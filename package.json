@@ -12,7 +12,11 @@
     "db:logs": "docker compose logs -f db",
     "db:psql": "docker compose exec db psql -U pms -d pms_dev",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "db:new": "dbmate new",
+    "db:migrate": "dbmate --wait --no-dump-schema up",
+    "db:rollback": "dbmate --wait --no-dump-schema rollback",
+    "db:status": "dbmate --wait status"
   },
   "dependencies": {
     "clsx": "^2.1.1",
@@ -28,6 +32,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dbmate": "^2.36.0",
     "eslint": "^9",
     "eslint-config-next": "16.3.6",
     "prettier": "^3.9.9",
