@@ -11,3 +11,5 @@
 ## Answers
 
 1. A migration is a way to manage and apply to your database schema. It will always come in pair the `up` and `down`. `up` is when you add a new column to a table, and `down` is when you can reverse it to its original structure.
+2. The `migrations` is like for creating a table with columns, and the `seeds` are the one responsible in adding data to that table.
+3. lookup tables were used for stages, modes, and pr types because it will be used as a reference data, but users types and roles need to CHECK to a function or constraints.

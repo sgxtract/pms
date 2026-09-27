@@ -71,6 +71,7 @@ Admin and Moderator accounts have no User Type. A regular User must have one.
 - Admins and Moderators can reset passwords for accounts they are allowed to manage.
 - Passwords are hashed with Argon2id.
 - Changing a password or disabling an account signs that user out of all sessions.
+- Accounts created or reset by an Admin or Moderator must change their password at next login (`must_change_password`).
 
 ## 4. Sessions
 
@@ -99,6 +100,7 @@ Admin and Moderator accounts have no User Type. A regular User must have one.
 | Procurement Mode           |    —     | See 5.3.                                                                                                                              |
 | Calendar Days              |    —     | See 5.6.                                                                                                                              |
 | Account Code               |    ✓     | Free text with autocomplete.                                                                                                          |
+| Category                   |    ✓     | Office, Hospital, 7K / SEF. Lookup table, so categories can be added later.                                                           |
 
 All fields remain editable while the PR is active. Every edit is audited with before and after values.
 
@@ -164,7 +166,7 @@ All fields remain editable while the PR is active. Every edit is audited with be
 ## 8. Search, filter, and dashboard
 
 - **Keyword search:** PR Number, Reference ID, Particulars, End-User.
-- **Filters:** Status, Stage, Procurement Mode, Type of PR, Source of Funds, End-User, PR Date range, ABC range.
+- **Filters:** Status, Stage, Procurement Mode, Type of PR, Source of Funds, End-User, PR Date range, ABC range, Categories.
 - Filters are stored in the page URL, so filtered views can be bookmarked and shared.
 - **Dashboard:** Total, Active, Completed, and Cancelled counts; total ABC of active PRs; PRs per stage; PRs by Procurement Mode (count and ABC); PRs staying too long in one stage; deliveries due or overdue; recent activity.
 
@@ -176,7 +178,7 @@ All fields remain editable while the PR is active. Every edit is audited with be
 ## 10. Reports
 
 - **Period filters:** All time, This Month, Last Month, This Quarter, This Year, Custom Date Range.
-- **Views:** Financial Overview, Total ABC by Procurement Mode.
+- **Views:** Financial Overview, Total ABC by Procurement Mode, Total ABC by Category.
 - **Printing:** A4, with LGU letterhead and logo, and "Prepared by" and "Noted by" signatory lines.
 - Signatory names and positions are editable in system settings.
 
