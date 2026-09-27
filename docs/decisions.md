@@ -8,26 +8,26 @@ This document records the agreed decisions for the Procurement Monitoring System
 
 ## 1. Technology
 
-| ID | Decision | Reason |
-|---|---|---|
-| D-001 | Next.js, React, TypeScript, Tailwind CSS | Modern full-stack framework; type safety reduces bugs; widely known, so the system is easy to hand over to other developers. |
-| D-002 | PostgreSQL 18 | Reliable, free, handles millions of rows; transactions keep stage changes and history consistent. |
-| D-003 | PostgreSQL runs in Docker (Docker Compose) | Same database version for every developer and every server; one-command setup. |
-| D-004 | Migrations are plain `.sql` files in `db/migrations/`, managed with dbmate | Readable by anyone who knows SQL; the full history of database changes is version-controlled. |
-| D-005 | Queries use the `postgres` (postgres.js) driver with parameterized SQL; input validated with Zod | Parameterized queries prevent SQL injection; validation rejects bad data before it reaches the database. |
-| D-006 | Money is stored as `NUMERIC(15,2)` | Exact decimal values; floating-point numbers cause rounding errors in totals. |
-| D-007 | All timestamps stored as `timestamptz`; server time zone `Asia/Manila` | Correct times for stage history and reports. |
-| D-008 | Git and GitHub, with Conventional Commits (`feat:`, `fix:`, `docs:`, `chore:`) | Readable history; changelogs can be generated for the client. |
+| ID    | Decision                                                                                         | Reason                                                                                                                       |
+| ----- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| D-001 | Next.js, React, TypeScript, Tailwind CSS                                                         | Modern full-stack framework; type safety reduces bugs; widely known, so the system is easy to hand over to other developers. |
+| D-002 | PostgreSQL 18                                                                                    | Reliable, free, handles millions of rows; transactions keep stage changes and history consistent.                            |
+| D-003 | PostgreSQL runs in Docker (Docker Compose)                                                       | Same database version for every developer and every server; one-command setup.                                               |
+| D-004 | Migrations are plain `.sql` files in `db/migrations/`, managed with dbmate                       | Readable by anyone who knows SQL; the full history of database changes is version-controlled.                                |
+| D-005 | Queries use the `postgres` (postgres.js) driver with parameterized SQL; input validated with Zod | Parameterized queries prevent SQL injection; validation rejects bad data before it reaches the database.                     |
+| D-006 | Money is stored as `NUMERIC(15,2)`                                                               | Exact decimal values; floating-point numbers cause rounding errors in totals.                                                |
+| D-007 | All timestamps stored as `timestamptz`; server time zone `Asia/Manila`                           | Correct times for stage history and reports.                                                                                 |
+| D-008 | Git and GitHub, with Conventional Commits (`feat:`, `fix:`, `docs:`, `chore:`)                   | Readable history; changelogs can be generated for the client.                                                                |
 
 ## 2. Design
 
-| ID | Decision |
-|---|---|
+| ID    | Decision                                                                                                                                                                                    |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | D-010 | Fonts: **Public Sans** for headings, **Inter** for UI and body text, **JetBrains Mono** for identifiers (PR Number, Reference ID, Account Code). All fonts self-hosted through `next/font`. |
-| D-011 | Theme: deep civic navy primary with brighter blue for interactive elements, on slate neutrals. |
-| D-012 | Light and dark mode toggle. Dark mode uses slate-950, not pure black. |
-| D-013 | Status colours always appear with a text label, never colour alone. |
-| D-014 | Buttons are compact and minimal. Tables are paginated. |
+| D-011 | Theme: deep civic navy primary with brighter blue for interactive elements, on slate neutrals.                                                                                              |
+| D-012 | Light and dark mode toggle. Dark mode uses slate-950, not pure black.                                                                                                                       |
+| D-013 | Status colours always appear with a text label, never colour alone.                                                                                                                         |
+| D-014 | Buttons are compact and minimal. Tables are paginated.                                                                                                                                      |
 
 ## 3. Roles and permissions
 
@@ -41,20 +41,20 @@ Admin and Moderator accounts have no User Type. A regular User must have one.
 
 ### 3.2 Permission matrix
 
-| Action | Admin | Moderator | Secretariat | TWG | Member |
-|---|:-:|:-:|:-:|:-:|:-:|
-| View PRs | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Create PR | ✓ | ✓ | ✓ | — | — |
-| Edit PR details | ✓ | ✓ | ✓ | ✓ | — |
-| Move PR stage | ✓ | ✓ | ✓ | ✓ | — |
-| Cancel / restore PR | ✓ | ✓ | ✓ | ✓ | — |
-| Upload attachment | ✓ | ✓ | ✓ | ✓ | — |
-| Delete own attachment | ✓ | ✓ | ✓ | ✓ | — |
-| Delete any attachment | ✓ | ✓ | — | — | — |
-| View reports | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Manage regular User accounts | ✓ | ✓ | — | — | — |
-| Manage Admin / Moderator accounts | ✓ | — | — | — | — |
-| View audit logs | All | All except Admin actions | Own only | Own only | Own only |
+| Action                            | Admin |        Moderator         | Secretariat |   TWG    |  Member  |
+| --------------------------------- | :---: | :----------------------: | :---------: | :------: | :------: |
+| View PRs                          |   ✓   |            ✓             |      ✓      |    ✓     |    ✓     |
+| Create PR                         |   ✓   |            ✓             |      ✓      |    —     |    —     |
+| Edit PR details                   |   ✓   |            ✓             |      ✓      |    ✓     |    —     |
+| Move PR stage                     |   ✓   |            ✓             |      ✓      |    ✓     |    —     |
+| Cancel / restore PR               |   ✓   |            ✓             |      ✓      |    ✓     |    —     |
+| Upload attachment                 |   ✓   |            ✓             |      ✓      |    ✓     |    —     |
+| Delete own attachment             |   ✓   |            ✓             |      ✓      |    ✓     |    —     |
+| Delete any attachment             |   ✓   |            ✓             |      —      |    —     |    —     |
+| View reports                      |   ✓   |            ✓             |      ✓      |    ✓     |    ✓     |
+| Manage regular User accounts      |   ✓   |            ✓             |      —      |    —     |    —     |
+| Manage Admin / Moderator accounts |   ✓   |            —             |      —      |    —     |    —     |
+| View audit logs                   |  All  | All except Admin actions |  Own only   | Own only | Own only |
 
 ### 3.3 Account rules
 
@@ -74,31 +74,31 @@ Admin and Moderator accounts have no User Type. A regular User must have one.
 
 ## 4. Sessions
 
-| ID | Decision |
-|---|---|
-| D-030 | Sessions are stored in the database; the browser holds an httpOnly, secure cookie that survives closing the browser. |
-| D-031 | **Idle timeout: 15 minutes.** A warning modal appears at 13 minutes with a "Stay signed in" option. |
-| D-032 | Absolute session lifetime of about 10 hours (one workday). *Default, to be confirmed.* |
+| ID    | Decision                                                                                                                                                               |
+| ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D-030 | Sessions are stored in the database; the browser holds an httpOnly, secure cookie that survives closing the browser.                                                   |
+| D-031 | **Idle timeout: 15 minutes.** A warning modal appears at 13 minutes with a "Stay signed in" option.                                                                    |
+| D-032 | Absolute session lifetime of about 10 hours (one workday). _Default, to be confirmed._                                                                                 |
 | D-033 | Logged-in users visiting the login page are redirected to the dashboard. Visitors who are not logged in can access only the Home page and the Public Procurement page. |
-| D-034 | Permissions are checked on the server for every action and query, not only at route level. |
+| D-034 | Permissions are checked on the server for every action and query, not only at route level.                                                                             |
 
 ## 5. Procurement Requests
 
 ### 5.1 Fields
 
-| Field | Required | Notes |
-|---|:-:|---|
-| PR Number | ✓ | Stored as text (e.g. `2026091252`, `2026091231-A`). Entered by the creator. Unique; trimmed and converted to uppercase before saving. |
-| PR Date | ✓ | |
-| Reference ID | — | See 5.2. |
-| Type of PR | — | Goods, Medicines, Infrastructure, Services. |
-| End-User | ✓ | Free text with autocomplete from previously entered values. |
-| Particulars / Project Name | ✓ | |
-| ABC | ✓ | `NUMERIC(15,2)`. |
-| Source of Funds | ✓ | Free text with autocomplete. |
-| Procurement Mode | — | See 5.3. |
-| Calendar Days | — | See 5.6. |
-| Account Code | ✓ | Free text with autocomplete. |
+| Field                      | Required | Notes                                                                                                                                 |
+| -------------------------- | :------: | ------------------------------------------------------------------------------------------------------------------------------------- |
+| PR Number                  |    ✓     | Stored as text (e.g. `2026091252`, `2026091231-A`). Entered by the creator. Unique; trimmed and converted to uppercase before saving. |
+| PR Date                    |    ✓     |                                                                                                                                       |
+| Reference ID               |    —     | See 5.2.                                                                                                                              |
+| Type of PR                 |    —     | Goods, Medicines, Infrastructure, Services.                                                                                           |
+| End-User                   |    ✓     | Free text with autocomplete from previously entered values.                                                                           |
+| Particulars / Project Name |    ✓     |                                                                                                                                       |
+| ABC                        |    ✓     | `NUMERIC(15,2)`.                                                                                                                      |
+| Source of Funds            |    ✓     | Free text with autocomplete.                                                                                                          |
+| Procurement Mode           |    —     | See 5.3.                                                                                                                              |
+| Calendar Days              |    —     | See 5.6.                                                                                                                              |
+| Account Code               |    ✓     | Free text with autocomplete.                                                                                                          |
 
 All fields remain editable while the PR is active. Every edit is audited with before and after values.
 
@@ -182,16 +182,16 @@ All fields remain editable while the PR is active. Every edit is audited with be
 
 ## 11. Hosting and deployment
 
-| ID | Decision | Reason |
-|---|---|---|
-| D-110 | The whole system runs as one Docker Compose stack: Next.js app, PostgreSQL, backups, and Cloudflare Tunnel. | The same setup runs on an LGU-owned server or a cloud VPS; moving between them needs no code changes. |
-| D-111 | Public access through **Cloudflare Tunnel** (free plan), for DNS, HTTPS, and attack protection. | No public IP or open firewall ports needed, which suits LGU networks. |
-| D-112 | Fallback if the tunnel is not allowed: a VPS with a public IP, using Caddy for automatic HTTPS. | Keeps the system independent of Cloudflare if required. |
-| D-113 | The app runs on the standard Node.js runtime, not an edge runtime. | Full library support; keeps every hosting option open. |
-| D-114 | Attachments are stored on the server's disk (a Docker volume), behind a storage module that can later be switched to S3-compatible storage. | Simple now; flexible later. |
-| D-115 | Backups: nightly database dump plus attachments; copies kept off the server; a restore is tested monthly. | Protects government records; an untested backup is not a backup. |
-| D-116 | A staging deployment is set up after Phase 3 (authentication). | Deployment is practised before the production launch. |
-| D-117 | Audit logs record the user's real IP address using the `CF-Connecting-IP` header. | Behind Cloudflare, the ordinary request IP is Cloudflare's. |
+| ID    | Decision                                                                                                                                    | Reason                                                                                                |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| D-110 | The whole system runs as one Docker Compose stack: Next.js app, PostgreSQL, backups, and Cloudflare Tunnel.                                 | The same setup runs on an LGU-owned server or a cloud VPS; moving between them needs no code changes. |
+| D-111 | Public access through **Cloudflare Tunnel** (free plan), for DNS, HTTPS, and attack protection.                                             | No public IP or open firewall ports needed, which suits LGU networks.                                 |
+| D-112 | Fallback if the tunnel is not allowed: a VPS with a public IP, using Caddy for automatic HTTPS.                                             | Keeps the system independent of Cloudflare if required.                                               |
+| D-113 | The app runs on the standard Node.js runtime, not an edge runtime.                                                                          | Full library support; keeps every hosting option open.                                                |
+| D-114 | Attachments are stored on the server's disk (a Docker volume), behind a storage module that can later be switched to S3-compatible storage. | Simple now; flexible later.                                                                           |
+| D-115 | Backups: nightly database dump plus attachments; copies kept off the server; a restore is tested monthly.                                   | Protects government records; an untested backup is not a backup.                                      |
+| D-116 | A staging deployment is set up after Phase 3 (authentication).                                                                              | Deployment is practised before the production launch.                                                 |
+| D-117 | Audit logs record the user's real IP address using the `CF-Connecting-IP` header.                                                           | Behind Cloudflare, the ordinary request IP is Cloudflare's.                                           |
 
 Suggested server: current Ubuntu LTS, 2 vCPU, 2–4 GB RAM, 50 GB disk.
 
@@ -203,11 +203,11 @@ Suggested server: current Ubuntu LTS, 2 vCPU, 2–4 GB RAM, 50 GB disk.
 
 ## 13. Open items
 
-| Item | Owner | Status |
-|---|---|---|
-| Fourth Procurement Mode | PBAC | To be named |
-| Hosting target: LGU server or cloud VPS | LGU IT office / PBAC | To decide before Phase 8 |
-| Domain name (e.g. a subdomain of the LGU's gov.ph domain) | LGU IT office | To request |
-| Disclosure of Cloudflare Tunnel to the Data Protection Officer | Developer | Before production |
-| Hosting subscription procurement, if a VPS is chosen | PBAC | Before production |
-| Absolute session lifetime (default: 10 hours) | PBAC | To confirm |
+| Item                                                           | Owner                | Status                   |
+| -------------------------------------------------------------- | -------------------- | ------------------------ |
+| Fourth Procurement Mode                                        | PBAC                 | To be named              |
+| Hosting target: LGU server or cloud VPS                        | LGU IT office / PBAC | To decide before Phase 8 |
+| Domain name (e.g. a subdomain of the LGU's gov.ph domain)      | LGU IT office        | To request               |
+| Disclosure of Cloudflare Tunnel to the Data Protection Officer | Developer            | Before production        |
+| Hosting subscription procurement, if a VPS is chosen           | PBAC                 | Before production        |
+| Absolute session lifetime (default: 10 hours)                  | PBAC                 | To confirm               |

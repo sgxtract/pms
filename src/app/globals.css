@@ -1,26 +1,122 @@
 @import "tailwindcss";
 
+/* Dark mode is controlled by a "dark" class on <html>, set by next-themes. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8fafc;
+  --surface: #ffffff;
+  --surface-muted: #f1f5f9;
+  --border: #e2e8f0;
+  --foreground: #0f172a;
+  --muted-foreground: #64748b;
+
+  --primary: #1e3a8a;
+  --primary-hover: #1e40af;
+  --primary-foreground: #ffffff;
+  --link: #1d4ed8;
+  --ring: #2563eb;
+
+  --danger: #b91c1c;
+  --danger-hover: #991b1b;
+
+  --neutral-soft: #f1f5f9;
+  --neutral-soft-foreground: #334155;
+  --info-soft: #dbeafe;
+  --info-soft-foreground: #1e40af;
+  --success-soft: #dcfce7;
+  --success-soft-foreground: #166534;
+  --warning-soft: #fef3c7;
+  --warning-soft-foreground: #92400e;
+  --danger-soft: #fee2e2;
+  --danger-soft-foreground: #991b1b;
+
+  color-scheme: light;
 }
 
+.dark {
+  --background: #020617;
+  --surface: #0f172a;
+  --surface-muted: #172135;
+  --border: #1e293b;
+  --foreground: #e2e8f0;
+  --muted-foreground: #94a3b8;
+
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-foreground: #ffffff;
+  --link: #60a5fa;
+  --ring: #60a5fa;
+
+  --danger: #b91c1c;
+  --danger-hover: #dc2626;
+
+  --neutral-soft: #1e293b;
+  --neutral-soft-foreground: #cbd5e1;
+  --info-soft: rgb(37 99 235 / 0.18);
+  --info-soft-foreground: #93c5fd;
+  --success-soft: rgb(22 163 74 / 0.18);
+  --success-soft-foreground: #86efac;
+  --warning-soft: rgb(217 119 6 / 0.18);
+  --warning-soft-foreground: #fcd34d;
+  --danger-soft: rgb(220 38 38 / 0.18);
+  --danger-soft-foreground: #fca5a5;
+
+  color-scheme: dark;
+}
+
+/* Expose the tokens as Tailwind classes, e.g. bg-primary, text-muted-foreground. */
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-border: var(--border);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-link: var(--link);
+  --color-ring: var(--ring);
+
+  --color-danger: var(--danger);
+  --color-danger-hover: var(--danger-hover);
+
+  --color-neutral-soft: var(--neutral-soft);
+  --color-neutral-soft-foreground: var(--neutral-soft-foreground);
+  --color-info-soft: var(--info-soft);
+  --color-info-soft-foreground: var(--info-soft-foreground);
+  --color-success-soft: var(--success-soft);
+  --color-success-soft-foreground: var(--success-soft-foreground);
+  --color-warning-soft: var(--warning-soft);
+  --color-warning-soft-foreground: var(--warning-soft-foreground);
+  --color-danger-soft: var(--danger-soft);
+  --color-danger-soft-foreground: var(--danger-soft-foreground);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-public-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--border);
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-public-sans), ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
 }

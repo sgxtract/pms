@@ -10,7 +10,9 @@
     "db:up": "docker compose up -d",
     "db:down": "docker compose down",
     "db:logs": "docker compose logs -f db",
-    "db:psql": "docker compose exec db psql -U pms -d pms_dev"
+    "db:psql": "docker compose exec db psql -U pms -d pms_dev",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "clsx": "^2.1.1",
@@ -32,7 +34,5 @@
     "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwindcss": "^4",
     "typescript": "^5"
-  },
-  "format": "prettier --write .",
-  "format:check": "prettier --check ."
+  }
 }
