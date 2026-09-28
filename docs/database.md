@@ -228,6 +228,9 @@ Some rules can be enforced by the database directly; others need information the
 | Cancelled PRs cannot be edited or moved                                      | Application                        |
 | Who may perform each action (permission matrix)                              | Application                        |
 | An Admin cannot disable themselves; the last active Admin cannot be disabled | Application                        |
+| Stage history, status history, and audit logs cannot be changed or deleted   | Database (append-only trigger); restricted database account in production |
+| PRs cannot be deleted once they have history | Database (foreign keys)       |
+| Free-text fields stored without leading or trailing spaces                   | Database (`CHECK`) and application |
 
 ## 5. Stage codes
 

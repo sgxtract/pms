@@ -16,7 +16,8 @@
     "db:new": "dbmate new",
     "db:migrate": "dbmate --wait --no-dump-schema up",
     "db:rollback": "dbmate --wait --no-dump-schema rollback",
-    "db:status": "dbmate --wait status"
+    "db:status": "dbmate --wait status",
+    "db:reset": "docker compose down -v && docker compose up -d && dbmate --wait --no-dump-schema up"
   },
   "dependencies": {
     "clsx": "^2.1.1",
