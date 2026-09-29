@@ -10,15 +10,15 @@ Docker is a lightweight container, it has the exact version of your database sof
 
 `.env`
 
-- It contains the sensitive data or keys that we will be using in creating our database.
+- It contains the sensitive data or keys that is used in creating the database.
 
 `.env.example`
 
 - It contains the same keys with the `.env` but without the real values, only placeholder values so that the developer will know what variables they need.
 
-## The daily commands
+### The daily commands
 
-The daily commands that we are going to use with Docker are:
+The daily commands that are going to use with Docker are:
 
 - `npm run db:up`
 - `npm run db:down`

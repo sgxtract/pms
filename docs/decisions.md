@@ -63,6 +63,7 @@ Admin and Moderator accounts have no User Type. A regular User must have one.
 - Accounts are **disabled, never deleted**. A disabled user cannot log in.
 - An Admin cannot disable their own account. The last active Admin cannot be disabled.
 - Employee ID is unique.
+- The first Admin is created with `npm run admin:create` on the server. The script generates a temporary password, requires a password change at first login, and refuses to run if an active Admin already exists.
 
 ### 3.4 Passwords
 
@@ -194,6 +195,8 @@ All fields remain editable while the PR is active. Every edit is audited with be
 | D-115 | Backups: nightly database dump plus attachments; copies kept off the server; a restore is tested monthly.                                   | Protects government records; an untested backup is not a backup.                                      |
 | D-116 | A staging deployment is set up after Phase 3 (authentication).                                                                              | Deployment is practised before the production launch.                                                 |
 | D-117 | Audit logs record the user's real IP address using the `CF-Connecting-IP` header.                                                           | Behind Cloudflare, the ordinary request IP is Cloudflare's.                                           |
+| D-118 | `GET /api/health` reports whether the app can reach the database (`200 ok` or `503 error`), without revealing details.                      | Used by uptime monitoring.                                                                            |
+
 
 Suggested server: current Ubuntu LTS, 2 vCPU, 2–4 GB RAM, 50 GB disk.
 

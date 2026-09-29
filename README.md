@@ -28,3 +28,4 @@ Open http://localhost:3000.
 | `npm run db:migrate` | Apply pending migrations |
 | `npm run db:status` | Show migration status |
 | `npm run db:reset` | Rebuild the development database (deletes all data) |
+| `npm run admin:create` | Create the first Admin account (runs only once) |

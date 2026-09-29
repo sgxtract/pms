@@ -17,16 +17,21 @@
     "db:migrate": "dbmate --wait --no-dump-schema up",
     "db:rollback": "dbmate --wait --no-dump-schema rollback",
     "db:status": "dbmate --wait status",
-    "db:reset": "docker compose down -v && docker compose up -d && dbmate --wait --no-dump-schema up"
+    "db:reset": "docker compose down -v && docker compose up -d && dbmate --wait --no-dump-schema up",
+    "admin:create": "tsx --env-file=.env --conditions=react-server scripts/create-admin.ts"
   },
   "dependencies": {
+    "@node-rs/argon2": "^2.2.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.48.0",
     "next": "16.3.6",
     "next-themes": "^0.4.6",
+    "postgres": "^3.4.9",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "tailwind-merge": "^3.7.0"
+    "server-only": "^0.0.1",
+    "tailwind-merge": "^3.7.0",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -39,6 +44,7 @@
     "prettier": "^3.9.9",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   }
 }

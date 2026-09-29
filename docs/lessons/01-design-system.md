@@ -1,6 +1,6 @@
-# Design System
+## Design System
 
-## Questions
+### Questions
 
 1. What design tokens are, and why dark mode needed no changes to any component
 2. How the fonts are loaded, and why self-hosting matters for an LGU network
@@ -8,7 +8,7 @@
 4. Why the theme toggle needs the mounted check
 5. Any problem you hit, and how you fixed it.
 
-## Answers
+### Answers
 
 1. Design tokens are named variables that store visual design decision. For example, you have hex-color code you can change it to a readable format instead.
 2. Fonts are loaded locally, so it doesn't need to contact google fonts to get the font design.
