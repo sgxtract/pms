@@ -111,10 +111,21 @@ export const getCurrentSession = cache(async (): Promise<Session | null> => {
   };
 });
 
-export async function requireUser(): Promise<SessionUser> {
+export async function requireUser(
+  options: { allowPasswordChangeRequired?: boolean } = {},
+): Promise<SessionUser> {
   const session = await getCurrentSession();
   if (!session) redirect("/login");
+
+  if (session.user.mustChangePassword && !options.allowPasswordChangeRequired) {
+    redirect("/change-password");
+  }
+
   return session.user;
+}
+
+export async function touchSession(sessionId: string): Promise<void> {
+  await sql`UPDATE sessions SET last_activity_at = now() WHERE id = ${sessionId}`;
 }
 
 export async function invalidateSession(sessionId: string): Promise<void> {

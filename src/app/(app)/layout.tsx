@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { logout } from "@/server/actions/auth";
 import { requireUser } from "@/server/auth/session";
+import { IdleTimeoutWatcher } from "@/components/features/auth/idle-timeout-watcher";
 
 export default async function AppLayout({
   children,
@@ -29,6 +30,7 @@ export default async function AppLayout({
         </div>
       </header>
       <main className="mx-auto max-w-6xl px-6 py-8">{children}</main>
+      <IdleTimeoutWatcher />
     </div>
   );
 }

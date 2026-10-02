@@ -72,7 +72,7 @@ Admin and Moderator accounts have no User Type. A regular User must have one.
 - Admins and Moderators can reset passwords for accounts they are allowed to manage.
 - Passwords are hashed with Argon2id.
 - Changing a password or disabling an account signs that user out of all sessions.
-- Accounts created or reset by an Admin or Moderator must change their password at next login (`must_change_password`).
+- Changing your own password signs out all your other sessions; the current session stays. Disabling an account signs out all of its sessions.
 
 ## 4. Sessions
 
@@ -85,6 +85,7 @@ Admin and Moderator accounts have no User Type. A regular User must have one.
 | D-034 | Permissions are checked on the server for every action and query, not only at route level.                                                                             |
 | D-035 | After 5 failed logins for one Employee ID within 15 minutes, further attempts are blocked until the oldest failure is 15 minutes old. Failed attempts are recorded in the audit log. |
 | D-036 | Login errors do not reveal whether an Employee ID exists.                                                                                                              |
+| D-037 | Activity (mouse, keyboard, scroll, touch) keeps the session alive. A warning appears 2 minutes before the idle timeout, and timeouts are synced across all open tabs. Timeouts are recorded as `auth.timeout`, separately from sign-outs. |
 
 ## 5. Procurement Requests
 

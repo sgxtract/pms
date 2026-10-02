@@ -10,6 +10,7 @@ import {
   deleteSessionCookie,
   getCurrentSession,
   invalidateSession,
+  touchSession,
 } from "@/server/auth/session";
 import { sql } from "@/server/db";
 import { getRequestMeta } from "@/server/request-meta";
@@ -145,4 +146,29 @@ export async function logout(): Promise<void> {
 
   await deleteSessionCookie();
   redirect("/login");
+}
+
+export async function extendSession(): Promise<{ ok: boolean }> {
+  const session = await getCurrentSession();
+  if (!session) return { ok: false };
+
+  await touchSession(session.id);
+  return { ok: true };
+}
+
+export async function logoutDueToInactivity(): Promise<void> {
+  const session = await getCurrentSession();
+
+  if (session) {
+    await invalidateSession(session.id);
+    await writeAuditLog({
+      actor: { id: session.user.id, role: session.user.role },
+      action: "auth.timeout",
+      entityType: "auth",
+      entityId: session.user.employeeId,
+      meta: await getRequestMeta(),
+    });
+  }
+
+  await deleteSessionCookie();
 }
