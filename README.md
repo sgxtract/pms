@@ -1,5 +1,10 @@
 ## Getting started
 
+### Troubleshooting
+
+- **Port 5432 is already in use:** another PostgreSQL is running on this computer. Set `POSTGRES_PORT=5433` in `.env` and change the port in `DATABASE_URL` to match.
+- **"Password authentication failed":** first check that the database container is running (`docker compose ps`). If it isn't, you may be connecting to a different PostgreSQL on the same port.
+
 ### Requirements
 
 - Node.js 24 or newer (LTS)
@@ -29,3 +34,4 @@ Open http://localhost:3000.
 | `npm run db:status` | Show migration status |
 | `npm run db:reset` | Rebuild the development database (deletes all data) |
 | `npm run admin:create` | Create the first Admin account (runs only once) |
+| `npm test` | Run the automated tests |

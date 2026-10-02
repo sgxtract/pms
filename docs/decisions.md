@@ -56,6 +56,8 @@ Admin and Moderator accounts have no User Type. A regular User must have one.
 | Manage Admin / Moderator accounts |   ✓   |            —             |      —      |    —     |    —     |
 | View audit logs                   |  All  | All except Admin actions |  Own only   | Own only | Own only |
 
+The matrix is implemented in `src/lib/permissions.ts` and verified by `src/lib/permissions.test.ts`, which encodes this table. Pages that a user cannot access respond as "not found".
+
 ### 3.3 Account rules
 
 - No public registration. Accounts are created only by an Admin, or by a Moderator for regular Users.

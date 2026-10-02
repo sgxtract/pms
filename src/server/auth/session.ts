@@ -12,9 +12,7 @@ import {
 import { sql } from "@/server/db";
 import { env } from "@/server/env";
 import type { RequestMeta } from "@/server/request-meta";
-
-export type Role = "admin" | "moderator" | "user";
-export type UserType = "secretariat" | "twg" | "member";
+import type { Role, UserType } from "@/lib/roles";
 
 export type SessionUser = {
   id: string;
