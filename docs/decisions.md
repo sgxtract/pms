@@ -83,6 +83,8 @@ Admin and Moderator accounts have no User Type. A regular User must have one.
 | D-032 | Absolute session lifetime of about 10 hours (one workday). _Default, to be confirmed._                                                                                 |
 | D-033 | Logged-in users visiting the login page are redirected to the dashboard. Visitors who are not logged in can access only the Home page and the Public Procurement page. |
 | D-034 | Permissions are checked on the server for every action and query, not only at route level.                                                                             |
+| D-035 | After 5 failed logins for one Employee ID within 15 minutes, further attempts are blocked until the oldest failure is 15 minutes old. Failed attempts are recorded in the audit log. |
+| D-036 | Login errors do not reveal whether an Employee ID exists.                                                                                                              |
 
 ## 5. Procurement Requests
 
