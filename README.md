@@ -2,7 +2,7 @@
 
 ### Requirements
 
-- Node.js (LTS)
+- Node.js 24 or newer (LTS)
 - Docker with Docker Compose
 - Git
 
