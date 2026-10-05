@@ -12,6 +12,9 @@ import { formatDate } from "@/lib/format";
 import { ROLE_LABELS, USER_TYPE_LABELS } from "@/lib/roles";
 import { requirePermission } from "@/server/auth/authorize";
 import { listUsers } from "@/server/queries/users";
+import Link from "next/link";
+import { buttonClasses } from "@/components/ui/button";
+import { can, canManageUser } from "@/lib/permissions";
 
 export const metadata: Metadata = { title: "Users" };
 
@@ -22,12 +25,19 @@ export default async function UsersPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Users</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {activeCount} active of {users.length} accounts. Accounts are
-          disabled, never deleted.
-        </p>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold">Users</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {activeCount} active of {users.length} accounts. Accounts are
+            disabled, never deleted.
+          </p>
+        </div>
+        {can(viewer, "user.manage_regular") && (
+          <Link href="/users/new" className={buttonClasses()}>
+            Add user
+          </Link>
+        )}
       </div>
 
       <Table>
@@ -46,7 +56,16 @@ export default async function UsersPage() {
             <TableRow key={user.id}>
               <TableCell className="font-mono">{user.employeeId}</TableCell>
               <TableCell>
-                {user.fullName}
+                {canManageUser(viewer, user) ? (
+                  <Link
+                    href={`/users/${user.id}`}
+                    className="font-medium text-link hover:underline"
+                  >
+                    {user.fullName}
+                  </Link>
+                ) : (
+                  user.fullName
+                )}
                 {user.id === viewer.id && (
                   <span className="ml-2 text-xs text-muted-foreground">
                     (you)

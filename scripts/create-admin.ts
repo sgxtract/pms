@@ -1,34 +1,8 @@
-import { randomInt } from "node:crypto";
 import { stdin as input, stdout as output } from "node:process";
 import { createInterface } from "node:readline/promises";
-import { passwordSchema } from "@/lib/validation/password";
 import { hashPassword } from "@/server/auth/password";
+import { generateTemporaryPassword } from "@/server/auth/temporary-password";
 import { sql } from "@/server/db";
-
-const CHARACTER_SETS = [
-  "ABCDEFGHJKLMNPQRSTUVWXYZ",
-  "abcdefghijkmnopqrstuvwxyz",
-  "23456789",
-  "!@#$%&*?-_+=",
-];
-
-function generateTemporaryPassword(length = 16): string {
-  const allCharacters = CHARACTER_SETS.join("");
-
-  // One character from each set guarantees the password policy is met.
-  const characters = CHARACTER_SETS.map((set) => set[randomInt(set.length)]);
-  while (characters.length < length) {
-    characters.push(allCharacters[randomInt(allCharacters.length)]);
-  }
-
-  // Shuffle so the guaranteed characters aren't always at the start.
-  for (let i = characters.length - 1; i > 0; i--) {
-    const j = randomInt(i + 1);
-    [characters[i], characters[j]] = [characters[j], characters[i]];
-  }
-
-  return characters.join("");
-}
 
 async function main() {
   const [existing] = await sql`
@@ -61,7 +35,6 @@ async function main() {
   }
 
   const temporaryPassword = generateTemporaryPassword();
-  passwordSchema.parse(temporaryPassword);
   const passwordHash = await hashPassword(temporaryPassword);
 
   const auditDetails = JSON.stringify({

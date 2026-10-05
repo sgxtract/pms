@@ -15,14 +15,33 @@ const sizes = {
   icon: "size-9",
 } as const;
 
-type ButtonProps = ComponentProps<"button"> & {
+type ButtonStyle = {
   variant?: keyof typeof variants;
   size?: keyof typeof sizes;
+  className?: string;
 };
 
-export function Button({
+export function buttonClasses({
   variant = "primary",
   size = "md",
+  className,
+}: ButtonStyle = {}): string {
+  return cn(
+    "inline-flex items-center justify-center gap-2 rounded-md font-medium whitespace-nowrap transition-colors",
+    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+    "disabled:pointer-events-none disabled:opacity-50",
+    "[&_svg]:size-4 [&_svg]:shrink-0",
+    variants[variant],
+    sizes[size],
+    className,
+  );
+}
+
+type ButtonProps = ComponentProps<"button"> & ButtonStyle;
+
+export function Button({
+  variant,
+  size,
   type = "button",
   className,
   ...props
@@ -30,15 +49,7 @@ export function Button({
   return (
     <button
       type={type}
-      className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-md font-medium whitespace-nowrap transition-colors",
-        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
-        "disabled:pointer-events-none disabled:opacity-50",
-        "[&_svg]:size-4 [&_svg]:shrink-0",
-        variants[variant],
-        sizes[size],
-        className,
-      )}
+      className={buttonClasses({ variant, size, className })}
       {...props}
     />
   );

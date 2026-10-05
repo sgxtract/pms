@@ -66,6 +66,9 @@ The matrix is implemented in `src/lib/permissions.ts` and verified by `src/lib/p
 - An Admin cannot disable their own account. The last active Admin cannot be disabled.
 - Employee ID is unique.
 - The first Admin is created with `npm run admin:create` on the server. The script generates a temporary password, requires a password change at first login, and refuses to run if an active Admin already exists.
+- An Admin cannot change their own role.
+- Changes that would leave no active Admin are refused. Admin rows are locked during these checks, so simultaneous changes cannot bypass the rule.
+- Temporary passwords are shown once to the person who created or reset the account, who gives them to the user in person. They are never stored or logged.
 
 ### 3.4 Passwords
 
