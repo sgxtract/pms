@@ -69,6 +69,8 @@ The matrix is implemented in `src/lib/permissions.ts` and verified by `src/lib/p
 - An Admin cannot change their own role.
 - Changes that would leave no active Admin are refused. Admin rows are locked during these checks, so simultaneous changes cannot bypass the rule.
 - Temporary passwords are shown once to the person who created or reset the account, who gives them to the user in person. They are never stored or logged.
+- Admins and Moderators can reset passwords for accounts they manage. The user receives a new temporary password, is signed out everywhere, and must choose a new password at next sign-in. Your own password is changed only through the Password page, which requires the current password.
+- Disabling an account deletes all its sessions, so re-enabling it never revives an old session. A re-enabled user keeps their existing password.
 
 ### 3.4 Passwords
 

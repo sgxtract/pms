@@ -6,6 +6,8 @@ import { assignableRoles, canManageUser } from "@/lib/permissions";
 import { describeAccess } from "@/lib/roles";
 import { requirePermission } from "@/server/auth/authorize";
 import { getUserById } from "@/server/queries/users";
+import { AccountStatusPanel } from "@/components/features/users/account-status-panel";
+import { ResetPasswordPanel } from "@/components/features/users/reset-password-panel";
 
 export const metadata: Metadata = { title: "Edit user" };
 
@@ -19,6 +21,8 @@ export default async function EditUserPage({
 
   const user = await getUserById(id);
   if (!user || !canManageUser(actor, user)) notFound();
+
+  const isSelf = user.id === actor.id;
 
   return (
     <div className="space-y-8">
@@ -41,9 +45,49 @@ export default async function EditUserPage({
         <EditUserForm
           user={user}
           roleOptions={assignableRoles(actor)}
-          roleLocked={user.id === actor.id}
+          roleLocked={isSelf}
         />
       </section>
+      {isSelf ? (
+        <section
+          aria-labelledby="own-account-heading"
+          className="space-y-2 border-t pt-8"
+        >
+          <h2 id="own-account-heading" className="text-lg font-semibold">
+            Password and status
+          </h2>
+          <p className="max-w-prose text-sm text-muted-foreground">
+            To change your own password, use Password in the header. You
+            can&apos;t disable your own account.
+          </p>
+        </section>
+      ) : (
+        <>
+          <section
+            aria-labelledby="password-heading"
+            className="space-y-3 border-t pt-8"
+          >
+            <h2 id="password-heading" className="text-lg font-semibold">
+              Password
+            </h2>
+            <ResetPasswordPanel userId={user.id} fullName={user.fullName} />
+          </section>
+
+          <section
+            aria-labelledby="status-heading"
+            className="space-y-3 border-t pt-8"
+          >
+            <h2 id="status-heading" className="text-lg font-semibold">
+              Account status
+            </h2>
+            <AccountStatusPanel
+              userId={user.id}
+              fullName={user.fullName}
+              isActive={user.isActive}
+            />
+          </section>
+        </>
+      )}
     </div>
   );
 }
