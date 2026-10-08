@@ -40,7 +40,8 @@ export function StageTimeline({
             <span
               aria-hidden
               className={cn(
-                "absolute top-1.5 -left-[29.5px] size-2.5 rounded-full",
+                // -left-6 matches the list's pl-6; the translate centres the dot on the line.
+                "absolute top-1.5 -left-6 size-2.5 -translate-x-1/2 rounded-full",
                 isCurrent ? "bg-primary" : "bg-border",
               )}
             />
