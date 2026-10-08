@@ -127,20 +127,26 @@ export default async function PrDetailPage({
         </h2>
 
         {can(user, "pr.move_stage") &&
-          (pr.status === "active" ? (
+          (pr.status === "cancelled" ? (
+            <p className="text-sm text-muted-foreground">
+              This PR is cancelled. Restore it to move it to another stage.
+            </p>
+          ) : pr.currentStageCode === "completed" && !can(user, "pr.reopen") ? (
+            <p className="text-sm text-muted-foreground">
+              This PR is completed. Only an Administrator or Moderator can
+              reopen it.
+            </p>
+          ) : (
             <MoveStagePanel
               prId={pr.id}
               currentStage={{
                 id: pr.currentStageId,
+                code: pr.currentStageCode,
                 name: pr.currentStage,
                 sortOrder: pr.currentSortOrder,
               }}
               stages={stages}
             />
-          ) : (
-            <p className="text-sm text-muted-foreground">
-              This PR is cancelled. Restore it to move it to another stage.
-            </p>
           ))}
 
         <StageTimeline entries={history} stages={stages} />

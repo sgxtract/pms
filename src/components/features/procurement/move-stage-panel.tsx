@@ -18,7 +18,7 @@ export function MoveStagePanel({
   stages,
 }: {
   prId: string;
-  currentStage: { id: string; name: string; sortOrder: number };
+  currentStage: { id: string; code: string; name: string; sortOrder: number };
   stages: StageOption[];
 }) {
   const [state, formAction, isPending] = useActionState<
@@ -49,9 +49,15 @@ export function MoveStagePanel({
         : undefined,
   });
 
+  const [confirmingComplete, setConfirmingComplete] = useState(false);
+
+  const movingToCompleted = target?.code === "completed";
+  const isReopening = currentStage.code === "completed";
+
   function open() {
     setHandled(state);
     setToStageId("");
+    setConfirmingComplete(false);
     setDefaultEffectiveAt(nowForDateTimeInput());
     setIsOpen(true);
   }
@@ -72,6 +78,10 @@ export function MoveStagePanel({
       noValidate
       onSubmit={(event) => {
         event.preventDefault();
+        if (movingToCompleted && !confirmingComplete) {
+          setConfirmingComplete(true);
+          return;
+        }
         const formData = new FormData(event.currentTarget);
         startTransition(() => formAction(formData));
       }}
@@ -86,7 +96,10 @@ export function MoveStagePanel({
         <Select
           {...describe("toStageId")}
           value={toStageId}
-          onChange={(event) => setToStageId(event.target.value)}
+          onChange={(event) => {
+            setToStageId(event.target.value);
+            setConfirmingComplete(false);
+          }}
         >
           <option value="" disabled>
             Choose a stage
@@ -122,9 +135,11 @@ export function MoveStagePanel({
         label="Remarks"
         optional={!movingBack}
         hint={
-          movingBack
-            ? "Required when moving a PR back to an earlier stage."
-            : undefined
+          isReopening
+            ? "Explain why this completed PR is being reopened."
+            : movingBack
+              ? "Required when moving a PR back to an earlier stage."
+              : undefined
         }
         error={errors.remarks}
       >
@@ -136,16 +151,50 @@ export function MoveStagePanel({
       )}
 
       <div className="flex flex-wrap gap-2">
-        <Button type="submit" disabled={isPending}>
-          {isPending ? "Saving…" : movingBack ? "Move back" : "Move PR"}
-        </Button>
-        <Button
-          variant="secondary"
-          onClick={() => setIsOpen(false)}
-          disabled={isPending}
-        >
-          Cancel
-        </Button>
+        {confirmingComplete ? (
+          <div className="space-y-3">
+            <FormMessage tone="warning">
+              <p className="font-medium">Mark this PR as completed?</p>
+              <p>
+                Once completed, only an Administrator or Moderator can reopen
+                it.
+              </p>
+            </FormMessage>
+            <div className="flex flex-wrap gap-2">
+              <Button type="submit" disabled={isPending} autoFocus>
+                {isPending ? "Saving…" : "Yes, mark as completed"}
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => setConfirmingComplete(false)}
+                disabled={isPending}
+              >
+                Go back
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            <Button type="submit" disabled={isPending}>
+              {isPending
+                ? "Saving…"
+                : isReopening
+                  ? "Reopen PR"
+                  : movingBack
+                    ? "Move back"
+                    : movingToCompleted
+                      ? "Mark as completed"
+                      : "Move PR"}
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => setIsOpen(false)}
+              disabled={isPending}
+            >
+              Cancel
+            </Button>
+          </div>
+        )}
       </div>
     </form>
   );

@@ -56,6 +56,7 @@ Admin and Moderator accounts have no User Type. A regular User must have one.
 | Manage Admin / Moderator accounts |   ✓   |            —             |      —      |    —     |    —     |
 | View audit logs                   |  All  | All except Admin actions |  Own only   | Own only | Own only |
 | View user accounts                |  All  |    All except Admins     |      —      |    —     |    —     |
+| Reopen a Completed PR             |   ✓   |            ✓             |      —      |    —     |    —     |
 
 The matrix is implemented in `src/lib/permissions.ts` and verified by `src/lib/permissions.test.ts`, which encodes this table. Pages that a user cannot access respond as "not found".
 
@@ -154,6 +155,8 @@ All fields remain editable while the PR is active. Every edit is audited with be
 - The current stage is also stored on the PR itself for fast searching; it is updated in the same transaction as the history record.
 - A PR's row is locked while it moves, so two simultaneous moves happen one after the other; the second sees the first's result.
 - The stage history shows "Moved back" and the names of skipped stages, and notes when an entry was encoded later than its effective time.
+- Moving a PR to Completed requires a confirmation step.
+- A Completed PR can be reopened (moved back to an earlier stage) only by an Administrator or Moderator, with remarks. The original "Completed" entry stays in the history.
 
 ### 5.6 Calendar Days
 

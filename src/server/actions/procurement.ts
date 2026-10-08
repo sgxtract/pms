@@ -18,6 +18,7 @@ import {
   MOVE_STAGE_FIELDS,
   type MoveStageField,
 } from "@/lib/validation/stage-move";
+import { can } from "@/lib/permissions";
 
 export type CreatePrState =
   | { error: string; fieldErrors?: Partial<Record<PrFormField, string>> }
@@ -226,6 +227,7 @@ type LockedPr = {
   id: string;
   status: "active" | "cancelled";
   currentStageId: number;
+  currentStageCode: string;
   currentStage: string;
   currentSortOrder: number;
   currentStageAt: Date;
@@ -281,8 +283,9 @@ export async function movePrStage(
   const result = await transaction(async (tx): Promise<MoveStageState> => {
     // Lock only the PR row, so simultaneous moves happen one at a time.
     const [pr] = await tx<LockedPr[]>`
-      SELECT p.id, p.status, p.current_stage_id, s.name AS current_stage,
-             s.sort_order AS current_sort_order, p.current_stage_at
+      SELECT p.id, p.status, p.current_stage_id, s.code AS current_stage_code,
+             s.name AS current_stage, s.sort_order AS current_sort_order,
+             p.current_stage_at
       FROM procurement_requests p
       JOIN procurement_stages s ON s.id = p.current_stage_id
       WHERE p.id = ${data.prId}
@@ -295,6 +298,13 @@ export async function movePrStage(
         status: "error",
         message:
           "This PR is cancelled. Restore it before moving it to another stage.",
+      };
+    }
+    if (pr.currentStageCode === "completed" && !can(user, "pr.reopen")) {
+      return {
+        status: "error",
+        message:
+          "Only an Administrator or Moderator can reopen a completed PR.",
       };
     }
 

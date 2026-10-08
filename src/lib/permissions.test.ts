@@ -34,6 +34,7 @@ const MATRIX: Record<Permission, SubjectName[]> = {
   "pr.update": ["admin", "moderator", "secretariat", "twg"],
   "pr.move_stage": ["admin", "moderator", "secretariat", "twg"],
   "pr.cancel_restore": ["admin", "moderator", "secretariat", "twg"],
+  "pr.reopen": ["admin", "moderator"],
   "attachment.upload": ["admin", "moderator", "secretariat", "twg"],
   "attachment.delete_any": ["admin", "moderator"],
   "report.view": ALL,

@@ -6,6 +6,7 @@ export type Permission =
   | "pr.update"
   | "pr.move_stage"
   | "pr.cancel_restore"
+  | "pr.reopen"
   | "attachment.upload"
   | "attachment.delete_any"
   | "report.view"
@@ -30,6 +31,7 @@ const ROLE_PERMISSIONS: Record<Exclude<Role, "user">, readonly Permission[]> = {
     ...EVERYONE,
     "pr.create",
     ...PR_WORK,
+    "pr.reopen",
     "attachment.delete_any",
     "user.view",
     "user.manage_regular",
@@ -39,6 +41,7 @@ const ROLE_PERMISSIONS: Record<Exclude<Role, "user">, readonly Permission[]> = {
     ...EVERYONE,
     "pr.create",
     ...PR_WORK,
+    "pr.reopen",
     "attachment.delete_any",
     "user.view",
     "user.manage_regular",
