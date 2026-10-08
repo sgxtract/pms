@@ -1,15 +1,16 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { assignableRoles, can, canManageUser } from "@/lib/permissions";
+import { assignableRoles, canManageUser } from "@/lib/permissions";
 import { userDetailsSchema } from "@/lib/validation/user";
 import { diffFields, writeAuditLog } from "@/server/audit";
 import { hashPassword } from "@/server/auth/password";
-import { getCurrentSession, type SessionUser } from "@/server/auth/session";
+import type { SessionUser } from "@/server/auth/session";
 import { generateTemporaryPassword } from "@/server/auth/temporary-password";
 import { isUniqueViolation, transaction, type Db } from "@/server/db";
 import { getRequestMeta } from "@/server/request-meta";
 import type { Role, UserType } from "@/lib/roles";
+import { getActionUser } from "@/server/auth/authorize";
 
 export type CreateUserState =
   | { status: "error"; message: string }
@@ -38,10 +39,7 @@ type AccountRow = {
 
 // The signed-in user, if they may manage accounts at all.
 async function getAccountManager(): Promise<SessionUser | null> {
-  const session = await getCurrentSession();
-  if (!session || session.user.mustChangePassword) return null;
-  if (!can(session.user, "user.manage_regular")) return null;
-  return session.user;
+  return getActionUser("user.manage_regular");
 }
 
 function parseUserDetails(formData: FormData) {

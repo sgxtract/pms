@@ -115,6 +115,10 @@ The matrix is implemented in `src/lib/permissions.ts` and verified by `src/lib/p
 
 All fields remain editable while the PR is active. Every edit is audited with before and after values.
 
+- When a free-text value (End-User, Source of Funds, Account Code) matches an existing value apart from capitalization, the existing spelling is used.
+- Typing a Reference ID links the PR to it, creating the Reference ID if it doesn't exist yet.
+- ABC accepts commas and the peso sign when typed, and is stored exactly, never as a floating-point number.
+
 ### 5.2 Reference ID
 
 - Used when several PRs are consolidated into one procurement.
@@ -226,3 +230,4 @@ Suggested server: current Ubuntu LTS, 2 vCPU, 2–4 GB RAM, 50 GB disk.
 | Disclosure of Cloudflare Tunnel to the Data Protection Officer | Developer            | Before production        |
 | Hosting subscription procurement, if a VPS is chosen           | PBAC                 | Before production        |
 | Absolute session lifetime (default: 10 hours)                  | PBAC                 | To confirm               |
+| Calendar Days upper limit (currently 3,650 days, to catch typing errors) | PBAC       | To confirm               |
