@@ -13,11 +13,14 @@ export type UserListItem = {
   createdAt: Date;
 };
 
-export async function listUsers(): Promise<UserListItem[]> {
+export async function listUsers(roles: Role[]): Promise<UserListItem[]> {
+  if (roles.length === 0) return [];
+
   return sql<UserListItem[]>`
     SELECT id, employee_id, full_name, role, user_type,
            is_active, must_change_password, created_at
     FROM users
+    WHERE role IN ${sql(roles)}
     ORDER BY is_active DESC, full_name
   `;
 }

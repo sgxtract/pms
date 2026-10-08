@@ -74,6 +74,13 @@ export function assignableRoles(actor: Subject): Role[] {
   return [];
 }
 
+// Which accounts, by role, `viewer` may see in the users list.
+export function visibleUserRoles(viewer: Subject): Role[] {
+  if (viewer.role === "admin") return ["admin", "moderator", "user"];
+  if (viewer.role === "moderator") return ["moderator", "user"];
+  return [];
+}
+
 export type AuditScope = "all" | "all_except_admin" | "own";
 
 // Decisions log, section 3.2: audit log visibility

@@ -4,6 +4,7 @@ import {
   auditScope,
   can,
   canManageUser,
+  visibleUserRoles,
   type Permission,
   type Subject,
 } from "@/lib/permissions";
@@ -104,5 +105,17 @@ describe("auditScope()", () => {
     expect(auditScope(SUBJECTS.admin)).toBe("all");
     expect(auditScope(SUBJECTS.moderator)).toBe("all_except_admin");
     expect(auditScope(SUBJECTS.twg)).toBe("own");
+  });
+});
+
+describe("visibleUserRoles()", () => {
+  it("shows Admins every account and hides Admins from Moderators", () => {
+    expect(visibleUserRoles(SUBJECTS.admin)).toEqual([
+      "admin",
+      "moderator",
+      "user",
+    ]);
+    expect(visibleUserRoles(SUBJECTS.moderator)).toEqual(["moderator", "user"]);
+    expect(visibleUserRoles(SUBJECTS.secretariat)).toEqual([]);
   });
 });

@@ -14,13 +14,13 @@ import { requirePermission } from "@/server/auth/authorize";
 import { listUsers } from "@/server/queries/users";
 import Link from "next/link";
 import { buttonClasses } from "@/components/ui/button";
-import { can, canManageUser } from "@/lib/permissions";
+import { can, canManageUser, visibleUserRoles } from "@/lib/permissions";
 
 export const metadata: Metadata = { title: "Users" };
 
 export default async function UsersPage() {
   const viewer = await requirePermission("user.view");
-  const users = await listUsers();
+  const users = await listUsers(visibleUserRoles(viewer));
   const activeCount = users.filter((user) => user.isActive).length;
 
   return (
