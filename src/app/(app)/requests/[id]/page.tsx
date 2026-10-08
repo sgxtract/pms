@@ -3,7 +3,15 @@ import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { formatDate, formatDateTime, formatPeso } from "@/lib/format";
 import { requirePermission } from "@/server/auth/authorize";
-import { getPrById } from "@/server/queries/procurement";
+import { MoveStagePanel } from "@/components/features/procurement/move-stage-panel";
+import { StageTimeline } from "@/components/features/procurement/stage-timeline";
+import { getDeliveryStatus } from "@/lib/delivery";
+import { can } from "@/lib/permissions";
+import {
+  getActiveStages,
+  getPrById,
+  getStageHistory,
+} from "@/server/queries/procurement";
 import Link from "next/link";
 
 export const metadata: Metadata = { title: "PR details" };
@@ -34,10 +42,25 @@ export default async function PrDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await requirePermission("pr.view");
+  const user = await requirePermission("pr.view");
   const { id } = await params;
   const pr = await getPrById(id);
   if (!pr) notFound();
+
+  const [history, stages] = await Promise.all([
+    getStageHistory(pr.id),
+    getActiveStages(),
+  ]);
+
+  const isOpen = pr.status === "active" && pr.currentStageCode !== "completed";
+  const noticeToProceed = history.find(
+    (entry) => entry.toStageCode === "notice_to_proceed",
+  );
+  const delivery = getDeliveryStatus({
+    calendarDays: pr.calendarDays,
+    noticeToProceedAt: noticeToProceed?.effectiveAt ?? null,
+    isOpen,
+  });
 
   return (
     <div className="space-y-8">
@@ -81,10 +104,47 @@ export default async function PrDetailPage({
         <Detail label="Calendar Days">
           {pr.calendarDays === null ? null : `${pr.calendarDays} days`}
         </Detail>
+        <Detail label="Delivery due">
+          {delivery ? (
+            <span className="flex flex-wrap items-center gap-2">
+              {formatDate(delivery.dueAt)}
+              {delivery.isOverdue && <Badge tone="warning">Overdue</Badge>}
+            </span>
+          ) : pr.calendarDays !== null ? (
+            <span className="text-muted-foreground">
+              After the Notice to Proceed
+            </span>
+          ) : null}
+        </Detail>
         <Detail label="Current stage since">
           {formatDateTime(pr.currentStageAt)}
         </Detail>
       </dl>
+
+      <section aria-labelledby="stage-heading" className="max-w-3xl space-y-5">
+        <h2 id="stage-heading" className="text-lg font-semibold">
+          Stage history
+        </h2>
+
+        {can(user, "pr.move_stage") &&
+          (pr.status === "active" ? (
+            <MoveStagePanel
+              prId={pr.id}
+              currentStage={{
+                id: pr.currentStageId,
+                name: pr.currentStage,
+                sortOrder: pr.currentSortOrder,
+              }}
+              stages={stages}
+            />
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              This PR is cancelled. Restore it to move it to another stage.
+            </p>
+          ))}
+
+        <StageTimeline entries={history} stages={stages} />
+      </section>
 
       <p className="text-sm text-muted-foreground">
         Encoded by {pr.createdBy} on {formatDateTime(pr.createdAt)}.

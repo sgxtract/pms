@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { isRealDate, manilaInputToDate, todayInManila } from "@/lib/dates";
+import { isRealDate, todayInManila } from "@/lib/dates";
+import { pastManilaDateTime } from "./common";
 
 // Single-line text: trimmed, with repeated spaces collapsed.
 const singleLine = (requiredMessage: string, max: number) =>
@@ -67,14 +68,7 @@ export const prFormSchema = z.object({
       "Calendar Days must be between 1 and 3,650.",
     ),
   accountCode: singleLine("Enter the Account Code.", 100),
-  receivedAt: z
-    .string()
-    .regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/, "Enter when the PR was received.")
-    .refine((value) => isRealDate(value.slice(0, 10)), "Enter a valid date.")
-    .refine(
-      (value) => manilaInputToDate(value) <= new Date(),
-      "The received time can't be in the future.",
-    ),
+  receivedAt: pastManilaDateTime("Enter when the PR was received."),
   remarks: z
     .string()
     .trim()

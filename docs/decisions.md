@@ -9,7 +9,7 @@ This document records the agreed decisions for the Procurement Monitoring System
 ## 1. Technology
 
 | ID    | Decision                                                                                         | Reason                                                                                                                       |
-|-------|--------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
+| ----- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
 | D-001 | Next.js, React, TypeScript, Tailwind CSS                                                         | Modern full-stack framework; type safety reduces bugs; widely known, so the system is easy to hand over to other developers. |
 | D-002 | PostgreSQL 18                                                                                    | Reliable, free, handles millions of rows; transactions keep stage changes and history consistent.                            |
 | D-003 | PostgreSQL runs in Docker (Docker Compose)                                                       | Same database version for every developer and every server; one-command setup.                                               |
@@ -22,7 +22,7 @@ This document records the agreed decisions for the Procurement Monitoring System
 ## 2. Design
 
 | ID    | Decision                                                                                                                                                                                    |
-|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | D-010 | Fonts: **Public Sans** for headings, **Inter** for UI and body text, **JetBrains Mono** for identifiers (PR Number, Reference ID, Account Code). All fonts self-hosted through `next/font`. |
 | D-011 | Theme: deep civic navy primary with brighter blue for interactive elements, on slate neutrals.                                                                                              |
 | D-012 | Light and dark mode toggle. Dark mode uses slate-950, not pure black.                                                                                                                       |
@@ -42,7 +42,7 @@ Admin and Moderator accounts have no User Type. A regular User must have one.
 ### 3.2 Permission matrix
 
 | Action                            | Admin |        Moderator         | Secretariat |   TWG    |  Member  |
-|-----------------------------------|:-----:|:------------------------:|:-----------:|:--------:|:--------:|
+| --------------------------------- | :---: | :----------------------: | :---------: | :------: | :------: |
 | View PRs                          |   ✓   |            ✓             |      ✓      |    ✓     |    ✓     |
 | Create PR                         |   ✓   |            ✓             |      ✓      |    —     |    —     |
 | Edit PR details                   |   ✓   |            ✓             |      ✓      |    ✓     |    —     |
@@ -87,7 +87,7 @@ Admin names still appear where accountability requires it, such as "Encoded by" 
 ## 4. Sessions
 
 | ID    | Decision                                                                                                                                                                                                                                  |
-|-------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | D-030 | Sessions are stored in the database; the browser holds an httpOnly, secure cookie that survives closing the browser.                                                                                                                      |
 | D-031 | **Idle timeout: 15 minutes.** A warning modal appears at 13 minutes with a "Stay signed in" option.                                                                                                                                       |
 | D-032 | Absolute session lifetime of about 10 hours (one workday). _Default, to be confirmed._                                                                                                                                                    |
@@ -102,7 +102,7 @@ Admin names still appear where accountability requires it, such as "Encoded by" 
 ### 5.1 Fields
 
 | Field                      | Required | Notes                                                                                                                                 |
-|----------------------------|:--------:|---------------------------------------------------------------------------------------------------------------------------------------|
+| -------------------------- | :------: | ------------------------------------------------------------------------------------------------------------------------------------- |
 | PR Number                  |    ✓     | Stored as text (e.g. `2026091252`, `2026091231-A`). Entered by the creator. Unique; trimmed and converted to uppercase before saving. |
 | PR Date                    |    ✓     |                                                                                                                                       |
 | Reference ID               |    —     | See 5.2.                                                                                                                              |
@@ -152,6 +152,8 @@ All fields remain editable while the PR is active. Every edit is audited with be
   - The user who made the change, and the remarks.
 - Validation: the effective time cannot be in the future, and cannot be earlier than the effective time of the PR's latest stage entry.
 - The current stage is also stored on the PR itself for fast searching; it is updated in the same transaction as the history record.
+- A PR's row is locked while it moves, so two simultaneous moves happen one after the other; the second sees the first's result.
+- The stage history shows "Moved back" and the names of skipped stages, and notes when an entry was encoded later than its effective time.
 
 ### 5.6 Calendar Days
 
@@ -206,7 +208,7 @@ All fields remain editable while the PR is active. Every edit is audited with be
 ## 11. Hosting and deployment
 
 | ID    | Decision                                                                                                                                    | Reason                                                                                                |
-|-------|---------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | D-110 | The whole system runs as one Docker Compose stack: Next.js app, PostgreSQL, backups, and Cloudflare Tunnel.                                 | The same setup runs on an LGU-owned server or a cloud VPS; moving between them needs no code changes. |
 | D-111 | Public access through **Cloudflare Tunnel** (free plan), for DNS, HTTPS, and attack protection.                                             | No public IP or open firewall ports needed, which suits LGU networks.                                 |
 | D-112 | Fallback if the tunnel is not allowed: a VPS with a public IP, using Caddy for automatic HTTPS.                                             | Keeps the system independent of Cloudflare if required.                                               |
@@ -216,7 +218,6 @@ All fields remain editable while the PR is active. Every edit is audited with be
 | D-116 | A staging deployment is set up after Phase 3 (authentication).                                                                              | Deployment is practised before the production launch.                                                 |
 | D-117 | Audit logs record the user's real IP address using the `CF-Connecting-IP` header.                                                           | Behind Cloudflare, the ordinary request IP is Cloudflare's.                                           |
 | D-118 | `GET /api/health` reports whether the app can reach the database (`200 ok` or `503 error`), without revealing details.                      | Used by uptime monitoring.                                                                            |
-
 
 Suggested server: current Ubuntu LTS, 2 vCPU, 2–4 GB RAM, 50 GB disk.
 
@@ -228,12 +229,13 @@ Suggested server: current Ubuntu LTS, 2 vCPU, 2–4 GB RAM, 50 GB disk.
 
 ## 13. Open items
 
-| Item                                                                     | Owner                | Status                   |
-|--------------------------------------------------------------------------|----------------------|--------------------------|
-| Fourth Procurement Mode                                                  | PBAC                 | To be named              |
-| Hosting target: LGU server or cloud VPS                                  | LGU IT office / PBAC | To decide before Phase 8 |
-| Domain name (e.g. a subdomain of the LGU's gov.ph domain)                | LGU IT office        | To request               |
-| Disclosure of Cloudflare Tunnel to the Data Protection Officer           | Developer            | Before production        |
-| Hosting subscription procurement, if a VPS is chosen                     | PBAC                 | Before production        |
-| Absolute session lifetime (default: 10 hours)                            | PBAC                 | To confirm               |
-| Calendar Days upper limit (currently 3,650 days, to catch typing errors) | PBAC                 | To confirm               |
+| Item                                                                                                  | Owner                | Status                   |
+| ----------------------------------------------------------------------------------------------------- | -------------------- | ------------------------ |
+| Fourth Procurement Mode                                                                               | PBAC                 | To be named              |
+| Hosting target: LGU server or cloud VPS                                                               | LGU IT office / PBAC | To decide before Phase 8 |
+| Domain name (e.g. a subdomain of the LGU's gov.ph domain)                                             | LGU IT office        | To request               |
+| Disclosure of Cloudflare Tunnel to the Data Protection Officer                                        | Developer            | Before production        |
+| Hosting subscription procurement, if a VPS is chosen                                                  | PBAC                 | Before production        |
+| Absolute session lifetime (default: 10 hours)                                                         | PBAC                 | To confirm               |
+| Calendar Days upper limit (currently 3,650 days, to catch typing errors)                              | PBAC                 | To confirm               |
+| Calendar Days counting: from the moment of the Notice to Proceed (current), or from the following day | PBAC                 | To confirm               |

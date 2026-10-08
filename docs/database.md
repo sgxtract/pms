@@ -253,3 +253,18 @@ The program refers to stages by `code`. Display names can be changed freely in t
 The gaps of 10 allow a new stage to be inserted between two existing stages (for example, order 55) without renumbering.
 
 The delivery due date is calculated from the `notice_to_proceed` entry in `pr_stage_history` plus the PR's Calendar Days.
+
+## 6. Consistency checks
+
+Each PR's current stage must match its latest stage history entry. This query lists any that don't, and should always return no rows:
+
+```sql
+SELECT p.pr_number
+FROM procurement_requests p
+WHERE p.current_stage_id <> (
+  SELECT h.to_stage_id FROM pr_stage_history h
+  WHERE h.pr_id = p.id
+  ORDER BY h.effective_at DESC, h.id DESC
+  LIMIT 1
+);
+```

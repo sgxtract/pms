@@ -12,6 +12,12 @@ import { writeAuditLog } from "@/server/audit";
 import { getActionUser } from "@/server/auth/authorize";
 import { isUniqueViolation, transaction, type Db } from "@/server/db";
 import { getRequestMeta } from "@/server/request-meta";
+import { formatDateTime } from "@/lib/format";
+import {
+  moveStageSchema,
+  MOVE_STAGE_FIELDS,
+  type MoveStageField,
+} from "@/lib/validation/stage-move";
 
 export type CreatePrState =
   | { error: string; fieldErrors?: Partial<Record<PrFormField, string>> }
@@ -205,4 +211,158 @@ export async function createProcurementRequest(
 
   revalidatePath("/dashboard");
   redirect(`/requests/${prId}`);
+}
+
+export type MoveStageState =
+  | {
+      status: "error";
+      message: string;
+      fieldErrors?: Partial<Record<MoveStageField, string>>;
+    }
+  | { status: "moved"; toStage: string }
+  | undefined;
+
+type LockedPr = {
+  id: string;
+  status: "active" | "cancelled";
+  currentStageId: number;
+  currentStage: string;
+  currentSortOrder: number;
+  currentStageAt: Date;
+};
+
+type TargetStage = { id: number; name: string; sortOrder: number };
+
+const fieldError = (
+  field: MoveStageField,
+  message: string,
+): MoveStageState => ({
+  status: "error",
+  message: "Please correct the highlighted fields.",
+  fieldErrors: { [field]: message },
+});
+
+export async function movePrStage(
+  _previousState: MoveStageState,
+  formData: FormData,
+): Promise<MoveStageState> {
+  const user = await getActionUser("pr.move_stage");
+  if (!user) {
+    return {
+      status: "error",
+      message: "You don't have permission to move PRs.",
+    };
+  }
+
+  const input = Object.fromEntries(
+    MOVE_STAGE_FIELDS.map((field) => [
+      field,
+      String(formData.get(field) ?? ""),
+    ]),
+  );
+  const parsed = moveStageSchema.safeParse(input);
+
+  if (!parsed.success) {
+    const fieldErrors: Partial<Record<MoveStageField, string>> = {};
+    for (const issue of parsed.error.issues) {
+      fieldErrors[issue.path[0] as MoveStageField] ??= issue.message;
+    }
+    return {
+      status: "error",
+      message: "Please correct the highlighted fields.",
+      fieldErrors,
+    };
+  }
+
+  const data = parsed.data;
+  const effectiveAt = manilaInputToDate(data.effectiveAt);
+  const meta = await getRequestMeta();
+
+  const result = await transaction(async (tx): Promise<MoveStageState> => {
+    // Lock only the PR row, so simultaneous moves happen one at a time.
+    const [pr] = await tx<LockedPr[]>`
+      SELECT p.id, p.status, p.current_stage_id, s.name AS current_stage,
+             s.sort_order AS current_sort_order, p.current_stage_at
+      FROM procurement_requests p
+      JOIN procurement_stages s ON s.id = p.current_stage_id
+      WHERE p.id = ${data.prId}
+      FOR UPDATE OF p
+    `;
+
+    if (!pr) return { status: "error", message: "This PR could not be found." };
+    if (pr.status === "cancelled") {
+      return {
+        status: "error",
+        message:
+          "This PR is cancelled. Restore it before moving it to another stage.",
+      };
+    }
+
+    const [target] = await tx<TargetStage[]>`
+      SELECT id, name, sort_order
+      FROM procurement_stages
+      WHERE id::text = ${data.toStageId} AND is_active
+    `;
+
+    if (!target) return fieldError("toStageId", "Choose an available stage.");
+    if (target.id === pr.currentStageId) {
+      return fieldError("toStageId", `The PR is already at ${target.name}.`);
+    }
+
+    const movingBack = target.sortOrder < pr.currentSortOrder;
+    if (movingBack && !data.remarks) {
+      return fieldError(
+        "remarks",
+        "Explain why the PR is moving back to an earlier stage.",
+      );
+    }
+
+    if (effectiveAt < pr.currentStageAt) {
+      return fieldError(
+        "effectiveAt",
+        `This can't be earlier than the latest stage entry (${formatDateTime(pr.currentStageAt)}).`,
+      );
+    }
+
+    await tx`
+      INSERT INTO pr_stage_history
+        (pr_id, from_stage_id, to_stage_id, effective_at, recorded_by, remarks)
+      VALUES
+        (${pr.id}, ${pr.currentStageId}, ${target.id}, ${effectiveAt}, ${user.id}, ${data.remarks})
+    `;
+
+    await tx`
+      UPDATE procurement_requests
+      SET current_stage_id = ${target.id},
+          current_stage_at = ${effectiveAt},
+          updated_by = ${user.id}
+      WHERE id = ${pr.id}
+    `;
+
+    await writeAuditLog(
+      {
+        actor: { id: user.id, role: user.role },
+        action: "pr.move_stage",
+        entityType: "procurement_request",
+        entityId: pr.id,
+        changes: {
+          stage: { from: pr.currentStage, to: target.name },
+          effectiveAt: effectiveAt.toISOString(),
+          movedBack: movingBack,
+          ...(data.remarks ? { remarks: data.remarks } : {}),
+        },
+        meta,
+      },
+      tx,
+    );
+
+    return { status: "moved", toStage: target.name };
+  });
+
+  if (result?.status === "moved") {
+    revalidatePath(`/requests/${data.prId}`);
+    revalidatePath("/requests");
+    revalidatePath("/dashboard");
+  }
+  return result;
 }

@@ -75,6 +75,9 @@ export type PrDetail = {
   status: "active" | "cancelled";
   createdAt: Date;
   createdBy: string;
+  currentStageId: string;
+  currentStageCode: string;
+  currentSortOrder: number;
 };
 
 export async function getPrById(id: string): Promise<PrDetail | null> {
@@ -86,6 +89,8 @@ export async function getPrById(id: string): Promise<PrDetail | null> {
            p.end_user, p.particulars, p.abc, p.source_of_funds,
            m.name AS procurement_mode, p.calendar_days, p.account_code,
            s.name AS current_stage, p.current_stage_at, p.status,
+           p.current_stage_id::text AS current_stage_id,
+           s.code AS current_stage_code, s.sort_order AS current_sort_order,
            p.created_at, u.full_name AS created_by
     FROM procurement_requests p
     LEFT JOIN pr_references r ON r.id = p.reference_id
@@ -202,4 +207,51 @@ export async function listPrs(filters: PrFilters) {
     page,
     pageCount,
   };
+}
+
+export type StageOption = {
+  id: string;
+  code: string;
+  name: string;
+  sortOrder: number;
+};
+
+export async function getActiveStages(): Promise<StageOption[]> {
+  return sql<StageOption[]>`
+    SELECT id::text, code, name, sort_order
+    FROM procurement_stages
+    WHERE is_active
+    ORDER BY sort_order
+  `;
+}
+
+export type StageHistoryEntry = {
+  id: string;
+  fromStage: string | null;
+  fromSortOrder: number | null;
+  toStage: string;
+  toStageCode: string;
+  toSortOrder: number;
+  effectiveAt: Date;
+  recordedAt: Date;
+  recordedBy: string;
+  remarks: string | null;
+};
+
+// Newest first: the first entry is the PR's current stage.
+export async function getStageHistory(
+  prId: string,
+): Promise<StageHistoryEntry[]> {
+  return sql<StageHistoryEntry[]>`
+    SELECT h.id,
+           f.name AS from_stage, f.sort_order AS from_sort_order,
+           t.name AS to_stage, t.code AS to_stage_code, t.sort_order AS to_sort_order,
+           h.effective_at, h.recorded_at, u.full_name AS recorded_by, h.remarks
+    FROM pr_stage_history h
+    LEFT JOIN procurement_stages f ON f.id = h.from_stage_id
+    JOIN procurement_stages t ON t.id = h.to_stage_id
+    JOIN users u ON u.id = h.recorded_by
+    WHERE h.pr_id = ${prId}
+    ORDER BY h.effective_at DESC, h.id DESC
+  `;
 }
