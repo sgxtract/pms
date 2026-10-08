@@ -184,9 +184,12 @@ All fields remain editable while the PR is active. Every edit is audited with be
 ## 8. Search, filter, and dashboard
 
 - **Keyword search:** PR Number, Reference ID, Particulars, End-User.
-- **Filters:** Status, Stage, Procurement Mode, Type of PR, Source of Funds, End-User, PR Date range, ABC range, Categories.
+- **Filters:** Status, Stage, Procurement Mode, Category, Type of PR, PR Date range, ABC range.
 - Filters are stored in the page URL, so filtered views can be bookmarked and shared.
 - **Dashboard:** Total, Active, Completed, and Cancelled counts; total ABC of active PRs; PRs per stage; PRs by Procurement Mode (count and ABC); PRs staying too long in one stage; deliveries due or overdue; recent activity.
+- The PR list shows 25 PRs per page, newest PR date first, with the count and total ABC of all matching PRs.
+- Invalid filter values in a URL are ignored, so a broken or outdated link still opens a working page.
+- Filter lists include deactivated stages, modes, categories, and types, so older PRs that use them can still be found.
 
 ## 9. Public Procurement page
 

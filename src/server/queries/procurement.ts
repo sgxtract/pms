@@ -1,4 +1,5 @@
 import "server-only";
+import { PR_PAGE_SIZE, type PrFilters } from "@/lib/pr-filters";
 import { sql } from "@/server/db";
 
 export type Option = { id: string; name: string };
@@ -96,4 +97,109 @@ export async function getPrById(id: string): Promise<PrDetail | null> {
     WHERE p.id = ${id}
   `;
   return pr ?? null;
+}
+
+export async function getPrFilterOptions() {
+  const [stages, modes, categories, types] = await Promise.all([
+    sql<{ code: string; name: string }[]>`
+      SELECT code, name FROM procurement_stages ORDER BY sort_order
+    `,
+    sql<
+      Option[]
+    >`SELECT id::text, name FROM procurement_modes ORDER BY sort_order, name`,
+    sql<
+      Option[]
+    >`SELECT id::text, name FROM pr_categories ORDER BY sort_order, name`,
+    sql<
+      Option[]
+    >`SELECT id::text, name FROM pr_types ORDER BY sort_order, name`,
+  ]);
+  return { stages, modes, categories, types };
+}
+
+export type PrListItem = {
+  id: string;
+  prNumber: string;
+  prDate: string;
+  referenceCode: string | null;
+  particulars: string;
+  endUser: string;
+  abc: string;
+  procurementMode: string | null;
+  stageCode: string;
+  stageName: string;
+  status: "active" | "cancelled";
+};
+
+// Makes % and _ in the user's search match literally.
+function escapeLike(value: string): string {
+  return value.replace(/[\\%_]/g, "\\$&");
+}
+
+function prListFrom() {
+  return sql`
+    FROM procurement_requests p
+    LEFT JOIN pr_references r ON r.id = p.reference_id
+    LEFT JOIN procurement_modes m ON m.id = p.procurement_mode_id
+    JOIN procurement_stages s ON s.id = p.current_stage_id
+  `;
+}
+
+function prListWhere(filters: PrFilters) {
+  const conditions = [sql`TRUE`];
+
+  if (filters.q) {
+    const pattern = `%${escapeLike(filters.q)}%`;
+    conditions.push(sql`(
+      p.pr_number ILIKE ${pattern}
+      OR r.reference_code ILIKE ${pattern}
+      OR p.particulars ILIKE ${pattern}
+      OR p.end_user ILIKE ${pattern}
+    )`);
+  }
+  if (filters.status) conditions.push(sql`p.status = ${filters.status}`);
+  if (filters.stage) conditions.push(sql`s.code = ${filters.stage}`);
+  if (filters.mode)
+    conditions.push(sql`p.procurement_mode_id::text = ${filters.mode}`);
+  if (filters.category)
+    conditions.push(sql`p.pr_category_id::text = ${filters.category}`);
+  if (filters.type) conditions.push(sql`p.pr_type_id::text = ${filters.type}`);
+  if (filters.from) conditions.push(sql`p.pr_date >= ${filters.from}`);
+  if (filters.to) conditions.push(sql`p.pr_date <= ${filters.to}`);
+  if (filters.abcMin) conditions.push(sql`p.abc >= ${filters.abcMin}`);
+  if (filters.abcMax) conditions.push(sql`p.abc <= ${filters.abcMax}`);
+
+  return conditions.reduce(
+    (combined, condition) => sql`${combined} AND ${condition}`,
+  );
+}
+
+export async function listPrs(filters: PrFilters) {
+  const [summary] = await sql<{ total: number; totalAbc: string }[]>`
+    SELECT count(*)::int AS total, coalesce(sum(p.abc), 0)::text AS total_abc
+    ${prListFrom()}
+    WHERE ${prListWhere(filters)}
+  `;
+
+  const pageCount = Math.max(1, Math.ceil(summary.total / PR_PAGE_SIZE));
+  const page = Math.min(filters.page, pageCount);
+
+  const rows = await sql<PrListItem[]>`
+    SELECT p.id, p.pr_number, p.pr_date::text AS pr_date, r.reference_code,
+           p.particulars, p.end_user, p.abc, m.name AS procurement_mode,
+           s.code AS stage_code, s.name AS stage_name, p.status
+    ${prListFrom()}
+    WHERE ${prListWhere(filters)}
+    ORDER BY p.pr_date DESC, p.id DESC
+    LIMIT ${PR_PAGE_SIZE}
+    OFFSET ${(page - 1) * PR_PAGE_SIZE}
+  `;
+
+  return {
+    rows,
+    total: summary.total,
+    totalAbc: summary.totalAbc,
+    page,
+    pageCount,
+  };
 }

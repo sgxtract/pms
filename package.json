@@ -20,7 +20,8 @@
     "db:reset": "docker compose down -v && docker compose up -d && dbmate --wait --no-dump-schema up",
     "admin:create": "tsx --env-file=.env --conditions=react-server scripts/create-admin.ts",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "db:seed": "docker compose exec -T db psql -U pms -d pms_dev -v ON_ERROR_STOP=1 -f - < db/seeds/sample-prs.sql"
   },
   "dependencies": {
     "@node-rs/argon2": "^2.2.1",

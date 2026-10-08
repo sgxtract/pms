@@ -35,3 +35,7 @@ Open http://localhost:3000.
 | `npm run db:reset` | Rebuild the development database (deletes all data) |
 | `npm run admin:create` | Create the first Admin account (runs only once) |
 | `npm test` | Run the automated tests |
+
+### Sample data (development only)
+
+`npm run db:seed` adds 120 sample PRs (`SAMPLE-0001` to `SAMPLE-0120`). Remove them with `npm run db:reset`, then recreate your Admin with `npm run admin:create`. Never run the seed outside development.

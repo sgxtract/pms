@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatDate, formatDateTime, formatPeso } from "@/lib/format";
 import { requirePermission } from "@/server/auth/authorize";
 import { getPrById } from "@/server/queries/procurement";
+import Link from "next/link";
 
 export const metadata: Metadata = { title: "PR details" };
 
@@ -40,6 +41,9 @@ export default async function PrDetailPage({
 
   return (
     <div className="space-y-8">
+      <Link href="/requests" className="text-sm text-link hover:underline">
+        All requests
+      </Link>
       <div className="space-y-2">
         <p className="font-mono text-sm text-muted-foreground">
           PR {pr.prNumber}
