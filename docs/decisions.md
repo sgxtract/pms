@@ -173,6 +173,8 @@ All fields remain editable while the PR is active. Every edit is audited with be
 - A cancelled PR is **frozen**: it cannot be edited or moved until restored.
 - Restoring a PR does not change its current stage.
 - PRs are **never deleted**. Encoding mistakes are fixed by editing an active PR, or the PR is cancelled with a remark such as "encoding error".
+- Cancelling or restoring locks the PR and checks its current status, so simultaneous attempts record only one change.
+- A cancelled PR's page shows a banner with the latest reason, who cancelled it, and when.
 
 ## 6. Attachments
 
