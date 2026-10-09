@@ -1,24 +1,16 @@
 import Link from "next/link";
 import { buttonClasses } from "@/components/ui/button";
-import {
-  PR_PAGE_SIZE,
-  prFiltersToQuery,
-  type PrFilters,
-} from "@/lib/pr-filters";
 
 function PageLink({
-  filters,
-  page,
+  href,
   disabled,
   children,
 }: {
-  filters: PrFilters;
-  page: number;
+  href: string;
   disabled: boolean;
   children: React.ReactNode;
 }) {
   const classes = buttonClasses({ variant: "secondary", size: "sm" });
-
   if (disabled) {
     return (
       <span
@@ -29,32 +21,30 @@ function PageLink({
       </span>
     );
   }
-
   return (
-    <Link
-      href={`/requests${prFiltersToQuery(filters, { page })}`}
-      className={classes}
-    >
+    <Link href={href} className={classes}>
       {children}
     </Link>
   );
 }
 
-export function PrPagination({
-  filters,
+export function Pagination({
   page,
   pageCount,
   total,
+  pageSize,
+  hrefForPage,
 }: {
-  filters: PrFilters;
   page: number;
   pageCount: number;
   total: number;
+  pageSize: number;
+  hrefForPage: (page: number) => string;
 }) {
   if (total === 0) return null;
 
-  const start = (page - 1) * PR_PAGE_SIZE + 1;
-  const end = Math.min(page * PR_PAGE_SIZE, total);
+  const start = (page - 1) * pageSize + 1;
+  const end = Math.min(page * pageSize, total);
 
   return (
     <nav
@@ -65,17 +55,13 @@ export function PrPagination({
         Showing {start}–{end} of {total}
       </p>
       <div className="flex items-center gap-2">
-        <PageLink filters={filters} page={page - 1} disabled={page <= 1}>
+        <PageLink href={hrefForPage(page - 1)} disabled={page <= 1}>
           Previous
         </PageLink>
         <span className="text-muted-foreground tabular-nums">
           Page {page} of {pageCount}
         </span>
-        <PageLink
-          filters={filters}
-          page={page + 1}
-          disabled={page >= pageCount}
-        >
+        <PageLink href={hrefForPage(page + 1)} disabled={page >= pageCount}>
           Next
         </PageLink>
       </div>

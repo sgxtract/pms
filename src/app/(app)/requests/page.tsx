@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PrFilterBar } from "@/components/features/procurement/pr-filter-bar";
-import { PrPagination } from "@/components/features/procurement/pr-pagination";
+import { Pagination } from "@/components/ui/pagination";
 import { Badge } from "@/components/ui/badge";
 import { buttonClasses } from "@/components/ui/button";
 import {
@@ -18,6 +18,7 @@ import {
   hasActiveFilters,
   parsePrFilters,
   prFiltersToQuery,
+  PR_PAGE_SIZE,
 } from "@/lib/pr-filters";
 import { requirePermission } from "@/server/auth/authorize";
 import { getPrFilterOptions, listPrs } from "@/server/queries/procurement";
@@ -154,11 +155,14 @@ export default async function RequestsPage({
             </TableBody>
           </Table>
 
-          <PrPagination
-            filters={filters}
+          <Pagination
             page={result.page}
             pageCount={result.pageCount}
             total={result.total}
+            pageSize={PR_PAGE_SIZE}
+            hrefForPage={(page) =>
+              `/requests${prFiltersToQuery(filters, { page })}`
+            }
           />
         </>
       )}

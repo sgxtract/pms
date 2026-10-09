@@ -1,20 +1,23 @@
 import { z } from "zod";
-import { isRealDate } from "@/lib/dates";
+import {
+  dateParam,
+  firstValue,
+  pageParam,
+  toQueryString,
+  type SearchParams,
+} from "@/lib/search-params";
 
 export const PR_PAGE_SIZE = 25;
 
-// A URL can repeat a parameter (?q=a&q=b); we use the first value.
-const first = (value: unknown) => (Array.isArray(value) ? value[0] : value);
-
 const text = (max: number) =>
   z
-    .preprocess(first, z.string().trim().max(max).optional())
+    .preprocess(firstValue, z.string().trim().max(max).optional())
     .transform((value) => value || undefined)
     .catch(undefined);
 
 const optionId = z
   .preprocess(
-    first,
+    firstValue,
     z
       .string()
       .regex(/^\d{1,5}$/)
@@ -22,14 +25,10 @@ const optionId = z
   )
   .catch(undefined);
 
-const date = z
-  .preprocess(first, z.string().refine(isRealDate).optional())
-  .catch(undefined);
-
 const amount = z
   .preprocess(
     (value) => {
-      const raw = first(value);
+      const raw = firstValue(value);
       return typeof raw === "string" ? raw.replace(/[\s,₱]/g, "") : raw;
     },
     z
@@ -42,11 +41,11 @@ const amount = z
 export const prFiltersSchema = z.object({
   q: text(100),
   status: z
-    .preprocess(first, z.enum(["active", "cancelled"]).optional())
+    .preprocess(firstValue, z.enum(["active", "cancelled"]).optional())
     .catch(undefined),
   stage: z
     .preprocess(
-      first,
+      firstValue,
       z
         .string()
         .regex(/^[a-z_]{1,50}$/)
@@ -56,36 +55,24 @@ export const prFiltersSchema = z.object({
   mode: optionId,
   category: optionId,
   type: optionId,
-  from: date,
-  to: date,
+  from: dateParam,
+  to: dateParam,
   abcMin: amount,
   abcMax: amount,
-  page: z
-    .preprocess(first, z.coerce.number().int().min(1).max(100_000))
-    .catch(1),
+  page: pageParam,
 });
 
 export type PrFilters = z.infer<typeof prFiltersSchema>;
 
-export function parsePrFilters(
-  searchParams: Record<string, string | string[] | undefined>,
-): PrFilters {
+export function parsePrFilters(searchParams: SearchParams): PrFilters {
   return prFiltersSchema.parse(searchParams);
 }
 
-// Builds "?q=...&stage=..." from filters, leaving out empty values.
 export function prFiltersToQuery(
   filters: PrFilters,
   overrides: Partial<PrFilters> = {},
 ): string {
-  const params = new URLSearchParams();
-  for (const [key, value] of Object.entries({ ...filters, ...overrides })) {
-    if (value === undefined || value === "") continue;
-    if (key === "page" && value === 1) continue;
-    params.set(key, String(value));
-  }
-  const query = params.toString();
-  return query ? `?${query}` : "";
+  return toQueryString({ ...filters, ...overrides });
 }
 
 export function hasActiveFilters(filters: PrFilters): boolean {
