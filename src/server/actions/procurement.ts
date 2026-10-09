@@ -22,6 +22,7 @@ import {
   type MoveStageField,
 } from "@/lib/validation/stage-move";
 import { can } from "@/lib/permissions";
+import { statusChangeSchema } from "@/lib/validation/status-change";
 
 export type CreatePrState =
   | { error: string; fieldErrors?: Partial<Record<PrFormField, string>> }
@@ -620,4 +621,101 @@ export async function updateProcurementRequest(
   revalidatePath("/requests");
   revalidatePath("/dashboard");
   redirect(`/requests/${data.prId}?saved=1`);
+}
+
+export type StatusChangeState =
+  | { status: "error"; message: string; remarksError?: string }
+  | { status: "changed"; newStatus: "active" | "cancelled" }
+  | undefined;
+
+export async function changePrStatus(
+  _previousState: StatusChangeState,
+  formData: FormData,
+): Promise<StatusChangeState> {
+  const user = await getActionUser("pr.cancel_restore");
+  if (!user) {
+    return {
+      status: "error",
+      message: "You don't have permission to cancel or restore PRs.",
+    };
+  }
+
+  const parsed = statusChangeSchema.safeParse({
+    prId: String(formData.get("prId") ?? ""),
+    intent: formData.get("intent"),
+    remarks: String(formData.get("remarks") ?? ""),
+  });
+
+  if (!parsed.success) {
+    const remarksIssue = parsed.error.issues.find(
+      (issue) => issue.path[0] === "remarks",
+    );
+    return {
+      status: "error",
+      message: remarksIssue
+        ? "Please add your remarks."
+        : "Reload the page and try again.",
+      remarksError: remarksIssue?.message,
+    };
+  }
+
+  const { prId, intent, remarks } = parsed.data;
+  const newStatus = intent === "cancel" ? "cancelled" : "active";
+  const meta = await getRequestMeta();
+
+  const result = await transaction(async (tx): Promise<StatusChangeState> => {
+    const [pr] = await tx<{ id: string; status: "active" | "cancelled" }[]>`
+      SELECT id, status FROM procurement_requests
+      WHERE id = ${prId}
+      FOR UPDATE
+    `;
+
+    if (!pr) return { status: "error", message: "This PR could not be found." };
+    if (pr.status === newStatus) {
+      return {
+        status: "error",
+        message:
+          newStatus === "cancelled"
+            ? "This PR is already cancelled."
+            : "This PR is already active.",
+      };
+    }
+
+    await tx`
+      UPDATE procurement_requests
+      SET status = ${newStatus}, updated_by = ${user.id}
+      WHERE id = ${pr.id}
+    `;
+
+    await tx`
+      INSERT INTO pr_status_history (pr_id, action, remarks, acted_by)
+      VALUES (
+        ${pr.id},
+        ${newStatus === "cancelled" ? "cancelled" : "restored"},
+        ${remarks},
+        ${user.id}
+      )
+    `;
+
+    await writeAuditLog(
+      {
+        actor: { id: user.id, role: user.role },
+        action: intent === "cancel" ? "pr.cancel" : "pr.restore",
+        entityType: "procurement_request",
+        entityId: pr.id,
+        changes: { status: { from: pr.status, to: newStatus }, remarks },
+        meta,
+      },
+      tx,
+    );
+
+    return { status: "changed", newStatus };
+  });
+
+  if (result?.status === "changed") {
+    revalidatePath(`/requests/${prId}`);
+    revalidatePath("/requests");
+    revalidatePath("/dashboard");
+  }
+  return result;
 }

@@ -272,3 +272,24 @@ export async function getStageHistory(
     ORDER BY h.effective_at DESC, h.id DESC
   `;
 }
+
+export type StatusHistoryEntry = {
+  id: string;
+  action: "cancelled" | "restored";
+  remarks: string;
+  actedAt: Date;
+  actedBy: string;
+};
+
+// Newest first.
+export async function getStatusHistory(
+  prId: string,
+): Promise<StatusHistoryEntry[]> {
+  return sql<StatusHistoryEntry[]>`
+    SELECT h.id, h.action, h.remarks, h.acted_at, u.full_name AS acted_by
+    FROM pr_status_history h
+    JOIN users u ON u.id = h.acted_by
+    WHERE h.pr_id = ${prId}
+    ORDER BY h.acted_at DESC, h.id DESC
+  `;
+}
