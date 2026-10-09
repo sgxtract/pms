@@ -122,6 +122,9 @@ All fields remain editable while the PR is active. Every edit is audited with be
 - When a free-text value (End-User, Source of Funds, Account Code) matches an existing value apart from capitalization, the existing spelling is used.
 - Typing a Reference ID links the PR to it, creating the Reference ID if it doesn't exist yet.
 - ABC accepts commas and the peso sign when typed, and is stored exactly, never as a floating-point number.
+- Edits are refused if someone else changed the PR after the editor opened it (optimistic concurrency, using the PR's `updated_at` as its version). Any change counts, including a stage move.
+- Each edit is audited with only the changed fields, using names rather than IDs.
+- When editing, a PR's current Type, Category, or Mode stays available even if it has since been deactivated.
 
 ### 5.2 Reference ID
 

@@ -13,6 +13,8 @@ import {
   getStageHistory,
 } from "@/server/queries/procurement";
 import Link from "next/link";
+import { buttonClasses } from "@/components/ui/button";
+import { FormMessage } from "@/components/ui/form-message";
 
 export const metadata: Metadata = { title: "PR details" };
 
@@ -39,8 +41,10 @@ function Detail({
 
 export default async function PrDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ saved?: string | string[] }>;
 }) {
   const user = await requirePermission("pr.view");
   const { id } = await params;
@@ -62,6 +66,8 @@ export default async function PrDetailPage({
     isOpen,
   });
 
+  const { saved } = await searchParams;
+
   return (
     <div className="space-y-8">
       <Link href="/requests" className="text-sm text-link hover:underline">
@@ -72,15 +78,33 @@ export default async function PrDetailPage({
           PR {pr.prNumber}
         </p>
         <h1 className="max-w-prose text-2xl font-semibold">{pr.particulars}</h1>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {pr.status === "cancelled" ? (
             <Badge tone="danger">Cancelled</Badge>
           ) : (
             <Badge tone="info">Active</Badge>
           )}
           <Badge>{pr.currentStage}</Badge>
+          {can(user, "pr.update") && pr.status === "active" && (
+            <Link
+              href={`/requests/${pr.id}/edit`}
+              className={buttonClasses({
+                variant: "secondary",
+                size: "sm",
+                className: "ml-auto",
+              })}
+            >
+              Edit details
+            </Link>
+          )}
         </div>
       </div>
+
+      {saved === "1" && (
+        <div className="max-w-3xl">
+          <FormMessage tone="success">Changes saved.</FormMessage>
+        </div>
+      )}
 
       <dl className="grid max-w-3xl gap-x-8 gap-y-5 rounded-lg border bg-surface p-6 sm:grid-cols-2">
         <Detail label="PR Number" mono>

@@ -17,6 +17,12 @@ const optionalOptionId = z
   .regex(/^\d*$/, "Choose a valid option.")
   .transform((value) => (value === "" ? null : value));
 
+// "1250000.5" → "1250000.50", matching how the database returns numeric(15,2).
+function toTwoDecimals(value: string): string {
+  const [whole, fraction = ""] = value.split(".");
+  return `${whole.replace(/^0+(?=\d)/, "")}.${fraction.padEnd(2, "0")}`;
+}
+
 export const prFormSchema = z.object({
   prNumber: z
     .string()
@@ -54,7 +60,8 @@ export const prFormSchema = z.object({
           /^\d{1,13}(\.\d{1,2})?$/,
           "Enter the ABC as an amount, such as 1,250,000.00.",
         )
-        .refine((value) => Number(value) > 0, "ABC must be greater than zero."),
+        .refine((value) => Number(value) > 0, "ABC must be greater than zero.")
+        .transform(toTwoDecimals),
     ),
   sourceOfFunds: singleLine("Enter the Source of Funds.", 200),
   procurementModeId: optionalOptionId,
@@ -78,3 +85,13 @@ export const prFormSchema = z.object({
 
 export type PrFormField = keyof z.input<typeof prFormSchema>;
 export const PR_FORM_FIELDS = Object.keys(prFormSchema.shape) as PrFormField[];
+
+export const prEditSchema = prFormSchema
+  .omit({ receivedAt: true, remarks: true })
+  .extend({
+    prId: z.string().regex(/^\d+$/, "This PR could not be found."),
+    version: z.string().min(1, "Reload the page and try again."),
+  });
+
+export type PrEditField = keyof z.input<typeof prEditSchema>;
+export const PR_EDIT_FIELDS = Object.keys(prEditSchema.shape) as PrEditField[];

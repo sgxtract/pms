@@ -4,19 +4,28 @@ import { sql } from "@/server/db";
 
 export type Option = { id: string; name: string };
 
-export async function getPrFormOptions() {
+export async function getPrFormOptions(
+  current: {
+    typeId?: string | null;
+    categoryId?: string | null;
+    modeId?: string | null;
+  } = {},
+) {
   const [types, categories, modes] = await Promise.all([
     sql<Option[]>`
       SELECT id::text, name FROM pr_types
-      WHERE is_active ORDER BY sort_order, name
+      WHERE is_active OR id::text = ${current.typeId ?? ""}
+      ORDER BY sort_order, name
     `,
     sql<Option[]>`
       SELECT id::text, name FROM pr_categories
-      WHERE is_active ORDER BY sort_order, name
+      WHERE is_active OR id::text = ${current.categoryId ?? ""}
+      ORDER BY sort_order, name
     `,
     sql<Option[]>`
       SELECT id::text, name FROM procurement_modes
-      WHERE is_active ORDER BY sort_order, name
+      WHERE is_active OR id::text = ${current.modeId ?? ""}
+      ORDER BY sort_order, name
     `,
   ]);
   return { types, categories, modes };
@@ -78,6 +87,10 @@ export type PrDetail = {
   currentStageId: string;
   currentStageCode: string;
   currentSortOrder: number;
+  prTypeId: string | null;
+  prCategoryId: string;
+  procurementModeId: string | null;
+  version: string;
 };
 
 export async function getPrById(id: string): Promise<PrDetail | null> {
@@ -91,7 +104,11 @@ export async function getPrById(id: string): Promise<PrDetail | null> {
            s.name AS current_stage, p.current_stage_at, p.status,
            p.current_stage_id::text AS current_stage_id,
            s.code AS current_stage_code, s.sort_order AS current_sort_order,
-           p.created_at, u.full_name AS created_by
+           p.created_at, u.full_name AS created_by,
+           p.pr_type_id::text AS pr_type_id,
+           p.pr_category_id::text AS pr_category_id,
+           p.procurement_mode_id::text AS procurement_mode_id,
+           p.updated_at::text AS version
     FROM procurement_requests p
     LEFT JOIN pr_references r ON r.id = p.reference_id
     LEFT JOIN pr_types t ON t.id = p.pr_type_id

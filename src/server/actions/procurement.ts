@@ -4,11 +4,14 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { manilaInputToDate } from "@/lib/dates";
 import {
+  PR_EDIT_FIELDS,
   PR_FORM_FIELDS,
+  prEditSchema,
   prFormSchema,
+  type PrEditField,
   type PrFormField,
 } from "@/lib/validation/procurement-request";
-import { writeAuditLog } from "@/server/audit";
+import { diffFields, writeAuditLog } from "@/server/audit";
 import { getActionUser } from "@/server/auth/authorize";
 import { isUniqueViolation, transaction, type Db } from "@/server/db";
 import { getRequestMeta } from "@/server/request-meta";
@@ -37,6 +40,22 @@ async function isActiveOption(
     SELECT 1 FROM ${tx(table)} WHERE id::text = ${id} AND is_active
   `;
   return Boolean(row);
+}
+
+// The option's name if it may be used: active, or the PR's current value.
+// Returns undefined if not allowed, null if no option was chosen.
+async function allowedOptionName(
+  tx: Db,
+  table: LookupTable,
+  id: string | null,
+  currentId: string | null,
+): Promise<string | null | undefined> {
+  if (id === null) return null;
+  const [row] = await tx<{ name: string }[]>`
+    SELECT name FROM ${tx(table)}
+    WHERE id::text = ${id} AND (is_active OR id::text = ${currentId ?? ""})
+  `;
+  return row?.name;
 }
 
 // If the value already exists with different capitalization,
@@ -375,4 +394,230 @@ export async function movePrStage(
     revalidatePath("/dashboard");
   }
   return result;
+}
+
+export type UpdatePrState =
+  | {
+      status: "error";
+      message: string;
+      conflict?: boolean;
+      fieldErrors?: Partial<Record<PrEditField, string>>;
+    }
+  | undefined;
+
+type EditablePr = {
+  id: string;
+  status: "active" | "cancelled";
+  version: string;
+  prNumber: string;
+  prDate: string;
+  referenceCode: string | null;
+  prTypeId: string | null;
+  prType: string | null;
+  prCategoryId: string;
+  category: string;
+  endUser: string;
+  particulars: string;
+  abc: string;
+  sourceOfFunds: string;
+  procurementModeId: string | null;
+  procurementMode: string | null;
+  calendarDays: number | null;
+  accountCode: string;
+};
+
+export async function updateProcurementRequest(
+  _previousState: UpdatePrState,
+  formData: FormData,
+): Promise<UpdatePrState> {
+  const user = await getActionUser("pr.update");
+  if (!user) {
+    return {
+      status: "error",
+      message: "You don't have permission to edit PRs.",
+    };
+  }
+
+  const input = Object.fromEntries(
+    PR_EDIT_FIELDS.map((field) => [field, String(formData.get(field) ?? "")]),
+  );
+  const parsed = prEditSchema.safeParse(input);
+
+  if (!parsed.success) {
+    const fieldErrors: Partial<Record<PrEditField, string>> = {};
+    for (const issue of parsed.error.issues) {
+      fieldErrors[issue.path[0] as PrEditField] ??= issue.message;
+    }
+    return {
+      status: "error",
+      message: "Please correct the highlighted fields.",
+      fieldErrors,
+    };
+  }
+
+  const data = parsed.data;
+  const meta = await getRequestMeta();
+
+  try {
+    const result = await transaction(async (tx): Promise<UpdatePrState> => {
+      const [pr] = await tx<EditablePr[]>`
+        SELECT p.id, p.status, p.updated_at::text AS version,
+               p.pr_number, p.pr_date::text AS pr_date, r.reference_code,
+               p.pr_type_id::text AS pr_type_id, t.name AS pr_type,
+               p.pr_category_id::text AS pr_category_id, c.name AS category,
+               p.end_user, p.particulars, p.abc, p.source_of_funds,
+               p.procurement_mode_id::text AS procurement_mode_id,
+               m.name AS procurement_mode, p.calendar_days, p.account_code
+        FROM procurement_requests p
+        LEFT JOIN pr_references r ON r.id = p.reference_id
+        LEFT JOIN pr_types t ON t.id = p.pr_type_id
+        JOIN pr_categories c ON c.id = p.pr_category_id
+        LEFT JOIN procurement_modes m ON m.id = p.procurement_mode_id
+        WHERE p.id = ${data.prId}
+        FOR UPDATE OF p
+      `;
+
+      if (!pr)
+        return { status: "error", message: "This PR could not be found." };
+      if (pr.status === "cancelled") {
+        return {
+          status: "error",
+          message:
+            "This PR is cancelled. Restore it before editing its details.",
+        };
+      }
+      if (pr.version !== data.version) {
+        return {
+          status: "error",
+          conflict: true,
+          message:
+            "Someone else changed this PR after you opened it. Reload to see the latest details, then make your changes again.",
+        };
+      }
+
+      const prType = await allowedOptionName(
+        tx,
+        "pr_types",
+        data.prTypeId,
+        pr.prTypeId,
+      );
+      const category = await allowedOptionName(
+        tx,
+        "pr_categories",
+        data.prCategoryId,
+        pr.prCategoryId,
+      );
+      const procurementMode = await allowedOptionName(
+        tx,
+        "procurement_modes",
+        data.procurementModeId,
+        pr.procurementModeId,
+      );
+      if (prType === undefined || !category || procurementMode === undefined) {
+        return {
+          status: "error",
+          message:
+            "One of the selected options is no longer available. Reload the page and try again.",
+        };
+      }
+
+      const endUser = await matchExistingSpelling(tx, "end_user", data.endUser);
+      const sourceOfFunds = await matchExistingSpelling(
+        tx,
+        "source_of_funds",
+        data.sourceOfFunds,
+      );
+      const accountCode = await matchExistingSpelling(
+        tx,
+        "account_code",
+        data.accountCode,
+      );
+
+      const before: Record<string, unknown> = {
+        prNumber: pr.prNumber,
+        prDate: pr.prDate,
+        referenceCode: pr.referenceCode,
+        prType: pr.prType,
+        category: pr.category,
+        endUser: pr.endUser,
+        particulars: pr.particulars,
+        abc: pr.abc,
+        sourceOfFunds: pr.sourceOfFunds,
+        procurementMode: pr.procurementMode,
+        calendarDays: pr.calendarDays,
+        accountCode: pr.accountCode,
+      };
+      const after: Record<string, unknown> = {
+        prNumber: data.prNumber,
+        prDate: data.prDate,
+        referenceCode: data.referenceCode,
+        prType,
+        category,
+        endUser,
+        particulars: data.particulars,
+        abc: data.abc,
+        sourceOfFunds,
+        procurementMode,
+        calendarDays: data.calendarDays,
+        accountCode,
+      };
+
+      const changes = diffFields(before, after, Object.keys(after));
+      if (Object.keys(changes).length === 0) return undefined;
+
+      const reference = data.referenceCode
+        ? await findOrCreateReference(tx, data.referenceCode, user.id)
+        : null;
+
+      await tx`
+        UPDATE procurement_requests
+        SET pr_number = ${data.prNumber},
+            pr_date = ${data.prDate},
+            reference_id = ${reference?.id ?? null},
+            pr_type_id = ${data.prTypeId},
+            pr_category_id = ${data.prCategoryId},
+            end_user = ${endUser},
+            particulars = ${data.particulars},
+            abc = ${data.abc},
+            source_of_funds = ${sourceOfFunds},
+            procurement_mode_id = ${data.procurementModeId},
+            calendar_days = ${data.calendarDays},
+            account_code = ${accountCode},
+            updated_by = ${user.id}
+        WHERE id = ${pr.id}
+      `;
+
+      await writeAuditLog(
+        {
+          actor: { id: user.id, role: user.role },
+          action: "pr.update",
+          entityType: "procurement_request",
+          entityId: pr.id,
+          changes: reference?.created
+            ? { ...changes, referenceCreated: true }
+            : changes,
+          meta,
+        },
+        tx,
+      );
+
+      return undefined;
+    });
+
+    if (result) return result;
+  } catch (error) {
+    if (isUniqueViolation(error, "procurement_requests_pr_number_key")) {
+      return {
+        status: "error",
+        message: "Please correct the highlighted fields.",
+        fieldErrors: { prNumber: `PR Number ${data.prNumber} already exists.` },
+      };
+    }
+    throw error;
+  }
+
+  revalidatePath(`/requests/${data.prId}`);
+  revalidatePath("/requests");
+  revalidatePath("/dashboard");
+  redirect(`/requests/${data.prId}?saved=1`);
 }
