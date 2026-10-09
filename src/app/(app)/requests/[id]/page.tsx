@@ -11,10 +11,12 @@ import {
   getActiveStages,
   getPrById,
   getStageHistory,
+  getStatusHistory,
 } from "@/server/queries/procurement";
 import Link from "next/link";
 import { buttonClasses } from "@/components/ui/button";
 import { FormMessage } from "@/components/ui/form-message";
+import { PrStatusPanel } from "@/components/features/procurement/pr-status-panel";
 
 export const metadata: Metadata = { title: "PR details" };
 
@@ -51,10 +53,16 @@ export default async function PrDetailPage({
   const pr = await getPrById(id);
   if (!pr) notFound();
 
-  const [history, stages] = await Promise.all([
+  const [history, stages, statusHistory] = await Promise.all([
     getStageHistory(pr.id),
     getActiveStages(),
+    getStatusHistory(pr.id),
   ]);
+
+  const latestCancellation =
+    pr.status === "cancelled" && statusHistory[0]?.action === "cancelled"
+      ? statusHistory[0]
+      : null;
 
   const isOpen = pr.status === "active" && pr.currentStageCode !== "completed";
   const noticeToProceed = history.find(
@@ -77,6 +85,25 @@ export default async function PrDetailPage({
         <p className="font-mono text-sm text-muted-foreground">
           PR {pr.prNumber}
         </p>
+        {pr.status === "cancelled" && (
+          <div
+            role="status"
+            className="max-w-3xl rounded-lg bg-danger-soft px-4 py-3 text-sm text-danger-soft-foreground"
+          >
+            <p className="font-medium">This PR is cancelled.</p>
+            {latestCancellation && (
+              <>
+                <p className="mt-1 whitespace-pre-line">
+                  {latestCancellation.remarks}
+                </p>
+                <p className="mt-1 text-xs">
+                  Cancelled by {latestCancellation.actedBy} on{" "}
+                  {formatDateTime(latestCancellation.actedAt)}
+                </p>
+              </>
+            )}
+          </div>
+        )}
         <h1 className="max-w-prose text-2xl font-semibold">{pr.particulars}</h1>
         <div className="flex flex-wrap items-center gap-2">
           {pr.status === "cancelled" ? (
@@ -174,6 +201,45 @@ export default async function PrDetailPage({
           ))}
 
         <StageTimeline entries={history} stages={stages} />
+      </section>
+
+      <section
+        aria-labelledby="status-heading"
+        className="max-w-3xl space-y-5 border-t pt-8"
+      >
+        <h2 id="status-heading" className="text-lg font-semibold">
+          Cancellation
+        </h2>
+
+        {can(user, "pr.cancel_restore") && (
+          <PrStatusPanel prId={pr.id} isCancelled={pr.status === "cancelled"} />
+        )}
+
+        {statusHistory.length > 0 ? (
+          <ul className="space-y-4">
+            {statusHistory.map((entry) => (
+              <li key={entry.id} className="text-sm">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge
+                    tone={entry.action === "cancelled" ? "danger" : "info"}
+                  >
+                    {entry.action === "cancelled" ? "Cancelled" : "Restored"}
+                  </Badge>
+                  <span className="text-muted-foreground">
+                    {formatDateTime(entry.actedAt)} by {entry.actedBy}
+                  </span>
+                </div>
+                <p className="mt-1 max-w-prose whitespace-pre-line">
+                  {entry.remarks}
+                </p>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            This PR has never been cancelled.
+          </p>
+        )}
       </section>
 
       <p className="text-sm text-muted-foreground">
