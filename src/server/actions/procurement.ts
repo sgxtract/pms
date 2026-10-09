@@ -31,18 +31,6 @@ export type CreatePrState =
 type LookupTable = "pr_types" | "pr_categories" | "procurement_modes";
 type FreeTextColumn = "end_user" | "source_of_funds" | "account_code";
 
-async function isActiveOption(
-  tx: Db,
-  table: LookupTable,
-  id: string | null,
-): Promise<boolean> {
-  if (id === null) return true;
-  const [row] = await tx`
-    SELECT 1 FROM ${tx(table)} WHERE id::text = ${id} AND is_active
-  `;
-  return Boolean(row);
-}
-
 // The option's name if it may be used: active, or the PR's current value.
 // Returns undefined if not allowed, null if no option was chosen.
 async function allowedOptionName(
@@ -124,15 +112,29 @@ export async function createProcurementRequest(
   try {
     const result = await transaction(
       async (tx): Promise<{ id: string } | { error: string }> => {
-        const optionsAreValid =
-          (await isActiveOption(tx, "pr_categories", data.prCategoryId)) &&
-          (await isActiveOption(tx, "pr_types", data.prTypeId)) &&
-          (await isActiveOption(
-            tx,
-            "procurement_modes",
-            data.procurementModeId,
-          ));
-        if (!optionsAreValid) {
+        const prType = await allowedOptionName(
+          tx,
+          "pr_types",
+          data.prTypeId,
+          null,
+        );
+        const category = await allowedOptionName(
+          tx,
+          "pr_categories",
+          data.prCategoryId,
+          null,
+        );
+        const procurementMode = await allowedOptionName(
+          tx,
+          "procurement_modes",
+          data.procurementModeId,
+          null,
+        );
+        if (
+          prType === undefined ||
+          !category ||
+          procurementMode === undefined
+        ) {
           return {
             error:
               "One of the selected options is no longer available. Reload the page and try again.",
@@ -198,13 +200,13 @@ export async function createProcurementRequest(
               prDate: data.prDate,
               referenceCode: data.referenceCode,
               referenceCreated: reference?.created ?? false,
-              prTypeId: data.prTypeId,
-              prCategoryId: data.prCategoryId,
+              prType,
+              category,
               endUser,
               particulars: data.particulars,
               abc: data.abc,
               sourceOfFunds,
-              procurementModeId: data.procurementModeId,
+              procurementMode,
               calendarDays: data.calendarDays,
               accountCode,
               receivedAt: receivedAt.toISOString(),

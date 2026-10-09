@@ -59,8 +59,8 @@ Admin and Moderator accounts have no User Type. A regular User must have one.
 | Reopen a Completed PR             |   ✓   |            ✓             |      —      |    —     |    —     |
 
 The matrix is implemented in `src/lib/permissions.ts` and verified by `src/lib/permissions.test.ts`, which encodes this table. Pages that a user cannot access respond as "not found".
-
 Admin names still appear where accountability requires it, such as "Encoded by" on a PR and in stage history.
+Audit visibility in detail: Administrators see all entries, including system events (failed sign-ins, accounts created by script). Moderators see entries made by Moderators and Users. Users see entries they made themselves. Filters can only narrow these limits, never widen them.
 
 ### 3.3 Account rules
 
@@ -190,6 +190,7 @@ All fields remain editable while the PR is active. Every edit is audited with be
 - Stage history is kept permanently and remains after a PR moves on.
 - Every record stores created by, created at, updated by, and updated at.
 - Visibility follows section 3.2.
+- The Audit Log page shows 50 entries per page, newest first, filterable by area (sign-ins, accounts, PRs), by who did it (Admins and Moderators only), and by date range in Manila time.
 
 ## 8. Search, filter, and dashboard
 

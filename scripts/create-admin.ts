@@ -37,7 +37,7 @@ async function main() {
   const temporaryPassword = generateTemporaryPassword();
   const passwordHash = await hashPassword(temporaryPassword);
 
-  const auditDetails = JSON.stringify({
+  const auditDetails = sql.json({
     role: "admin",
     source: "create-admin script",
   });
