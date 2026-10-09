@@ -213,24 +213,24 @@ erDiagram
 
 Some rules can be enforced by the database directly; others need information the database does not have (such as who is logged in) and are enforced by the application's server code.
 
-| Rule                                                                         | Enforced by                        |
-| ---------------------------------------------------------------------------- | ---------------------------------- |
-| PR Number, Reference ID, Employee ID unique and normalized                   | Database (`UNIQUE`, `CHECK`)       |
-| Role and user type values valid; user type present only for regular users    | Database (`CHECK`)                 |
-| ABC greater than zero; Calendar Days greater than zero                       | Database (`CHECK`)                 |
-| PR status is `active` or `cancelled`                                         | Database (`CHECK`)                 |
-| Stage effective time not after the recorded time (not in the future)         | Database (`CHECK`)                 |
-| Cancel and restore remarks required                                          | Database (`NOT NULL`, `CHECK`)     |
-| Attachment size at most 2.5 MB                                               | Database (`CHECK`) and application |
-| Stage change and its history record saved together                           | Database transaction               |
-| Remarks required when moving a PR backward                                   | Application                        |
-| Effective time not earlier than the PR's latest stage entry                  | Application                        |
-| Cancelled PRs cannot be edited or moved                                      | Application                        |
-| Who may perform each action (permission matrix)                              | Application                        |
-| An Admin cannot disable themselves; the last active Admin cannot be disabled | Application                        |
+| Rule                                                                         | Enforced by                                                               |
+| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| PR Number, Reference ID, Employee ID unique and normalized                   | Database (`UNIQUE`, `CHECK`)                                              |
+| Role and user type values valid; user type present only for regular users    | Database (`CHECK`)                                                        |
+| ABC greater than zero; Calendar Days greater than zero                       | Database (`CHECK`)                                                        |
+| PR status is `active` or `cancelled`                                         | Database (`CHECK`)                                                        |
+| Stage effective time not after the recorded time (not in the future)         | Database (`CHECK`)                                                        |
+| Cancel and restore remarks required                                          | Database (`NOT NULL`, `CHECK`)                                            |
+| Attachment size at most 2.5 MB                                               | Database (`CHECK`) and application                                        |
+| Stage change and its history record saved together                           | Database transaction                                                      |
+| Remarks required when moving a PR backward                                   | Application                                                               |
+| Effective time not earlier than the PR's latest stage entry                  | Application                                                               |
+| Cancelled PRs cannot be edited or moved                                      | Application                                                               |
+| Who may perform each action (permission matrix)                              | Application                                                               |
+| An Admin cannot disable themselves; the last active Admin cannot be disabled | Application                                                               |
 | Stage history, status history, and audit logs cannot be changed or deleted   | Database (append-only trigger); restricted database account in production |
-| PRs cannot be deleted once they have history | Database (foreign keys)       |
-| Free-text fields stored without leading or trailing spaces                   | Database (`CHECK`) and application |
+| PRs cannot be deleted once they have history                                 | Database (foreign keys)                                                   |
+| Free-text fields stored without leading or trailing spaces                   | Database (`CHECK`) and application                                        |
 
 ## 5. Stage codes
 
@@ -267,4 +267,11 @@ WHERE p.current_stage_id <> (
   ORDER BY h.effective_at DESC, h.id DESC
   LIMIT 1
 );
+```
+
+Every audit entry's `changes` must be a JSON object or empty. This should return no rows:
+
+```sql
+SELECT id, action FROM audit_logs
+WHERE changes IS NOT NULL AND jsonb_typeof(changes) <> 'object';
 ```

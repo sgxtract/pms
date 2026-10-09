@@ -12,6 +12,7 @@ const NAV_ITEMS: { href: string; label: string; permission?: Permission }[] = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/requests", label: "Requests", permission: "pr.view" },
   { href: "/users", label: "Users", permission: "user.view" },
+  { href: "/audit-log", label: "Audit log" },
 ];
 
 export default async function AppLayout({

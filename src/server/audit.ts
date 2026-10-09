@@ -1,6 +1,7 @@
 import "server-only";
 import { sql, type Db } from "@/server/db";
 import type { RequestMeta } from "@/server/request-meta";
+import type postgres from "postgres";
 
 type AuditEntry = {
   actor: { id: string; role: string } | null;
@@ -16,7 +17,9 @@ export async function writeAuditLog(
   db: Db = sql,
 ): Promise<void> {
   const changes =
-    entry.changes === undefined ? null : JSON.stringify(entry.changes);
+    entry.changes === undefined
+      ? null
+      : db.json(entry.changes as postgres.JSONValue);
 
   await db`
     INSERT INTO audit_logs

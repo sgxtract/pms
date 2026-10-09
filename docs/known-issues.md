@@ -11,3 +11,7 @@
 **Decision:** accepted for now. Console filtering and patching the library were rejected because they hide real errors or break on updates.
 
 **If it needs replacing:** `next-themes` is only used in `src/components/providers/theme-provider.tsx` and `src/components/ui/theme-toggle.tsx`.
+
+## Audit entries stored as JSON strings (fixed)
+
+Audit `changes` written before October 9, 2026 were double-encoded (`JSON.stringify` combined with postgres.js's own JSON encoding). New entries use `sql.json()`. Development data was repaired in place; no production data was affected.

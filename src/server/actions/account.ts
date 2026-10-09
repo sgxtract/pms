@@ -57,7 +57,7 @@ export async function changePassword(
 
   const newPasswordHash = await hashPassword(newPassword);
   const meta = await getRequestMeta();
-  const auditChanges = JSON.stringify({
+  const auditChanges = sql.json({
     mustChangePassword: { from: session.user.mustChangePassword, to: false },
     otherSessionsSignedOut: true,
   });
