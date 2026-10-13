@@ -179,7 +179,15 @@ function prListWhere(filters: PrFilters) {
       OR p.end_user ILIKE ${pattern}
     )`);
   }
-  if (filters.status) conditions.push(sql`p.status = ${filters.status}`);
+  if (filters.status === "in_progress") {
+    conditions.push(sql`p.status = 'active' AND s.code <> 'completed'`);
+  }
+  if (filters.status === "completed") {
+    conditions.push(sql`p.status = 'active' AND s.code = 'completed'`);
+  }
+  if (filters.status === "cancelled") {
+    conditions.push(sql`p.status = 'cancelled'`);
+  }
   if (filters.stage) conditions.push(sql`s.code = ${filters.stage}`);
   if (filters.mode)
     conditions.push(sql`p.procurement_mode_id::text = ${filters.mode}`);

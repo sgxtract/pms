@@ -41,7 +41,10 @@ const amount = z
 export const prFiltersSchema = z.object({
   q: text(100),
   status: z
-    .preprocess(firstValue, z.enum(["active", "cancelled"]).optional())
+    .preprocess(
+      firstValue,
+      z.enum(["in_progress", "completed", "cancelled"]).optional(),
+    )
     .catch(undefined),
   stage: z
     .preprocess(

@@ -78,7 +78,8 @@ export function PrFilterBar({
         <FilterField id="status" label="Status">
           <Select id="status" name="status" defaultValue={filters.status ?? ""}>
             <option value="">All</option>
-            <option value="active">Active</option>
+            <option value="in_progress">In progress</option>
+            <option value="completed">Completed</option>
             <option value="cancelled">Cancelled</option>
           </Select>
         </FilterField>
