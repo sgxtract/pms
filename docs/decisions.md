@@ -9,7 +9,7 @@ This document records the agreed decisions for the Procurement Monitoring System
 ## 1. Technology
 
 | ID    | Decision                                                                                         | Reason                                                                                                                       |
-| ----- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+|-------|--------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
 | D-001 | Next.js, React, TypeScript, Tailwind CSS                                                         | Modern full-stack framework; type safety reduces bugs; widely known, so the system is easy to hand over to other developers. |
 | D-002 | PostgreSQL 18                                                                                    | Reliable, free, handles millions of rows; transactions keep stage changes and history consistent.                            |
 | D-003 | PostgreSQL runs in Docker (Docker Compose)                                                       | Same database version for every developer and every server; one-command setup.                                               |
@@ -22,7 +22,7 @@ This document records the agreed decisions for the Procurement Monitoring System
 ## 2. Design
 
 | ID    | Decision                                                                                                                                                                                    |
-| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | D-010 | Fonts: **Public Sans** for headings, **Inter** for UI and body text, **JetBrains Mono** for identifiers (PR Number, Reference ID, Account Code). All fonts self-hosted through `next/font`. |
 | D-011 | Theme: deep civic navy primary with brighter blue for interactive elements, on slate neutrals.                                                                                              |
 | D-012 | Light and dark mode toggle. Dark mode uses slate-950, not pure black.                                                                                                                       |
@@ -42,7 +42,7 @@ Admin and Moderator accounts have no User Type. A regular User must have one.
 ### 3.2 Permission matrix
 
 | Action                            | Admin |        Moderator         | Secretariat |   TWG    |  Member  |
-| --------------------------------- | :---: | :----------------------: | :---------: | :------: | :------: |
+|-----------------------------------|:-----:|:------------------------:|:-----------:|:--------:|:--------:|
 | View PRs                          |   ✓   |            ✓             |      ✓      |    ✓     |    ✓     |
 | Create PR                         |   ✓   |            ✓             |      ✓      |    —     |    —     |
 | Edit PR details                   |   ✓   |            ✓             |      ✓      |    ✓     |    —     |
@@ -88,7 +88,7 @@ Audit visibility in detail: Administrators see all entries, including system eve
 ## 4. Sessions
 
 | ID    | Decision                                                                                                                                                                                                                                  |
-| ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|-------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | D-030 | Sessions are stored in the database; the browser holds an httpOnly, secure cookie that survives closing the browser.                                                                                                                      |
 | D-031 | **Idle timeout: 15 minutes.** A warning modal appears at 13 minutes with a "Stay signed in" option.                                                                                                                                       |
 | D-032 | Absolute session lifetime of about 10 hours (one workday). _Default, to be confirmed._                                                                                                                                                    |
@@ -103,7 +103,7 @@ Audit visibility in detail: Administrators see all entries, including system eve
 ### 5.1 Fields
 
 | Field                      | Required | Notes                                                                                                                                 |
-| -------------------------- | :------: | ------------------------------------------------------------------------------------------------------------------------------------- |
+|----------------------------|:--------:|---------------------------------------------------------------------------------------------------------------------------------------|
 | PR Number                  |    ✓     | Stored as text (e.g. `2026091252`, `2026091231-A`). Entered by the creator. Unique; trimmed and converted to uppercase before saving. |
 | PR Date                    |    ✓     |                                                                                                                                       |
 | Reference ID               |    —     | See 5.2.                                                                                                                              |
@@ -197,7 +197,8 @@ All fields remain editable while the PR is active. Every edit is audited with be
 - **Keyword search:** PR Number, Reference ID, Particulars, End-User.
 - **Filters:** Status, Stage, Procurement Mode, Category, Type of PR, PR Date range, ABC range.
 - Filters are stored in the page URL, so filtered views can be bookmarked and shared.
-- **Dashboard:** Total, Active, Completed, and Cancelled counts; total ABC of active PRs; PRs per stage; PRs by Procurement Mode (count and ABC); PRs staying too long in one stage; deliveries due or overdue; recent activity.
+- **Dashboard:** Total, In progress, Completed, and Cancelled PRs (In progress + Completed + Cancelled = Total), with the total ABC of PRs in progress; in-progress PRs by stage and by procurement mode; deliveries overdue or due within 7 days; PRs in the same stage for over 15 days; and recent activity, limited by the viewer's audit visibility. Every number links to the matching filtered PR list.
+- The PR list's Status filter uses the same three groups: In progress, Completed, Cancelled.
 - The PR list shows 25 PRs per page, newest PR date first, with the count and total ABC of all matching PRs.
 - Invalid filter values in a URL are ignored, so a broken or outdated link still opens a working page.
 - Filter lists include deactivated stages, modes, categories, and types, so older PRs that use them can still be found.
@@ -217,7 +218,7 @@ All fields remain editable while the PR is active. Every edit is audited with be
 ## 11. Hosting and deployment
 
 | ID    | Decision                                                                                                                                    | Reason                                                                                                |
-| ----- | ------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+|-------|---------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
 | D-110 | The whole system runs as one Docker Compose stack: Next.js app, PostgreSQL, backups, and Cloudflare Tunnel.                                 | The same setup runs on an LGU-owned server or a cloud VPS; moving between them needs no code changes. |
 | D-111 | Public access through **Cloudflare Tunnel** (free plan), for DNS, HTTPS, and attack protection.                                             | No public IP or open firewall ports needed, which suits LGU networks.                                 |
 | D-112 | Fallback if the tunnel is not allowed: a VPS with a public IP, using Caddy for automatic HTTPS.                                             | Keeps the system independent of Cloudflare if required.                                               |
@@ -239,7 +240,7 @@ Suggested server: current Ubuntu LTS, 2 vCPU, 2–4 GB RAM, 50 GB disk.
 ## 13. Open items
 
 | Item                                                                                                  | Owner                | Status                   |
-| ----------------------------------------------------------------------------------------------------- | -------------------- | ------------------------ |
+|-------------------------------------------------------------------------------------------------------|----------------------|--------------------------|
 | Fourth Procurement Mode                                                                               | PBAC                 | To be named              |
 | Hosting target: LGU server or cloud VPS                                                               | LGU IT office / PBAC | To decide before Phase 8 |
 | Domain name (e.g. a subdomain of the LGU's gov.ph domain)                                             | LGU IT office        | To request               |
@@ -248,3 +249,4 @@ Suggested server: current Ubuntu LTS, 2 vCPU, 2–4 GB RAM, 50 GB disk.
 | Absolute session lifetime (default: 10 hours)                                                         | PBAC                 | To confirm               |
 | Calendar Days upper limit (currently 3,650 days, to catch typing errors)                              | PBAC                 | To confirm               |
 | Calendar Days counting: from the moment of the Notice to Proceed (current), or from the following day | PBAC                 | To confirm               |
+| "Waiting too long" threshold (currently 15 days) and "due soon" window (currently 7 days)             | PBAC                 | To confirm               |
