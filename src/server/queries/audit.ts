@@ -1,5 +1,9 @@
 import "server-only";
-import { AUDIT_PAGE_SIZE, type AuditFilters } from "@/lib/audit-filters";
+import {
+  AUDIT_PAGE_SIZE,
+  parseAuditFilters,
+  type AuditFilters,
+} from "@/lib/audit-filters";
 import { manilaInputToDate } from "@/lib/dates";
 import type { AuditScope } from "@/lib/permissions";
 import type { Role } from "@/lib/roles";
@@ -105,5 +109,27 @@ export async function getAuditActorOptions(roles: Role[]) {
     FROM users
     WHERE role IN ${sql(roles)}
     ORDER BY full_name
+  `;
+}
+
+export async function listRecentAuditLogs(
+  scope: AuditScope,
+  viewerId: string,
+  limit: number,
+) {
+  const noFilters = parseAuditFilters({});
+  return sql<AuditLogEntry[]>`
+    SELECT a.id, a.created_at, a.action, a.entity_type, a.entity_id, a.changes,
+           a.ip_address::text AS ip_address, a.actor_id, a.actor_role,
+           actor.full_name AS actor_name,
+           pr.pr_number AS subject_pr_number,
+           NULL AS subject_user_id, NULL AS subject_user_name, NULL AS subject_user_role
+    FROM audit_logs a
+    LEFT JOIN users actor ON actor.id = a.actor_id
+    LEFT JOIN procurement_requests pr
+      ON a.entity_type = 'procurement_request' AND pr.id::text = a.entity_id
+    WHERE ${auditWhere(scope, viewerId, noFilters)}
+    ORDER BY a.created_at DESC, a.id DESC
+    LIMIT ${limit}
   `;
 }
