@@ -1,6 +1,7 @@
 import "server-only";
 import { PR_PAGE_SIZE, type PrFilters } from "@/lib/pr-filters";
 import { sql } from "@/server/db";
+import { containsPattern } from "@/lib/like";
 
 export type Option = { id: string; name: string };
 
@@ -153,11 +154,6 @@ export type PrListItem = {
   status: "active" | "cancelled";
 };
 
-// Makes % and _ in the user's search match literally.
-function escapeLike(value: string): string {
-  return value.replace(/[\\%_]/g, "\\$&");
-}
-
 function prListFrom() {
   return sql`
     FROM procurement_requests p
@@ -167,11 +163,23 @@ function prListFrom() {
   `;
 }
 
+export type PrStatusGroup = "in_progress" | "completed" | "cancelled";
+
+// The three status groups used by the dashboard, the PR list, and the
+// public page. Expects the PR as "p" and its current stage as "s".
+export function prStatusGroupCondition(group: PrStatusGroup) {
+  if (group === "in_progress")
+    return sql`p.status = 'active' AND s.code <> 'completed'`;
+  if (group === "completed")
+    return sql`p.status = 'active' AND s.code = 'completed'`;
+  return sql`p.status = 'cancelled'`;
+}
+
 function prListWhere(filters: PrFilters) {
   const conditions = [sql`TRUE`];
 
   if (filters.q) {
-    const pattern = `%${escapeLike(filters.q)}%`;
+    const pattern = containsPattern(filters.q);
     conditions.push(sql`(
       p.pr_number ILIKE ${pattern}
       OR r.reference_code ILIKE ${pattern}
@@ -179,15 +187,7 @@ function prListWhere(filters: PrFilters) {
       OR p.end_user ILIKE ${pattern}
     )`);
   }
-  if (filters.status === "in_progress") {
-    conditions.push(sql`p.status = 'active' AND s.code <> 'completed'`);
-  }
-  if (filters.status === "completed") {
-    conditions.push(sql`p.status = 'active' AND s.code = 'completed'`);
-  }
-  if (filters.status === "cancelled") {
-    conditions.push(sql`p.status = 'cancelled'`);
-  }
+  if (filters.status) conditions.push(prStatusGroupCondition(filters.status));
   if (filters.stage) conditions.push(sql`s.code = ${filters.stage}`);
   if (filters.mode)
     conditions.push(sql`p.procurement_mode_id::text = ${filters.mode}`);
