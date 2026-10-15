@@ -29,7 +29,7 @@ export default async function AppLayout({
 
   return (
     <div className="min-h-svh">
-      <header className="border-b bg-surface">
+      <header className="border-b bg-surface print:hidden">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-6 py-3">
           <Link href="/dashboard" className="font-heading font-semibold">
             PMS
@@ -69,7 +69,9 @@ export default async function AppLayout({
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-6 py-8">{children}</main>
+      <main className="mx-auto max-w-6xl px-6 py-8 print:max-w-none print:p-0">
+        {children}
+      </main>
       <IdleTimeoutWatcher />
     </div>
   );

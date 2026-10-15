@@ -14,6 +14,11 @@ import {
 import type { SearchParams } from "@/lib/search-params";
 import { requirePermission } from "@/server/auth/authorize";
 import { getAbcBreakdown, getReportOverview } from "@/server/queries/reports";
+import { PrintButton } from "@/components/features/reports/print-button";
+import { ReportLetterhead } from "@/components/features/reports/report-letterhead";
+import { SignatureBlock } from "@/components/features/reports/signature-block";
+import { getReportSignatories } from "@/server/queries/settings";
+import { SITE } from "@/lib/site-config";
 
 export const metadata: Metadata = { title: "Reports" };
 
@@ -48,32 +53,40 @@ export default async function ReportsPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
-  await requirePermission("report.view");
+  const user = await requirePermission("report.view");
   const params = parseReportParams(await searchParams);
   const period = resolvePeriod(params, todayInManila());
 
-  const [overview, byMode, byCategory] = await Promise.all([
+  const [overview, byMode, byCategory, signatories] = await Promise.all([
     getReportOverview(period),
     getAbcBreakdown("mode", period),
     getAbcBreakdown("category", period),
+    getReportSignatories(),
   ]);
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-semibold">Reports</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Procurement figures for a period. PRs are included by their PR date.
-        </p>
+      <div className="flex flex-wrap items-end justify-between gap-4 print:hidden">
+        <div>
+          <h1 className="text-2xl font-semibold">Reports</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Procurement figures for a period. PRs are included by their PR date.
+          </p>
+        </div>
+        {overview.count > 0 && <PrintButton />}
       </div>
 
       <ReportPeriodForm key={reportParamsToQuery(params)} params={params} />
 
-      {period.notice && (
-        <FormMessage tone="warning">{period.notice}</FormMessage>
-      )}
+      <div className="space-y-4 print:hidden">
+        <ReportPeriodForm key={reportParamsToQuery(params)} params={params} />
+        {period.notice && (
+          <FormMessage tone="warning">{period.notice}</FormMessage>
+        )}
+      </div>
 
       <section aria-labelledby="report-title" className="space-y-8">
+        <ReportLetterhead />
         <div>
           <h2 id="report-title" className="text-xl font-semibold">
             Procurement report: {REPORT_PERIODS[period.key]}
@@ -94,7 +107,7 @@ export default async function ReportsPage({
               <h3 id="overview-heading" className="font-semibold">
                 Financial overview
               </h3>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 print:grid-cols-4">
                 <Figure
                   label="Total ABC (excluding cancelled)"
                   count={overview.inProgressCount + overview.completedCount}
@@ -132,6 +145,10 @@ export default async function ReportsPage({
               rows={byCategory}
               totals={overview}
             />
+            <SignatureBlock signatories={signatories} />
+            <p className="hidden text-xs text-muted-foreground print:block">
+              Printed by {user.fullName} from the {SITE.systemName}.
+            </p>
           </>
         )}
       </section>
