@@ -37,6 +37,7 @@ const ROLE_PERMISSIONS: Record<Exclude<Role, "user">, readonly Permission[]> = {
     "user.view",
     "user.manage_regular",
     "user.manage_privileged",
+    "settings.manage",
   ],
   moderator: [
     ...EVERYONE,

@@ -76,8 +76,6 @@ export default async function ReportsPage({
         {overview.count > 0 && <PrintButton />}
       </div>
 
-      <ReportPeriodForm key={reportParamsToQuery(params)} params={params} />
-
       <div className="space-y-4 print:hidden">
         <ReportPeriodForm key={reportParamsToQuery(params)} params={params} />
         {period.notice && (

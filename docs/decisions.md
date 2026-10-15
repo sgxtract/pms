@@ -57,6 +57,7 @@ Admin and Moderator accounts have no User Type. A regular User must have one.
 | View audit logs                   |  All  | All except Admin actions |  Own only   | Own only | Own only |
 | View user accounts                |  All  |    All except Admins     |      —      |    —     |    —     |
 | Reopen a Completed PR             |   ✓   |            ✓             |      —      |    —     |    —     |
+| Manage settings                   |   ✓   |            —             |      —      |    —     |    —     |
 
 The matrix is implemented in `src/lib/permissions.ts` and verified by `src/lib/permissions.test.ts`, which encodes this table. Pages that a user cannot access respond as "not found".
 Admin names still appear where accountability requires it, such as "Encoded by" on a PR and in stage history.
@@ -222,6 +223,8 @@ All fields remain editable while the PR is active. Every edit is audited with be
 - An incomplete or reversed custom range falls back to All time, with a notice.
 - Financial figures use the ABC (the approved budget, not the contract price). Cancelled PRs are shown separately and excluded from the total.
 - Breakdown tables list only modes or categories with PRs in the period; every table's totals row equals the overview.
+- Reports print on A4 with the letterhead, the figures and tables, and "Prepared by" and "Noted by" signatures. Printed copies show when the figures were generated and who printed them, and always use light colours.
+- Signatory names and positions are stored in `system_settings` and edited by Administrators on the Settings page; changes are audited. A blank name prints an empty line for signing by hand.
 
 ## 11. Hosting and deployment
 
@@ -261,3 +264,4 @@ Suggested server: current Ubuntu LTS, 2 vCPU, 2–4 GB RAM, 50 GB disk.
 | Official LGU name for the site (`src/lib/site-config.ts`), and whether to display the official seal    | PBAC / LGU           | To confirm               |
 | Default report period (currently This year)                                                            | PBAC                 | To confirm               |
 | Should the system also record the contract price at award, for reports comparing ABC with actual cost? | PBAC                 | To discuss               |
+| Letterhead wording, official seal image and approval to use it, and signatory names                    | PBAC / LGU           | To provide               |
