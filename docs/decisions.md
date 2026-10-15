@@ -218,6 +218,10 @@ All fields remain editable while the PR is active. Every edit is audited with be
 - **Views:** Financial Overview, Total ABC by Procurement Mode, Total ABC by Category.
 - **Printing:** A4, with LGU letterhead and logo, and "Prepared by" and "Noted by" signatory lines.
 - Signatory names and positions are editable in system settings.
+- A PR belongs to a period by its PR date. The default period is This year.
+- An incomplete or reversed custom range falls back to All time, with a notice.
+- Financial figures use the ABC (the approved budget, not the contract price). Cancelled PRs are shown separately and excluded from the total.
+- Breakdown tables list only modes or categories with PRs in the period; every table's totals row equals the overview.
 
 ## 11. Hosting and deployment
 
@@ -243,15 +247,17 @@ Suggested server: current Ubuntu LTS, 2 vCPU, 2–4 GB RAM, 50 GB disk.
 
 ## 13. Open items
 
-| Item                                                                                                  | Owner                | Status                   |
-| ----------------------------------------------------------------------------------------------------- | -------------------- | ------------------------ |
-| Fourth Procurement Mode                                                                               | PBAC                 | To be named              |
-| Hosting target: LGU server or cloud VPS                                                               | LGU IT office / PBAC | To decide before Phase 8 |
-| Domain name (e.g. a subdomain of the LGU's gov.ph domain)                                             | LGU IT office        | To request               |
-| Disclosure of Cloudflare Tunnel to the Data Protection Officer                                        | Developer            | Before production        |
-| Hosting subscription procurement, if a VPS is chosen                                                  | PBAC                 | Before production        |
-| Absolute session lifetime (default: 10 hours)                                                         | PBAC                 | To confirm               |
-| Calendar Days upper limit (currently 3,650 days, to catch typing errors)                              | PBAC                 | To confirm               |
-| Calendar Days counting: from the moment of the Notice to Proceed (current), or from the following day | PBAC                 | To confirm               |
-| "Waiting too long" threshold (currently 15 days) and "due soon" window (currently 7 days)             | PBAC                 | To confirm               |
-| Official LGU name for the site (`src/lib/site-config.ts`), and whether to display the official seal   | PBAC / LGU           | To confirm               |
+| Item                                                                                                   | Owner                | Status                   |
+| ------------------------------------------------------------------------------------------------------ | -------------------- | ------------------------ |
+| Fourth Procurement Mode                                                                                | PBAC                 | To be named              |
+| Hosting target: LGU server or cloud VPS                                                                | LGU IT office / PBAC | To decide before Phase 8 |
+| Domain name (e.g. a subdomain of the LGU's gov.ph domain)                                              | LGU IT office        | To request               |
+| Disclosure of Cloudflare Tunnel to the Data Protection Officer                                         | Developer            | Before production        |
+| Hosting subscription procurement, if a VPS is chosen                                                   | PBAC                 | Before production        |
+| Absolute session lifetime (default: 10 hours)                                                          | PBAC                 | To confirm               |
+| Calendar Days upper limit (currently 3,650 days, to catch typing errors)                               | PBAC                 | To confirm               |
+| Calendar Days counting: from the moment of the Notice to Proceed (current), or from the following day  | PBAC                 | To confirm               |
+| "Waiting too long" threshold (currently 15 days) and "due soon" window (currently 7 days)              | PBAC                 | To confirm               |
+| Official LGU name for the site (`src/lib/site-config.ts`), and whether to display the official seal    | PBAC / LGU           | To confirm               |
+| Default report period (currently This year)                                                            | PBAC                 | To confirm               |
+| Should the system also record the contract price at award, for reports comparing ABC with actual cost? | PBAC                 | To discuss               |
