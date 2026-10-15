@@ -22,6 +22,7 @@ import {
 } from "@/lib/pr-filters";
 import { requirePermission } from "@/server/auth/authorize";
 import { getPrFilterOptions, listPrs } from "@/server/queries/procurement";
+import { PrStatusBadge } from "@/components/features/procurement/pr-status-badge";
 
 export const metadata: Metadata = { title: "Requests" };
 
@@ -144,11 +145,10 @@ export default async function RequestsPage({
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {pr.status === "cancelled" ? (
-                      <Badge tone="danger">Cancelled</Badge>
-                    ) : (
-                      <Badge tone="info">Active</Badge>
-                    )}
+                    <PrStatusBadge
+                      status={pr.status}
+                      stageCode={pr.stageCode}
+                    />
                   </TableCell>
                 </TableRow>
               ))}
