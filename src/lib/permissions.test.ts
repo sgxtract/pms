@@ -41,6 +41,7 @@ const MATRIX: Record<Permission, SubjectName[]> = {
   "user.view": ["admin", "moderator"],
   "user.manage_regular": ["admin", "moderator"],
   "user.manage_privileged": ["admin"],
+  "settings.manage": ["admin"],
 };
 
 const cases = Object.entries(MATRIX).flatMap(([permission, allowed]) =>

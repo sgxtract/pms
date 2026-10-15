@@ -89,6 +89,16 @@ function Subject({
     );
   }
 
+  if (entry.entityType === "setting") {
+    return (
+      <span>
+        {entry.entityId === "report_signatories"
+          ? "Report signatories"
+          : entry.entityId}
+      </span>
+    );
+  }
+
   return <span className="text-muted-foreground">None</span>;
 }
 

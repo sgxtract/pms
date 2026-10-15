@@ -12,7 +12,8 @@ export type Permission =
   | "report.view"
   | "user.view"
   | "user.manage_regular"
-  | "user.manage_privileged";
+  | "user.manage_privileged"
+  | "settings.manage";
 
 export type Subject = { role: Role; userType: UserType | null };
 
