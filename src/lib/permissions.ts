@@ -12,7 +12,8 @@ export type Permission =
   | "report.view"
   | "user.view"
   | "user.manage_regular"
-  | "user.manage_privileged";
+  | "user.manage_privileged"
+  | "settings.manage";
 
 export type Subject = { role: Role; userType: UserType | null };
 
@@ -36,6 +37,7 @@ const ROLE_PERMISSIONS: Record<Exclude<Role, "user">, readonly Permission[]> = {
     "user.view",
     "user.manage_regular",
     "user.manage_privileged",
+    "settings.manage",
   ],
   moderator: [
     ...EVERYONE,

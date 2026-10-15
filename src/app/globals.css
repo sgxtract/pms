@@ -120,3 +120,27 @@
     text-wrap: balance;
   }
 }
+
+@page {
+  size: A4;
+  margin: 15mm;
+}
+
+@media print {
+  /* Paper is always light, whatever the screen theme. */
+  :root,
+  .dark {
+    color-scheme: light;
+    --background: #ffffff;
+    --surface: #ffffff;
+    --surface-muted: #f1f5f9;
+    --border: #94a3b8;
+    --foreground: #000000;
+    --muted-foreground: #334155;
+    --link: #000000;
+  }
+
+  body {
+    font-size: 10.5pt;
+  }
+}

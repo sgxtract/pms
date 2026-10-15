@@ -15,6 +15,7 @@ export const AUDIT_ACTION_LABELS: Record<string, string> = {
   "pr.move_stage": "Moved PR to another stage",
   "pr.cancel": "Cancelled PR",
   "pr.restore": "Restored PR",
+  "settings.update": "Changed settings",
 };
 
 export const AUDIT_FIELD_LABELS: Record<string, string> = {
@@ -49,12 +50,17 @@ export const AUDIT_FIELD_LABELS: Record<string, string> = {
   sessionsSignedOut: "Signed out everywhere",
   otherSessionsSignedOut: "Other sessions signed out",
   source: "Source",
+  preparedByName: "Prepared by (name)",
+  preparedByPosition: "Prepared by (position)",
+  notedByName: "Noted by (name)",
+  notedByPosition: "Noted by (position)",
 };
 
 export const AUDIT_AREAS = {
   auth: "Sign-ins",
   user: "Accounts",
   pr: "PRs",
+  settings: "Settings",
 } as const;
 
 export type AuditArea = keyof typeof AUDIT_AREAS;

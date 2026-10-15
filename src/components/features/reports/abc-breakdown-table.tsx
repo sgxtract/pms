@@ -44,7 +44,10 @@ export function AbcBreakdownTable({
   const id = `table-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
 
   return (
-    <section aria-labelledby={id} className="space-y-3">
+    <section
+      aria-labelledby={id}
+      className="space-y-3 print:break-inside-avoid"
+    >
       <h3 id={id} className="font-semibold">
         {title}
       </h3>
