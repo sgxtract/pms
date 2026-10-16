@@ -6,6 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { login, type LoginState } from "@/server/actions/auth";
 
+const NEU_INPUT =
+  "h-11 rounded-xl border border-neu-edge bg-neu px-4 neu-inset";
+
 export function LoginForm() {
   const [state, formAction, isPending] = useActionState<LoginState, FormData>(
     login,
@@ -23,6 +26,7 @@ export function LoginForm() {
           autoCapitalize="characters"
           spellCheck={false}
           defaultValue={state?.employeeId}
+          className={NEU_INPUT}
           required
         />
       </div>
@@ -34,6 +38,7 @@ export function LoginForm() {
           name="password"
           type="password"
           autoComplete="current-password"
+          className={NEU_INPUT}
           required
         />
       </div>
@@ -41,13 +46,19 @@ export function LoginForm() {
       {state?.error && (
         <p
           role="alert"
-          className="rounded-md bg-danger-soft px-3 py-2 text-sm text-danger-soft-foreground"
+          className="rounded-xl bg-neu px-4 py-3 text-sm text-danger-soft-foreground neu-inset"
         >
           {state.error}
         </p>
       )}
 
-      <Button type="submit" className="w-full" disabled={isPending}>
+      <Button
+        type="submit"
+        variant="neu"
+        size="lg"
+        className="w-full"
+        disabled={isPending}
+      >
         {isPending ? "Signing in…" : "Sign in"}
       </Button>
     </form>
