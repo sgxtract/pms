@@ -1,3 +1,7 @@
+{
+	default_sni {$DEFAULT_SNI}
+}
+
 {$SITE_ADDRESS} {
 	tls {$CADDY_TLS}
 	encode zstd gzip
