@@ -4,6 +4,7 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { todayInManila } from "@/lib/dates";
 import { SITE } from "@/lib/site-config";
 import { getCurrentSession } from "@/server/auth/session";
+import { Seal } from "@/components/features/brand/seal";
 
 export default async function PublicLayout({
   children,
@@ -16,12 +17,15 @@ export default async function PublicLayout({
     <div className="flex min-h-svh flex-col">
       <header className="border-b bg-surface">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-6 py-3">
-          <Link href="/" className="leading-tight">
-            <span className="block text-xs text-muted-foreground">
-              {SITE.lguName}
-            </span>
-            <span className="block font-heading font-semibold">
-              {SITE.systemName}
+          <Link href="/" className="flex items-center gap-3 leading-tight">
+            <Seal size={40} eager />
+            <span>
+              <span className="block text-xs text-muted-foreground">
+                {SITE.lguName}
+              </span>
+              <span className="block font-heading font-semibold">
+                {SITE.systemName}
+              </span>
             </span>
           </Link>
 

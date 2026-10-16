@@ -6,7 +6,5 @@ export const SITE = {
   systemName: "Procurement Monitoring System",
   letterhead: {
     lines: ["Republic of the Philippines", "Province of Sorsogon"],
-    // Path of the official seal in /public, e.g. "/seal.png", once approved.
-    sealSrc: null as string | null,
   },
 } as const;

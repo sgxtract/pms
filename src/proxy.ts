@@ -2,7 +2,14 @@ import { NextResponse, type NextRequest } from "next/server";
 import { SESSION_COOKIE_NAME } from "@/lib/auth-config";
 
 // Pages anyone can visit without logging in.
-const PUBLIC_PATHS = ["/", "/login", "/procurements", "/api/health"];
+const PUBLIC_PATHS = [
+  "/",
+  "/login",
+  "/procurements",
+  "/api/health",
+  "/robots.txt",
+  "/manifest.webmanifest",
+];
 
 function isPublicPath(pathname: string): boolean {
   return PUBLIC_PATHS.some(

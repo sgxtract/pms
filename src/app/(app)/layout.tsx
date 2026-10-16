@@ -7,6 +7,7 @@ import { can, type Permission } from "@/lib/permissions";
 import { describeAccess } from "@/lib/roles";
 import { logout } from "@/server/actions/auth";
 import { requireUser } from "@/server/auth/session";
+import { Seal } from "@/components/features/brand/seal";
 
 const NAV_ITEMS: { href: string; label: string; permission?: Permission }[] = [
   { href: "/dashboard", label: "Dashboard" },
@@ -31,7 +32,11 @@ export default async function AppLayout({
     <div className="min-h-svh">
       <header className="border-b bg-surface print:hidden">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-6 py-3">
-          <Link href="/dashboard" className="font-heading font-semibold">
+          <Link
+            href="/dashboard"
+            className="flex items-center gap-2 font-heading font-semibold"
+          >
+            <Seal size={28} eager />
             PMS
           </Link>
 

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { LoginForm } from "@/components/features/auth/login-form";
 import { IDLE_TIMEOUT_SECONDS } from "@/lib/auth-config";
 import { getCurrentSession } from "@/server/auth/session";
+import { Seal } from "@/components/features/brand/seal";
 
 export const metadata: Metadata = { title: "Sign in" };
 
@@ -19,6 +20,7 @@ export default async function LoginPage({
   return (
     <main className="flex min-h-svh items-center justify-center px-4 py-12">
       <div className="w-full max-w-sm">
+        <Seal size={64} eager className="mb-6" />
         <h1 className="text-2xl font-semibold">Sign in</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Procurement Monitoring System

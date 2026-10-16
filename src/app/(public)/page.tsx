@@ -6,6 +6,7 @@ import { formatDateTime } from "@/lib/format";
 import { SITE } from "@/lib/site-config";
 import { getDashboardSummary } from "@/server/queries/dashboard";
 import { getActiveStages } from "@/server/queries/procurement";
+import { Seal } from "@/components/features/brand/seal";
 
 export const metadata: Metadata = {
   title: { absolute: `${SITE.systemName} | ${SITE.lguName}` },
@@ -21,6 +22,7 @@ export default async function HomePage() {
   return (
     <div className="space-y-14">
       <section className="max-w-3xl space-y-5">
+        <Seal size={96} eager />
         <p className="text-sm font-medium text-muted-foreground">
           {SITE.lguName}, {SITE.officeName}
         </p>
