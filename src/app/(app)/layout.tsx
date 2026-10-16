@@ -1,22 +1,89 @@
+import {
+  ChartColumn,
+  FileText,
+  History,
+  LayoutDashboard,
+  Settings,
+  Users,
+} from "lucide-react";
 import Link from "next/link";
+import { MobileNav } from "@/components/features/app-shell/mobile-nav";
+import {
+  SidebarNav,
+  type NavGroup,
+  type NavItem,
+} from "@/components/features/app-shell/sidebar-nav";
+import { UserMenu } from "@/components/features/app-shell/user-menu";
 import { IdleTimeoutWatcher } from "@/components/features/auth/idle-timeout-watcher";
-import { NavLink } from "@/components/features/app-shell/nav-link";
-import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { Seal } from "@/components/features/brand/seal";
 import { can, type Permission } from "@/lib/permissions";
 import { describeAccess } from "@/lib/roles";
-import { logout } from "@/server/actions/auth";
+import { SITE } from "@/lib/site-config";
 import { requireUser } from "@/server/auth/session";
-import { Seal } from "@/components/features/brand/seal";
 
-const NAV_ITEMS: { href: string; label: string; permission?: Permission }[] = [
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/requests", label: "Requests", permission: "pr.view" },
-  { href: "/users", label: "Users", permission: "user.view" },
-  { href: "/audit-log", label: "Audit log" },
-  { href: "/reports", label: "Reports", permission: "report.view" },
-  { href: "/settings", label: "Settings", permission: "settings.manage" },
+type NavConfig = {
+  label: string;
+  items: (NavItem & { permission?: Permission })[];
+}[];
+
+const NAV: NavConfig = [
+  {
+    label: "Procurement",
+    items: [
+      {
+        href: "/dashboard",
+        label: "Dashboard",
+        icon: <LayoutDashboard aria-hidden />,
+      },
+      {
+        href: "/requests",
+        label: "Requests",
+        icon: <FileText aria-hidden />,
+        permission: "pr.view",
+      },
+      {
+        href: "/reports",
+        label: "Reports",
+        icon: <ChartColumn aria-hidden />,
+        permission: "report.view",
+      },
+    ],
+  },
+  {
+    label: "System",
+    items: [
+      {
+        href: "/users",
+        label: "Users",
+        icon: <Users aria-hidden />,
+        permission: "user.view",
+      },
+      { href: "/audit-log", label: "Audit log", icon: <History aria-hidden /> },
+      {
+        href: "/settings",
+        label: "Settings",
+        icon: <Settings aria-hidden />,
+        permission: "settings.manage",
+      },
+    ],
+  },
 ];
+
+function Brand({ compact = false }: { compact?: boolean }) {
+  return (
+    <Link href="/dashboard" className="flex min-w-0 items-center gap-3">
+      <Seal size={compact ? 28 : 36} eager />
+      <span className="min-w-0 leading-tight">
+        <span className="block font-heading font-semibold">PMS</span>
+        {!compact && (
+          <span className="block text-xs text-muted-foreground">
+            {SITE.lguName}
+          </span>
+        )}
+      </span>
+    </Link>
+  );
+}
 
 export default async function AppLayout({
   children,
@@ -24,59 +91,48 @@ export default async function AppLayout({
   children: React.ReactNode;
 }) {
   const user = await requireUser();
-  const navItems = NAV_ITEMS.filter(
-    (item) => !item.permission || can(user, item.permission),
-  );
+  const roleLabel = describeAccess(user);
+
+  // Each group keeps only the links this user may open; empty groups are dropped.
+  const groups: NavGroup[] = NAV.map((group) => ({
+    label: group.label,
+    items: group.items.filter(
+      (item) => !item.permission || can(user, item.permission),
+    ),
+  })).filter((group) => group.items.length > 0);
+
+  const navigation = <SidebarNav groups={groups} />;
 
   return (
-    <div className="min-h-svh">
-      <header className="border-b bg-surface print:hidden">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-6 py-3">
-          <Link
-            href="/dashboard"
-            className="flex items-center gap-2 font-heading font-semibold"
-          >
-            <Seal size={28} eager />
-            PMS
-          </Link>
-
-          <nav
-            aria-label="Main"
-            className="order-last -mx-3 flex w-full gap-1 overflow-x-auto sm:order-0 sm:mx-0 sm:w-auto"
-          >
-            {navItems.map((item) => (
-              <NavLink key={item.href} href={item.href}>
-                {item.label}
-              </NavLink>
-            ))}
-          </nav>
-
-          <div className="ml-auto flex items-center gap-2">
-            <div className="hidden text-right leading-tight sm:block">
-              <p className="text-sm font-medium">{user.fullName}</p>
-              <p className="text-xs text-muted-foreground">
-                {describeAccess(user)}
-              </p>
-            </div>
-            <ThemeToggle />
-            <Link
-              href="/change-password"
-              className="rounded-md px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground"
-            >
-              Password
-            </Link>
-            <form action={logout}>
-              <Button type="submit" variant="secondary" size="sm">
-                Sign out
-              </Button>
-            </form>
-          </div>
+    <div className="min-h-svh lg:grid lg:grid-cols-[15rem_1fr] print:block">
+      <aside className="sticky top-0 hidden h-svh flex-col border-r bg-surface lg:flex print:hidden">
+        <div className="border-b px-4 py-4">
+          <Brand />
         </div>
-      </header>
+        <div className="flex-1 overflow-y-auto px-3 py-4">{navigation}</div>
+        <div className="border-t p-3">
+          <UserMenu name={user.fullName} roleLabel={roleLabel} placement="up" />
+        </div>
+      </aside>
 
-      <main className="mx-auto max-w-6xl px-6 py-8 print:max-w-none print:p-0">
-        {children}
-      </main>
+      <div className="min-w-0">
+        <header className="sticky top-0 z-40 flex items-center gap-2 border-b bg-surface px-3 py-2 lg:hidden print:hidden">
+          <MobileNav>{navigation}</MobileNav>
+          <Brand compact />
+          <div className="ml-auto">
+            <UserMenu
+              name={user.fullName}
+              roleLabel={roleLabel}
+              placement="down"
+            />
+          </div>
+        </header>
+
+        <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8 print:max-w-none print:p-0">
+          {children}
+        </main>
+      </div>
+
       <IdleTimeoutWatcher />
     </div>
   );
