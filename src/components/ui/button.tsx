@@ -7,11 +7,13 @@ const variants = {
     "border border-border bg-surface text-foreground hover:bg-surface-muted",
   ghost: "text-foreground hover:bg-surface-muted",
   danger: "bg-danger text-white hover:bg-danger-hover",
+  neu: "rounded-xl bg-neu font-semibold text-link neu-raised-sm transition-[color,box-shadow] hover:text-foreground active:neu-pressed",
 } as const;
 
 const sizes = {
   sm: "h-8 px-3 text-sm",
   md: "h-9 px-4 text-sm",
+  lg: "h-11 px-5 text-sm",
   icon: "size-9",
 } as const;
 

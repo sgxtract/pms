@@ -31,6 +31,12 @@
   --danger-soft: #fee2e2;
   --danger-soft-foreground: #991b1b;
 
+  --neu: #e4e9f0;
+  --neu-light: #ffffff;
+  --neu-dark: #b8c1cf;
+  --neu-muted: #475569;
+  --neu-edge: #7b879b;
+
   color-scheme: light;
 }
 
@@ -61,6 +67,12 @@
   --warning-soft-foreground: #fcd34d;
   --danger-soft: rgb(220 38 38 / 0.18);
   --danger-soft-foreground: #fca5a5;
+
+  --neu: #1c2433;
+  --neu-light: #273146;
+  --neu-dark: #111723;
+  --neu-muted: #94a3b8;
+  --neu-edge: #66738a;
 
   color-scheme: dark;
 }
@@ -97,6 +109,10 @@
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-heading: var(--font-public-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+
+  --color-neu: var(--neu);
+  --color-neu-muted: var(--neu-muted);
+  --color-neu-edge: var(--neu-edge);
 }
 
 @layer base {
@@ -119,6 +135,31 @@
     letter-spacing: -0.01em;
     text-wrap: balance;
   }
+}
+
+/* Neumorphism: one surface colour, lit from the top-left. */
+@utility neu-raised {
+  box-shadow:
+    10px 10px 24px var(--neu-dark),
+    -10px -10px 24px var(--neu-light);
+}
+
+@utility neu-raised-sm {
+  box-shadow:
+    5px 5px 10px var(--neu-dark),
+    -5px -5px 10px var(--neu-light);
+}
+
+@utility neu-inset {
+  box-shadow:
+    inset 5px 5px 10px var(--neu-dark),
+    inset -5px -5px 10px var(--neu-light);
+}
+
+@utility neu-pressed {
+  box-shadow:
+    inset 3px 3px 6px var(--neu-dark),
+    inset -3px -3px 6px var(--neu-light);
 }
 
 @page {
