@@ -11,9 +11,7 @@ export async function getRequestMeta(): Promise<RequestMeta> {
   const headerStore = await headers();
 
   const candidate =
-    headerStore.get("cf-connecting-ip") ??
-    headerStore.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    null;
+    headerStore.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null;
 
   return {
     ipAddress: candidate && isIP(candidate) ? candidate : null,
