@@ -21,20 +21,29 @@ npm run db:migrate
 npm run dev
 ```
 
+### After pulling changes
+
+```bash
+npm install
+npm run db:migrate
+```
+
+New code may need new packages or database changes. Both commands do nothing if there's nothing new.
+
 Open http://localhost:3000.
 
 ### Useful commands
 
-| Command | Purpose |
-|---|---|
-| `npm run dev` | Start the development server |
-| `npm run build` | Production build and type check |
-| `npm run db:up` / `db:down` | Start / stop the database |
-| `npm run db:migrate` | Apply pending migrations |
-| `npm run db:status` | Show migration status |
-| `npm run db:reset` | Rebuild the development database (deletes all data) |
-| `npm run admin:create` | Create the first Admin account (runs only once) |
-| `npm test` | Run the automated tests |
+| Command                     | Purpose                                             |
+|-----------------------------|-----------------------------------------------------|
+| `npm run dev`               | Start the development server                        |
+| `npm run build`             | Production build and type check                     |
+| `npm run db:up` / `db:down` | Start / stop the database                           |
+| `npm run db:migrate`        | Apply pending migrations                            |
+| `npm run db:status`         | Show migration status                               |
+| `npm run db:reset`          | Rebuild the development database (deletes all data) |
+| `npm run admin:create`      | Create the first Admin account (runs only once)     |
+| `npm test`                  | Run the automated tests                             |
 
 ### Sample data (development only)
 
