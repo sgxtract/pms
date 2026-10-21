@@ -4,10 +4,12 @@ import { cn } from "@/lib/utils";
 const variants = {
   primary: "bg-primary text-primary-foreground hover:bg-primary-hover",
   secondary:
-    "border border-border bg-surface text-foreground hover:bg-surface-muted",
+    "rounded-full border border-border bg-surface text-foreground hover:bg-surface-muted",
   ghost: "text-foreground hover:bg-surface-muted",
-  danger: "bg-danger text-white hover:bg-danger-hover",
+  danger: "rounded-full bg-danger text-white hover:bg-danger-hover",
   ink: "rounded-full bg-ink font-semibold text-on-ink shadow-[var(--shadow-float)] transition-transform hover:-translate-y-0.5 active:scale-98 focus-visible:outline-ink",
+  glass:
+    "rounded-full border border-glass-edge bg-foreground/5 font-medium text-foreground transition-colors hover:bg-foreground/10",
 } as const;
 
 const sizes = {

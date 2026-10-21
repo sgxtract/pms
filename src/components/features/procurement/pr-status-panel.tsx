@@ -9,6 +9,7 @@ import {
   changePrStatus,
   type StatusChangeState,
 } from "@/server/actions/procurement";
+import { GLASS_FIELD } from "@/components/ui/glass-field";
 
 export function PrStatusPanel({
   prId,
@@ -45,9 +46,11 @@ export function PrStatusPanel({
           </FormMessage>
         )}
         {isCancelled ? (
-          <Button onClick={open}>Restore PR</Button>
+          <Button onClick={open} variant="ink">
+            Restore PR
+          </Button>
         ) : (
-          <Button variant="secondary" onClick={open}>
+          <Button variant="glass" onClick={open}>
             Cancel PR
           </Button>
         )}
@@ -63,7 +66,7 @@ export function PrStatusPanel({
         const formData = new FormData(event.currentTarget);
         startTransition(() => formAction(formData));
       }}
-      className="max-w-xl space-y-4 rounded-lg border bg-surface p-5"
+      className="max-w-xl space-y-4 rounded-xl border border-foreground/10 bg-foreground/3 p-5"
     >
       <input type="hidden" name="prId" value={prId} />
       <input
@@ -87,6 +90,7 @@ export function PrStatusPanel({
           id="statusRemarks"
           name="remarks"
           rows={3}
+          className={GLASS_FIELD}
           aria-invalid={remarksError ? true : undefined}
           aria-describedby={remarksError ? "statusRemarks-error" : undefined}
           autoFocus
@@ -99,7 +103,7 @@ export function PrStatusPanel({
 
       <div className="flex flex-wrap gap-2">
         {isCancelled ? (
-          <Button type="submit" disabled={isPending}>
+          <Button type="submit" variant="ink" disabled={isPending}>
             {isPending ? "Restoring…" : "Restore PR"}
           </Button>
         ) : (
@@ -108,7 +112,7 @@ export function PrStatusPanel({
           </Button>
         )}
         <Button
-          variant="secondary"
+          variant="glass"
           onClick={() => setIsOpen(false)}
           disabled={isPending}
         >

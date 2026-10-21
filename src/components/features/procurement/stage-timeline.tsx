@@ -16,7 +16,10 @@ export function StageTimeline({
   stages: StageOption[];
 }) {
   return (
-    <ol aria-label="Stage history" className="space-y-6 border-l pl-6">
+    <ol
+      aria-label="Stage history"
+      className="space-y-6 border-l border-foreground/15 pl-6"
+    >
       {entries.map((entry, index) => {
         const isCurrent = index === 0;
         const from = entry.fromSortOrder;
@@ -42,7 +45,7 @@ export function StageTimeline({
               className={cn(
                 // -left-6 matches the list's pl-6; the translate centres the dot on the line.
                 "absolute top-1.5 -left-6 size-2.5 -translate-x-1/2 rounded-full",
-                isCurrent ? "bg-primary" : "bg-border",
+                isCurrent ? "bg-foreground" : "bg-foreground/25",
               )}
             />
             <div className="flex flex-wrap items-center gap-2">
