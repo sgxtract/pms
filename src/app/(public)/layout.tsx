@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { GlassScene } from "@/components/features/app-shell/glass-scene";
 import { Seal } from "@/components/features/brand/seal";
+import { ContourScene } from "@/components/features/public/contour-scene";
 import { PublicNavLink } from "@/components/features/public/public-nav-link";
 import { buttonClasses } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
@@ -18,6 +19,7 @@ export default async function PublicLayout({
   return (
     <div className="flex min-h-svh flex-col">
       <GlassScene />
+      <ContourScene />
 
       {/* Sticky needs the wrapper: glass sets position: relative on its element.
           The fade hides content scrolling through the gap above the bar. */}

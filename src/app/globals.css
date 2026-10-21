@@ -35,6 +35,8 @@
   --scene: #e6e7ea;
   --scene-form-1: #c9cdd4;
   --scene-form-2: #fafafa;
+  /* Contour lines on the public pages, drawn through a mask. */
+  --scene-contour: rgb(24 27 33 / 0.2);
   --glass: rgb(255 255 255 / 0.55);
   --glass-strong: rgb(255 255 255 / 0.78);
   --glass-solid: #f6f6f7;
@@ -94,6 +96,7 @@
   --scene: #0b0c0e;
   --scene-form-1: #262a31;
   --scene-form-2: #1a1d22;
+  --scene-contour: rgb(226 230 236 / 0.16);
   --glass: rgb(28 30 34 / 0.55);
   --glass-strong: rgb(36 38 43 / 0.75);
   --glass-solid: #1a1c20;
@@ -298,6 +301,35 @@
       transparent 70%
     ),
     var(--scene);
+}
+
+/* Topographic contours over the scene, in the character of the Bulusan
+   volcanic complex. The SVG is only a mask, so the line colour comes from
+   --scene-contour and flips with the theme. The radial mask keeps the lines
+   strongest around the peak and lets them fade before they reach the edges. */
+@utility contour-scene {
+  background-color: var(--scene-contour);
+  mask-image:
+    url("/scene/contours.svg"),
+    radial-gradient(
+      ellipse 80% 90% at 70% 32%,
+      #000 35%,
+      rgb(0 0 0 / 0.35) 70%,
+      transparent 100%
+    );
+  mask-size:
+    cover,
+    100% 100%;
+  mask-position:
+    70% 30%,
+    center;
+  mask-repeat: no-repeat;
+  mask-composite: intersect;
+
+  /* On phones the lines run behind the hero text, so they step back. */
+  @media (width < 40rem) {
+    opacity: 0.6;
+  }
 }
 
 /* The procurement route on the home page draws once on load: each line
