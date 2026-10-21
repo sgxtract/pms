@@ -300,6 +300,21 @@
     var(--scene);
 }
 
+/* The procurement route on the home page draws once on load: each line
+   segment grows downwards and each station settles in, top to bottom. */
+@keyframes route-line {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@keyframes route-station {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+
 @page {
   size: A4;
   margin: 15mm;

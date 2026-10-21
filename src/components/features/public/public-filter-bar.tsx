@@ -1,8 +1,9 @@
 import Form from "next/form";
 import Link from "next/link";
-import { Button, buttonClasses } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { TEXT_LINK } from "@/components/ui/link-styles";
 import { Select } from "@/components/ui/select";
 import {
   hasActivePublicFilters,
@@ -22,7 +23,7 @@ export function PublicFilterBar({
       action="/procurements"
       role="search"
       aria-label="Search procurement"
-      className="grid gap-3 rounded-lg border bg-surface p-4 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr_auto] lg:items-end"
+      className="glass grid gap-3 glass-strong p-4 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr_auto] lg:items-end"
     >
       <div className="space-y-1">
         <Label htmlFor="q" className="text-xs text-muted-foreground">
@@ -77,13 +78,12 @@ export function PublicFilterBar({
         </Select>
       </div>
 
-      <div className="flex gap-2">
-        <Button type="submit">Search</Button>
+      <div className="flex items-center gap-3">
+        <Button type="submit" variant="glass">
+          Search
+        </Button>
         {hasActivePublicFilters(filters) && (
-          <Link
-            href="/procurements"
-            className={buttonClasses({ variant: "secondary" })}
-          >
+          <Link href="/procurements" className={`text-sm ${TEXT_LINK}`}>
             Clear
           </Link>
         )}
