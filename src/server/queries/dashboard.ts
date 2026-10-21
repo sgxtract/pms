@@ -77,6 +77,7 @@ export type UpcomingDelivery = {
   dueAt: Date;
   isOverdue: boolean;
   daysLeft: number;
+  totalOverdue: number;
 };
 
 // Same rule as getDeliveryStatus() in src/lib/delivery.ts:
@@ -100,13 +101,14 @@ export async function getUpcomingDeliveries(): Promise<UpcomingDelivery[]> {
         AND s.code <> 'completed'
         AND p.calendar_days IS NOT NULL
     )
-    SELECT id, pr_number, particulars, due_at,
-           due_at < now() AS is_overdue,
-           ceil(extract(epoch FROM due_at - now()) / 86400)::int AS days_left
-    FROM deliveries
-    WHERE due_at < now() + make_interval(days => ${DELIVERY_DUE_SOON_DAYS})
-    ORDER BY due_at
-    LIMIT ${DASHBOARD_LIST_LIMIT}
+      SELECT id, pr_number, particulars, due_at,
+            due_at < now() AS is_overdue,
+            ceil(extract(epoch FROM due_at - now()) / 86400)::int AS days_left,
+            count(*) FILTER (WHERE due_at < now()) OVER ()::int AS total_overdue
+      FROM deliveries
+      WHERE due_at < now() + make_interval(days => ${DELIVERY_DUE_SOON_DAYS})
+      ORDER BY due_at
+      LIMIT ${DASHBOARD_LIST_LIMIT}
   `;
 }
 

@@ -23,6 +23,7 @@ import {
   getWaitingPrs,
 } from "@/server/queries/dashboard";
 import { GlassScene } from "@/components/features/dashboard/glass-scene";
+import { NeedsAttentionCard } from "@/components/features/dashboard/needs-attention-card";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
@@ -48,6 +49,7 @@ export default async function DashboardPage() {
     ]);
 
   const totalWaiting = waiting[0]?.totalWaiting ?? 0;
+  const totalOverdue = deliveries[0]?.totalOverdue ?? 0;
 
   return (
     <div className="space-y-8">
@@ -66,28 +68,38 @@ export default async function DashboardPage() {
         )}
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard
-          label="Total PRs"
-          value={String(summary.total)}
-          href="/requests"
-        />
-        <StatCard
-          label="In progress"
-          value={String(summary.inProgress)}
-          description={`${formatPeso(summary.inProgressAbc)} total ABC`}
-          href="/requests?status=in_progress"
-        />
-        <StatCard
-          label="Completed"
-          value={String(summary.completed)}
-          href="/requests?status=completed"
-        />
-        <StatCard
-          label="Cancelled"
-          value={String(summary.cancelled)}
-          href="/requests?status=cancelled"
-        />
+      <div className="grid gap-4 lg:grid-cols-12">
+        <div className="lg:col-span-4">
+          <NeedsAttentionCard
+            overdue={totalOverdue}
+            waiting={totalWaiting}
+            staleDays={STALE_STAGE_DAYS}
+          />
+        </div>
+
+        <div className="glass grid grid-cols-2 p-2 sm:grid-cols-4 sm:divide-x sm:divide-foreground/10 lg:col-span-8">
+          <StatCard
+            label="Total PRs"
+            value={String(summary.total)}
+            href="/requests"
+          />
+          <StatCard
+            label="In progress"
+            value={String(summary.inProgress)}
+            description={`${formatPeso(summary.inProgressAbc)} ABC`}
+            href="/requests?status=in_progress"
+          />
+          <StatCard
+            label="Completed"
+            value={String(summary.completed)}
+            href="/requests?status=completed"
+          />
+          <StatCard
+            label="Cancelled"
+            value={String(summary.cancelled)}
+            href="/requests?status=cancelled"
+          />
+        </div>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[3fr_2fr]">

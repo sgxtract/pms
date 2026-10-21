@@ -14,7 +14,7 @@ export function StatCard({
   return (
     <Link
       href={href}
-      className="block rounded-lg border bg-surface p-5 transition-colors hover:bg-surface-muted/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      className="block rounded-2xl px-4 py-3 transition-colors hover:bg-foreground/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
       <p className="text-sm text-muted-foreground">{label}</p>
       <p className="mt-1 font-heading text-3xl font-semibold tabular-nums">
