@@ -6,8 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { login, type LoginState } from "@/server/actions/auth";
 
-const NEU_INPUT =
-  "h-11 rounded-xl border border-neu-edge bg-neu px-4 neu-inset";
+const GLASS_INPUT =
+  "h-11 rounded-xl border border-glass-edge bg-foreground/5 px-4 autofill:shadow-[inset_0_0_0_100px_var(--glass-solid)] autofill:[-webkit-text-fill-color:var(--foreground)]";
 
 export function LoginForm() {
   const [state, formAction, isPending] = useActionState<LoginState, FormData>(
@@ -26,7 +26,7 @@ export function LoginForm() {
           autoCapitalize="characters"
           spellCheck={false}
           defaultValue={state?.employeeId}
-          className={NEU_INPUT}
+          className={GLASS_INPUT}
           required
         />
       </div>
@@ -38,7 +38,7 @@ export function LoginForm() {
           name="password"
           type="password"
           autoComplete="current-password"
-          className={NEU_INPUT}
+          className={GLASS_INPUT}
           required
         />
       </div>
@@ -46,7 +46,7 @@ export function LoginForm() {
       {state?.error && (
         <p
           role="alert"
-          className="rounded-xl bg-neu px-4 py-3 text-sm text-danger-soft-foreground neu-inset"
+          className="rounded-xl bg-danger-soft px-4 py-3 text-sm text-danger-soft-foreground"
         >
           {state.error}
         </p>
@@ -54,7 +54,7 @@ export function LoginForm() {
 
       <Button
         type="submit"
-        variant="neu"
+        variant="ink"
         size="lg"
         className="w-full"
         disabled={isPending}

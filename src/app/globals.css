@@ -31,12 +31,6 @@
   --danger-soft: #fee2e2;
   --danger-soft-foreground: #991b1b;
 
-  --neu: #e4e9f0;
-  --neu-light: #ffffff;
-  --neu-dark: #b8c1cf;
-  --neu-muted: #475569;
-  --neu-edge: #7b879b;
-
   /* Liquid glass */
   --scene: #e6e7ea;
   --scene-form-1: #c9cdd4;
@@ -47,6 +41,7 @@
   --glass-rim: rgb(255 255 255 / 0.75);
   --glass-highlight: rgb(255 255 255 / 0.85);
   --glass-muted: #555e6b;
+  --glass-edge: #7d8590;
   --ink: #0f1114;
   --ink-2: #1b1e23;
   --on-ink: #f4f4f5;
@@ -85,12 +80,6 @@
   --danger-soft: rgb(220 38 38 / 0.18);
   --danger-soft-foreground: #fca5a5;
 
-  --neu: #1c2433;
-  --neu-light: #273146;
-  --neu-dark: #111723;
-  --neu-muted: #94a3b8;
-  --neu-edge: #66738a;
-
   /* Liquid glass */
   --scene: #0b0c0e;
   --scene-form-1: #262a31;
@@ -101,6 +90,7 @@
   --glass-rim: rgb(255 255 255 / 0.12);
   --glass-highlight: rgb(255 255 255 / 0.08);
   --glass-muted: #a7b0bd;
+  --glass-edge: #6b7280;
   --ink: #c4c9d1;
   --ink-2: #e7e9ec;
   --on-ink: #0f1114;
@@ -144,13 +134,10 @@
   --font-heading: var(--font-public-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
 
-  --color-neu: var(--neu);
-  --color-neu-muted: var(--neu-muted);
-  --color-neu-edge: var(--neu-edge);
-
   --color-ink: var(--ink);
   --color-on-ink: var(--on-ink);
   --color-on-ink-muted: var(--on-ink-muted);
+  --color-glass-edge: var(--glass-edge);
 
   --ease-glass: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -175,31 +162,6 @@
     letter-spacing: -0.01em;
     text-wrap: balance;
   }
-}
-
-/* Neumorphism: one surface colour, lit from the top-left. */
-@utility neu-raised {
-  box-shadow:
-    10px 10px 24px var(--neu-dark),
-    -10px -10px 24px var(--neu-light);
-}
-
-@utility neu-raised-sm {
-  box-shadow:
-    5px 5px 10px var(--neu-dark),
-    -5px -5px 10px var(--neu-light);
-}
-
-@utility neu-inset {
-  box-shadow:
-    inset 5px 5px 10px var(--neu-dark),
-    inset -5px -5px 10px var(--neu-light);
-}
-
-@utility neu-pressed {
-  box-shadow:
-    inset 3px 3px 6px var(--neu-dark),
-    inset -3px -3px 6px var(--neu-light);
 }
 
 /* Liquid glass: frosted panel with a light-catching rim and grain. */
