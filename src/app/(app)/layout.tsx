@@ -20,6 +20,7 @@ import { can, type Permission } from "@/lib/permissions";
 import { describeAccess } from "@/lib/roles";
 import { SITE } from "@/lib/site-config";
 import { requireUser } from "@/server/auth/session";
+import { GlassScene } from "@/components/features/app-shell/glass-scene";
 
 type NavConfig = {
   label: string;
@@ -104,16 +105,23 @@ export default async function AppLayout({
   const navigation = <SidebarNav groups={groups} />;
 
   return (
-    <div className="min-h-svh lg:grid lg:grid-cols-[15rem_1fr] print:block">
-      <aside className="sticky top-0 hidden h-svh flex-col border-r bg-surface lg:flex print:hidden">
-        <div className="border-b px-4 py-4">
-          <Brand />
-        </div>
-        <div className="flex-1 overflow-y-auto px-3 py-4">{navigation}</div>
-        <div className="border-t p-3">
-          <UserMenu name={user.fullName} roleLabel={roleLabel} placement="up" />
-        </div>
-      </aside>
+    <div className="min-h-svh lg:grid lg:grid-cols-[16.5rem_1fr] print:block">
+      <GlassScene />
+      <div className="sticky top-0 hidden h-svh p-3 lg:block print:hidden">
+        <aside className="glass flex h-full flex-col glass-strong">
+          <div className="border-b border-foreground/10 px-4 py-4">
+            <Brand />
+          </div>
+          <div className="flex-1 overflow-y-auto px-3 py-4">{navigation}</div>
+          <div className="border-t border-foreground/10 p-3">
+            <UserMenu
+              name={user.fullName}
+              roleLabel={roleLabel}
+              placement="up"
+            />
+          </div>
+        </aside>
+      </div>
 
       <div className="min-w-0">
         <header className="sticky top-0 z-40 flex items-center gap-2 border-b bg-surface px-3 py-2 lg:hidden print:hidden">
