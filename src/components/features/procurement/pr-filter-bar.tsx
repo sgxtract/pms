@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { hasActiveFilters, type PrFilters } from "@/lib/pr-filters";
 import type { Option } from "@/server/queries/procurement";
+import { GLASS_FIELD } from "@/components/ui/glass-field";
+import { cn } from "@/lib/utils";
 
 type FilterOptions = {
   stages: { code: string; name: string }[];
@@ -62,7 +64,7 @@ export function PrFilterBar({
       action="/requests"
       role="search"
       aria-label="Filter PRs"
-      className="space-y-3 rounded-lg border bg-surface p-4"
+      className="glass space-y-3 glass-strong p-4"
     >
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr_auto] lg:items-end">
         <FilterField id="q" label="Search">
@@ -72,11 +74,17 @@ export function PrFilterBar({
             type="search"
             defaultValue={filters.q}
             placeholder="PR Number, Reference ID, Particulars, or End-User"
+            className="{GLASS_FIELD}"
           />
         </FilterField>
 
         <FilterField id="status" label="Status">
-          <Select id="status" name="status" defaultValue={filters.status ?? ""}>
+          <Select
+            id="status"
+            className="{GLASS_FIELD}"
+            name="status"
+            defaultValue={filters.status ?? ""}
+          >
             <option value="">All</option>
             <option value="in_progress">In progress</option>
             <option value="completed">Completed</option>
@@ -85,7 +93,12 @@ export function PrFilterBar({
         </FilterField>
 
         <FilterField id="stage" label="Stage">
-          <Select id="stage" name="stage" defaultValue={filters.stage ?? ""}>
+          <Select
+            id="stage"
+            className="{GLASS_FIELD}"
+            name="stage"
+            defaultValue={filters.stage ?? ""}
+          >
             <option value="">All stages</option>
             {options.stages.map((stage) => (
               <option key={stage.code} value={stage.code}>
@@ -96,18 +109,25 @@ export function PrFilterBar({
         </FilterField>
 
         <FilterField id="mode" label="Procurement Mode">
-          <Select id="mode" name="mode" defaultValue={filters.mode ?? ""}>
+          <Select
+            id="mode"
+            className="{GLASS_FIELD}"
+            name="mode"
+            defaultValue={filters.mode ?? ""}
+          >
             <option value="">All modes</option>
             <OptionList options={options.modes} />
           </Select>
         </FilterField>
 
-        <div className="flex gap-2">
-          <Button type="submit">Apply</Button>
+        <div className="flex items-center gap-3">
+          <Button type="submit" variant="glass">
+            Apply
+          </Button>
           {hasActiveFilters(filters) && (
             <Link
               href="/requests"
-              className={buttonClasses({ variant: "secondary" })}
+              className="rounded-sm text-sm underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
               Clear
             </Link>
@@ -116,7 +136,7 @@ export function PrFilterBar({
       </div>
 
       <details open={moreCount > 0}>
-        <summary className="cursor-pointer text-sm font-medium text-link">
+        <summary className="cursor-pointer text-sm font-medium underline-offset-4 hover:underline">
           More filters{moreCount > 0 && ` (${moreCount} in use)`}
         </summary>
         <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -124,6 +144,7 @@ export function PrFilterBar({
             <Select
               id="category"
               name="category"
+              className="{GLASS_FIELD}"
               defaultValue={filters.category ?? ""}
             >
               <option value="">All categories</option>
@@ -132,7 +153,12 @@ export function PrFilterBar({
           </FilterField>
 
           <FilterField id="type" label="Type of PR">
-            <Select id="type" name="type" defaultValue={filters.type ?? ""}>
+            <Select
+              id="type"
+              name="type"
+              className="{GLASS_FIELD}"
+              defaultValue={filters.type ?? ""}
+            >
               <option value="">All types</option>
               <OptionList options={options.types} />
             </Select>
@@ -143,6 +169,7 @@ export function PrFilterBar({
               <Input
                 id="from"
                 name="from"
+                className="{GLASS_FIELD}"
                 type="date"
                 defaultValue={filters.from}
               />
@@ -159,7 +186,7 @@ export function PrFilterBar({
                 name="abcMin"
                 inputMode="decimal"
                 defaultValue={filters.abcMin}
-                className="tabular-nums"
+                className={cn(GLASS_FIELD, "tabular-nums")}
               />
             </FilterField>
             <FilterField id="abcMax" label="ABC to">
@@ -168,7 +195,7 @@ export function PrFilterBar({
                 name="abcMax"
                 inputMode="decimal"
                 defaultValue={filters.abcMax}
-                className="tabular-nums"
+                className={cn(GLASS_FIELD, "tabular-nums")}
               />
             </FilterField>
           </div>
