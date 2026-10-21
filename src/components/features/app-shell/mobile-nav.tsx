@@ -28,10 +28,10 @@ export function MobileNav({ children }: { children: React.ReactNode }) {
             event.currentTarget.close();
           }
         }}
-        className="m-0 h-svh max-h-none w-72 max-w-[85vw] border-r bg-surface p-0 text-foreground backdrop:bg-black/50"
+        className="m-0 h-svh max-h-none w-72 max-w-[85vw] bg-transparent p-3 text-foreground backdrop:bg-black/50"
       >
-        <div className="flex h-full flex-col">
-          <div className="flex items-center justify-between border-b px-4 py-3">
+        <div className="glass flex h-full flex-col glass-strong">
+          <div className="flex items-center justify-between border-b border-foreground/10 px-4 py-3">
             <span className="font-heading font-semibold">Menu</span>
             <Button
               variant="ghost"

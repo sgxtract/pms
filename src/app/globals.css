@@ -286,6 +286,11 @@
 @utility glass-scene {
   background:
     radial-gradient(
+      18rem 26rem at 4% 70%,
+      var(--scene-form-1),
+      transparent 70%
+    ),
+    radial-gradient(
       38rem 30rem at 32% 8%,
       var(--scene-form-2),
       transparent 70%
