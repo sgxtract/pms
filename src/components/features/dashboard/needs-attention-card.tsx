@@ -16,12 +16,12 @@ function AttentionStat({
       href={href}
       className="-m-3 block rounded-2xl p-3 transition-colors hover:bg-on-ink/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-on-ink"
     >
+      <span className="block font-heading text-5xl font-semibold tracking-tight tabular-nums">
+        {value}
+      </span>
       <span className="mt-2 flex items-center gap-1.5 text-sm text-on-ink-muted">
         {icon}
         {label}
-      </span>
-      <span className="block font-heading text-5xl font-semibold tracking-tight tabular-nums">
-        {value}
       </span>
     </a>
   );

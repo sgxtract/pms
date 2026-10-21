@@ -76,7 +76,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Row 1: ink card + stat strip (unchanged from step 3) */}
-      <div className="grid gap-4 lg:grid-cols-12">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
         <div className="lg:col-span-4">
           <NeedsAttentionCard
             overdue={totalOverdue}
@@ -113,7 +113,7 @@ export default async function DashboardPage() {
       {/* ── CHANGED: one grid with TWO column stacks replaces the old
           `lg:grid-cols-[3fr_2fr]` and `lg:grid-cols-2` rows.
           `lg:items-start` stops the columns stretching to equal height. ── */}
-      <div className="grid gap-4 lg:grid-cols-12 lg:items-start">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12 lg:items-start">
         {/* ── CHANGED: LEFT column (7 of 12) = Stage + Deliveries ── */}
         <div className="space-y-4 lg:col-span-7">
           {/* Section unchanged, only moved */}
