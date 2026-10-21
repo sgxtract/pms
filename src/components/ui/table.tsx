@@ -1,9 +1,18 @@
 import type { ComponentProps } from "react";
 import { cn } from "@/lib/utils";
 
-export function Table({ className, ...props }: ComponentProps<"table">) {
+export function Table({
+  className,
+  framed = true,
+  ...props
+}: ComponentProps<"table"> & { framed?: boolean }) {
   return (
-    <div className="overflow-x-auto rounded-lg border bg-surface">
+    <div
+      className={cn(
+        "overflow-x-auto",
+        framed && "rounded-lg border bg-surface",
+      )}
+    >
       <table className={cn("w-full text-sm", className)} {...props} />
     </div>
   );
@@ -12,7 +21,7 @@ export function Table({ className, ...props }: ComponentProps<"table">) {
 export function TableHead({ className, ...props }: ComponentProps<"thead">) {
   return (
     <thead
-      className={cn("border-b bg-surface-muted/60", className)}
+      className={cn("border-b border-foreground/10 bg-foreground/3", className)}
       {...props}
     />
   );
@@ -26,7 +35,7 @@ export function TableRow({ className, ...props }: ComponentProps<"tr">) {
   return (
     <tr
       className={cn(
-        "border-b transition-colors last:border-0 hover:bg-surface-muted/40",
+        "border-b border-foreground/10 transition-colors last:border-0 hover:bg-foreground/5",
         className,
       )}
       {...props}
@@ -54,7 +63,10 @@ export function TableCell({ className, ...props }: ComponentProps<"td">) {
 export function TableFoot({ className, ...props }: ComponentProps<"tfoot">) {
   return (
     <tfoot
-      className={cn("border-t-2 bg-surface-muted/60 font-medium", className)}
+      className={cn(
+        "border-t-2 border-foreground/10 bg-foreground/3 font-medium",
+        className,
+      )}
       {...props}
     />
   );

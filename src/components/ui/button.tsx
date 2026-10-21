@@ -8,6 +8,8 @@ const variants = {
   ghost: "text-foreground hover:bg-surface-muted",
   danger: "bg-danger text-white hover:bg-danger-hover",
   ink: "rounded-full bg-ink font-semibold text-on-ink shadow-[var(--shadow-float)] transition-transform hover:-translate-y-0.5 active:scale-98 focus-visible:outline-ink",
+  glass:
+    "rounded-full border border-glass-edge bg-foreground/5 font-medium text-foreground transition-colors hover:bg-foreground/10",
 } as const;
 
 const sizes = {

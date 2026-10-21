@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { login, type LoginState } from "@/server/actions/auth";
+import { GLASS_FIELD } from "@/components/ui/glass-field";
+import { cn } from "@/lib/utils";
 
-const GLASS_INPUT =
-  "h-11 rounded-xl border border-glass-edge bg-foreground/5 px-4 autofill:shadow-[inset_0_0_0_100px_var(--glass-solid)] autofill:[-webkit-text-fill-color:var(--foreground)]";
+const GLASS_INPUT = cn(GLASS_FIELD, "h-11 px-4");
 
 export function LoginForm() {
   const [state, formAction, isPending] = useActionState<LoginState, FormData>(
