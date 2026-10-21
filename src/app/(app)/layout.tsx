@@ -72,7 +72,10 @@ const NAV: NavConfig = [
 
 function Brand({ compact = false }: { compact?: boolean }) {
   return (
-    <Link href="/dashboard" className="flex min-w-0 items-center gap-3">
+    <Link
+      href="/dashboard"
+      className="flex min-w-0 items-center gap-3 rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+    >
       <Seal size={compact ? 28 : 36} eager />
       <span className="min-w-0 leading-tight">
         <span className="block font-heading font-semibold">PMS</span>
@@ -124,17 +127,21 @@ export default async function AppLayout({
       </div>
 
       <div className="min-w-0">
-        <header className="sticky top-0 z-40 flex items-center gap-2 border-b bg-surface px-3 py-2 lg:hidden print:hidden">
-          <MobileNav>{navigation}</MobileNav>
-          <Brand compact />
-          <div className="ml-auto">
-            <UserMenu
-              name={user.fullName}
-              roleLabel={roleLabel}
-              placement="down"
-            />
-          </div>
-        </header>
+        {/* Sticky needs the wrapper: glass sets position: relative on its element.
+            The fade hides content scrolling through the gap above the bar. */}
+        <div className="sticky top-0 z-40 bg-linear-to-b from-(--scene) from-40% to-transparent px-3 pt-3 pb-1 lg:hidden print:hidden">
+          <header className="glass flex items-center gap-2 glass-strong py-1.5 pr-1.5 pl-2">
+            <MobileNav>{navigation}</MobileNav>
+            <Brand compact />
+            <div className="ml-auto">
+              <UserMenu
+                name={user.fullName}
+                roleLabel={roleLabel}
+                placement="down"
+              />
+            </div>
+          </header>
+        </div>
 
         <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8 print:max-w-none print:p-0">
           {children}

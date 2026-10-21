@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { fieldAria } from "@/lib/field-aria";
+import { cn } from "@/lib/utils";
 import type { PrFormField } from "@/lib/validation/procurement-request";
 import type { Option, PrSuggestions } from "@/server/queries/procurement";
 
@@ -41,6 +42,30 @@ function OptionList({ options }: { options: Option[] }) {
   ));
 }
 
+/**
+ * One glass panel per group. The fieldset goes inside the panel instead of
+ * being the panel: a <legend> is drawn on the fieldset's top edge, so the
+ * panel's padding wouldn't reach it.
+ */
+export function FieldPanel({
+  legend,
+  className,
+  children,
+}: {
+  legend: string;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="glass p-5 sm:p-6">
+      <fieldset className={cn("grid min-w-0 gap-5", className)}>
+        <legend className="mb-5 text-lg font-semibold">{legend}</legend>
+        {children}
+      </fieldset>
+    </div>
+  );
+}
+
 export function PrDetailsFields({
   options,
   suggestions,
@@ -59,9 +84,7 @@ export function PrDetailsFields({
 
   return (
     <>
-      <fieldset className="grid gap-5 sm:grid-cols-2">
-        <legend className="mb-4 text-lg font-semibold">PR details</legend>
-
+      <FieldPanel legend="PR details" className="sm:grid-cols-2">
         <Field id="prNumber" label="PR Number" error={errors.prNumber}>
           <Input
             {...aria("prNumber")}
@@ -128,13 +151,9 @@ export function PrDetailsFields({
             <OptionList options={options.categories} />
           </Select>
         </Field>
-      </fieldset>
+      </FieldPanel>
 
-      <fieldset className="grid gap-5">
-        <legend className="mb-4 text-lg font-semibold">
-          Requesting office and project
-        </legend>
-
+      <FieldPanel legend="Requesting office and project">
         <Field id="endUser" label="End-User" error={errors.endUser}>
           <Input
             {...aria("endUser")}
@@ -156,11 +175,9 @@ export function PrDetailsFields({
             rows={3}
           />
         </Field>
-      </fieldset>
+      </FieldPanel>
 
-      <fieldset className="grid gap-5 sm:grid-cols-2">
-        <legend className="mb-4 text-lg font-semibold">Budget</legend>
-
+      <FieldPanel legend="Budget" className="sm:grid-cols-2">
         <Field
           id="abc"
           label="ABC (Approved Budget for the Contract)"
@@ -208,11 +225,9 @@ export function PrDetailsFields({
             values={suggestions.accountCodes}
           />
         </Field>
-      </fieldset>
+      </FieldPanel>
 
-      <fieldset className="grid gap-5 sm:grid-cols-2">
-        <legend className="mb-4 text-lg font-semibold">Procurement</legend>
-
+      <FieldPanel legend="Procurement" className="sm:grid-cols-2">
         <Field
           id="procurementModeId"
           label="Procurement Mode"
@@ -245,7 +260,7 @@ export function PrDetailsFields({
             className="tabular-nums"
           />
         </Field>
-      </fieldset>
+      </FieldPanel>
     </>
   );
 }

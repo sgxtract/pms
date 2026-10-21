@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { TEXT_LINK } from "@/components/ui/link-styles";
 
 export function DashboardSection({
   title,
@@ -25,10 +26,7 @@ export function DashboardSection({
           )}
         </div>
         {action && (
-          <Link
-            href={action.href}
-            className="text-sm text-link hover:underline"
-          >
+          <Link href={action.href} className={`text-sm ${TEXT_LINK}`}>
             {action.label}
           </Link>
         )}

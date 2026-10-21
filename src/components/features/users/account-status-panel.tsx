@@ -1,7 +1,6 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FormMessage } from "@/components/ui/form-message";
 import {
@@ -25,15 +24,14 @@ export function AccountStatusPanel({
   const [isConfirming, setIsConfirming] = useState(false);
 
   return (
-    <div className="max-w-xl space-y-4">
-      <div className="flex items-center gap-2 text-sm">
-        <span>Status:</span>
-        {isActive ? (
-          <Badge tone="success">Active</Badge>
-        ) : (
-          <Badge>Disabled</Badge>
-        )}
-      </div>
+    <div className="space-y-4">
+      {!isConfirming && (
+        <p className="text-sm text-muted-foreground">
+          {isActive
+            ? "Disabling stops the account from signing in. Records and history are kept."
+            : "This account can't sign in. Enabling lets them use their existing password again."}
+        </p>
+      )}
 
       {state?.status === "error" && <FormMessage>{state.message}</FormMessage>}
       {state?.status === "updated" && (
@@ -45,7 +43,7 @@ export function AccountStatusPanel({
       )}
 
       {isActive && !isConfirming && (
-        <Button variant="secondary" onClick={() => setIsConfirming(true)}>
+        <Button variant="glass" onClick={() => setIsConfirming(true)}>
           Disable account
         </Button>
       )}
@@ -56,7 +54,7 @@ export function AccountStatusPanel({
           onSubmit={() => setIsConfirming(false)}
           className="space-y-3"
         >
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm">
             Disabling signs {fullName} out immediately and stops them from
             signing in. Their records and history are kept, and the account can
             be enabled again.
@@ -73,7 +71,7 @@ export function AccountStatusPanel({
               {isPending ? "Disabling…" : "Yes, disable account"}
             </Button>
             <Button
-              variant="secondary"
+              variant="glass"
               onClick={() => setIsConfirming(false)}
               disabled={isPending}
             >
@@ -87,7 +85,7 @@ export function AccountStatusPanel({
         <form action={formAction}>
           <input type="hidden" name="userId" value={userId} />
           <input type="hidden" name="active" value="true" />
-          <Button type="submit" disabled={isPending}>
+          <Button type="submit" variant="glass" disabled={isPending}>
             {isPending ? "Enabling…" : "Enable account"}
           </Button>
         </form>

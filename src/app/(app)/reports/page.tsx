@@ -26,21 +26,26 @@ function Figure({
   label,
   count,
   abc,
-  muted = false,
+  variant = "glass",
 }: {
   label: string;
   count: number;
   abc: string;
-  muted?: boolean;
+  variant?: "ink" | "glass" | "muted";
 }) {
+  const isInk = variant === "ink";
   return (
-    <div className="rounded-lg border bg-surface p-4">
-      <p className="text-sm text-muted-foreground">{label}</p>
+    <div className={isInk ? "ink p-5" : "glass p-5"}>
+      <p
+        className={`text-sm ${isInk ? "text-on-ink-muted" : "text-muted-foreground"}`}
+      >
+        {label}
+      </p>
       <p className="mt-1 font-heading text-2xl font-semibold tabular-nums">
         {count} {count === 1 ? "PR" : "PRs"}
       </p>
       <p
-        className={`mt-0.5 text-sm tabular-nums ${muted ? "text-muted-foreground" : ""}`}
+        className={`mt-0.5 text-sm tabular-nums ${variant === "muted" ? "text-muted-foreground" : ""}`}
       >
         {formatPeso(abc)}
       </p>
@@ -69,7 +74,7 @@ export default async function ReportsPage({
       <div className="flex flex-wrap items-end justify-between gap-4 print:hidden">
         <div>
           <h1 className="text-2xl font-semibold">Reports</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 text-sm text-foreground/75">
             Procurement figures for a period. PRs are included by their PR date.
           </p>
         </div>
@@ -96,7 +101,7 @@ export default async function ReportsPage({
         </div>
 
         {overview.count === 0 ? (
-          <div className="rounded-lg border bg-surface px-6 py-12 text-center">
+          <div className="glass px-6 py-12 text-center">
             <p className="font-medium">No PRs have a PR date in this period.</p>
           </div>
         ) : (
@@ -110,6 +115,7 @@ export default async function ReportsPage({
                   label="Total ABC (excluding cancelled)"
                   count={overview.inProgressCount + overview.completedCount}
                   abc={overview.activeAbc}
+                  variant="ink"
                 />
                 <Figure
                   label="In progress"
@@ -125,7 +131,7 @@ export default async function ReportsPage({
                   label="Cancelled (not included)"
                   count={overview.cancelledCount}
                   abc={overview.cancelledAbc}
-                  muted
+                  variant="muted"
                 />
               </div>
             </section>

@@ -14,7 +14,7 @@ export function ReportPeriodForm({ params }: { params: ReportParams }) {
     <Form
       action="/reports"
       aria-label="Report period"
-      className="grid gap-3 rounded-lg border bg-surface p-4 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_auto] lg:items-end"
+      className="glass grid gap-3 glass-strong p-4 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_auto] lg:items-end"
     >
       <div className="space-y-1">
         <Label htmlFor="period" className="text-xs text-muted-foreground">
@@ -43,7 +43,9 @@ export function ReportPeriodForm({ params }: { params: ReportParams }) {
         <Input id="to" name="to" type="date" defaultValue={params.to} />
       </div>
 
-      <Button type="submit">Show report</Button>
+      <Button type="submit" variant="glass">
+        Show report
+      </Button>
     </Form>
   );
 }

@@ -25,7 +25,7 @@ export function ThemeChoice() {
     <div
       role="group"
       aria-label="Theme"
-      className="grid grid-cols-3 gap-1 rounded-md bg-surface-muted p-1"
+      className="grid grid-cols-3 gap-1 rounded-xl bg-foreground/5 p-1"
     >
       {OPTIONS.map(({ value, label, Icon }) => {
         const isActive = mounted && theme === value;
@@ -36,10 +36,10 @@ export function ThemeChoice() {
             aria-pressed={isActive}
             onClick={() => setTheme(value)}
             className={cn(
-              "flex flex-col items-center gap-0.5 rounded px-2 py-1.5 text-xs transition-colors",
+              "flex flex-col items-center gap-0.5 rounded-lg px-2 py-1.5 text-xs transition-colors duration-200 ease-glass",
               "focus-visible:outline-2 focus-visible:outline-ring",
               isActive
-                ? "bg-surface text-foreground shadow-sm"
+                ? "bg-ink text-on-ink"
                 : "text-muted-foreground hover:text-foreground",
             )}
           >

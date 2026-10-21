@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
 import { MoveStagePanel } from "@/components/features/procurement/move-stage-panel";
 import { PrStatusBadge } from "@/components/features/procurement/pr-status-badge";
 import { PrStatusPanel } from "@/components/features/procurement/pr-status-panel";
 import { StageTimeline } from "@/components/features/procurement/stage-timeline";
+import { BackLink } from "@/components/ui/back-link";
 import { Badge } from "@/components/ui/badge";
 import { buttonClasses } from "@/components/ui/button";
 import { FormMessage } from "@/components/ui/form-message";
@@ -100,13 +100,7 @@ export default async function PrDetailPage({
 
   return (
     <div className="max-w-6xl space-y-6">
-      <Link
-        href="/requests"
-        className="inline-flex w-fit items-center gap-1.5 rounded-md text-sm underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-      >
-        <ArrowLeft className="size-4" aria-hidden />
-        All requests
-      </Link>
+      <BackLink href="/requests">All requests</BackLink>
 
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0 space-y-2">

@@ -46,12 +46,12 @@ export function AbcBreakdownTable({
   return (
     <section
       aria-labelledby={id}
-      className="space-y-3 print:break-inside-avoid"
+      className="glass overflow-hidden print:break-inside-avoid"
     >
-      <h3 id={id} className="font-semibold">
+      <h3 id={id} className="px-5 pt-5 pb-3 font-semibold">
         {title}
       </h3>
-      <Table>
+      <Table framed={false}>
         <TableHead>
           <TableRow>
             <TableHeaderCell>{groupLabel}</TableHeaderCell>

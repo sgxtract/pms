@@ -89,9 +89,9 @@ export function UserMenu({
         }
         onClick={() => setIsOpen((open) => !open)}
         className={cn(
-          "flex items-center gap-3 rounded-md text-left transition-colors hover:bg-surface-muted",
+          "flex items-center gap-3 text-left transition-colors duration-200 ease-glass hover:bg-foreground/5",
           "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
-          placement === "up" ? "w-full p-2" : "p-1",
+          placement === "up" ? "w-full rounded-xl p-2" : "rounded-full p-1",
         )}
       >
         {avatar}
@@ -116,7 +116,7 @@ export function UserMenu({
         hidden={!isOpen}
         tabIndex={-1}
         className={cn(
-          "absolute z-50 rounded-2xl border border-foreground/10 bg-surface p-1.5 shadow-[var(--shadow-float)]",
+          "absolute z-50 rounded-2xl border border-foreground/10 bg-glass-solid p-1.5 shadow-[var(--shadow-float)]",
           placement === "up"
             ? "inset-x-0 bottom-full mb-2"
             : "top-full right-0 mt-2 w-64",

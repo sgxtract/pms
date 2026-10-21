@@ -149,30 +149,33 @@ export function IdleTimeoutWatcher() {
         event.preventDefault();
         void extend();
       }}
-      className="m-auto w-full max-w-sm rounded-xl border bg-surface p-6 text-foreground shadow-xl backdrop:bg-black/50"
+      className="m-auto w-full max-w-sm bg-transparent p-3 text-foreground backdrop:bg-black/50"
     >
-      <h2 id="idle-warning-title" className="text-lg font-semibold">
-        Are you still there?
-      </h2>
-      <p
-        id="idle-warning-description"
-        className="mt-2 text-sm text-muted-foreground"
-      >
-        For security, you&apos;ll be signed out in{" "}
-        <span className="font-medium text-foreground tabular-nums">
-          {formatCountdown(secondsLeft ?? 0)}
-        </span>{" "}
-        because of inactivity.
-      </p>
-      <div className="mt-6 flex justify-end gap-2">
-        <form action={logout}>
-          <Button type="submit" variant="secondary">
-            Sign out
+      {/* The dialog positions itself; glass would override that, so it goes inside. */}
+      <div className="glass glass-strong p-6">
+        <h2 id="idle-warning-title" className="text-lg font-semibold">
+          Are you still there?
+        </h2>
+        <p
+          id="idle-warning-description"
+          className="mt-2 text-sm text-muted-foreground"
+        >
+          For security, you&apos;ll be signed out in{" "}
+          <span className="font-medium text-foreground tabular-nums">
+            {formatCountdown(secondsLeft ?? 0)}
+          </span>{" "}
+          because of inactivity.
+        </p>
+        <div className="mt-6 flex justify-end gap-2">
+          <form action={logout}>
+            <Button type="submit" variant="glass">
+              Sign out
+            </Button>
+          </form>
+          <Button variant="ink" onClick={() => void extend()} autoFocus>
+            Stay signed in
           </Button>
-        </form>
-        <Button onClick={() => void extend()} autoFocus>
-          Stay signed in
-        </Button>
+        </div>
       </div>
     </dialog>
   );

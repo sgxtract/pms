@@ -74,7 +74,7 @@ export function AuditChanges({
   }
   return (
     <details>
-      <summary className="cursor-pointer text-link">
+      <summary className="cursor-pointer font-medium underline-offset-4 hover:underline">
         {entries.length} details
       </summary>
       <div className="mt-2">

@@ -18,7 +18,7 @@ export function CreateUserForm({ roleOptions }: { roleOptions: Role[] }) {
 
   if (state?.status === "created" && state !== acknowledged) {
     return (
-      <div className="max-w-xl space-y-6">
+      <div className="space-y-4">
         <TemporaryPasswordNotice
           title="Account created"
           fullName={state.fullName}
@@ -26,13 +26,10 @@ export function CreateUserForm({ roleOptions }: { roleOptions: Role[] }) {
           password={state.temporaryPassword}
         />
         <div className="flex flex-wrap gap-2">
-          <Button onClick={() => setAcknowledged(state)}>
+          <Button variant="glass" onClick={() => setAcknowledged(state)}>
             Add another user
           </Button>
-          <Link
-            href="/users"
-            className={buttonClasses({ variant: "secondary" })}
-          >
+          <Link href="/users" className={buttonClasses({ variant: "glass" })}>
             Back to users
           </Link>
         </div>
@@ -47,11 +44,12 @@ export function CreateUserForm({ roleOptions }: { roleOptions: Role[] }) {
         const formData = new FormData(event.currentTarget);
         startTransition(() => formAction(formData));
       }}
-      className="max-w-md space-y-5"
+      aria-label="New account"
+      className="glass space-y-5 glass-strong p-5 sm:p-6"
     >
       <UserDetailsFields roleOptions={roleOptions} />
       {state?.status === "error" && <FormMessage>{state.message}</FormMessage>}
-      <Button type="submit" disabled={isPending}>
+      <Button type="submit" variant="ink" disabled={isPending}>
         {isPending ? "Creating…" : "Create account"}
       </Button>
     </form>

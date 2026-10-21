@@ -34,7 +34,7 @@ export function EditUserForm({
         const formData = new FormData(event.currentTarget);
         startTransition(() => formAction(formData));
       }}
-      className="max-w-md space-y-5"
+      className="space-y-5"
     >
       <input type="hidden" name="userId" value={user.id} />
       <UserDetailsFields
@@ -46,7 +46,7 @@ export function EditUserForm({
       {state?.status === "saved" && (
         <FormMessage tone="success">Changes saved.</FormMessage>
       )}
-      <Button type="submit" disabled={isPending}>
+      <Button type="submit" variant="ink" disabled={isPending}>
         {isPending ? "Saving…" : "Save changes"}
       </Button>
     </form>

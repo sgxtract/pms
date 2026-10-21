@@ -26,7 +26,7 @@ export function ResetPasswordPanel({
 
   if (state?.status === "reset" && state !== acknowledged) {
     return (
-      <div className="max-w-xl space-y-4">
+      <div className="space-y-4">
         <TemporaryPasswordNotice
           title="Password reset"
           fullName={state.fullName}
@@ -34,7 +34,7 @@ export function ResetPasswordPanel({
           password={state.temporaryPassword}
         />
         <Button
-          variant="secondary"
+          variant="glass"
           onClick={() => {
             setAcknowledged(state);
             setIsConfirming(false);
@@ -47,7 +47,7 @@ export function ResetPasswordPanel({
   }
 
   return (
-    <div className="max-w-xl space-y-4">
+    <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
         Resetting gives {fullName} a new temporary password and signs them out
         everywhere. They&apos;ll choose a new password at their next sign-in.
@@ -62,7 +62,7 @@ export function ResetPasswordPanel({
             {isPending ? "Resetting…" : "Yes, reset password"}
           </Button>
           <Button
-            variant="secondary"
+            variant="glass"
             onClick={() => setIsConfirming(false)}
             disabled={isPending}
           >
@@ -70,7 +70,7 @@ export function ResetPasswordPanel({
           </Button>
         </form>
       ) : (
-        <Button variant="secondary" onClick={() => setIsConfirming(true)}>
+        <Button variant="glass" onClick={() => setIsConfirming(true)}>
           Reset password
         </Button>
       )}

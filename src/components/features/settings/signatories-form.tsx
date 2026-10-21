@@ -33,11 +33,14 @@ export function SignatoriesForm({ defaults }: { defaults: SignatoriesValues }) {
         const formData = new FormData(event.currentTarget);
         startTransition(() => formAction(formData));
       }}
-      className="max-w-2xl space-y-6"
+      className="space-y-6"
     >
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="grid gap-6 sm:grid-cols-2 sm:gap-0 sm:divide-x sm:divide-foreground/10">
         {GROUPS.map((group) => (
-          <fieldset key={group.legend} className="space-y-4">
+          <fieldset
+            key={group.legend}
+            className="min-w-0 space-y-4 sm:pr-6 sm:last:pr-0 sm:last:pl-6"
+          >
             <legend className="mb-3 font-semibold">{group.legend}</legend>
             <Field id={group.name} label="Name" optional>
               <Input
@@ -64,7 +67,7 @@ export function SignatoriesForm({ defaults }: { defaults: SignatoriesValues }) {
         <FormMessage tone="success">Signatories saved.</FormMessage>
       )}
 
-      <Button type="submit" disabled={isPending}>
+      <Button type="submit" variant="ink" disabled={isPending}>
         {isPending ? "Saving…" : "Save signatories"}
       </Button>
     </form>

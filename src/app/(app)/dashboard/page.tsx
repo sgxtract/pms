@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { TEXT_LINK } from "@/components/ui/link-styles";
 import { BarList } from "@/components/features/dashboard/bar-list";
 import { DashboardSection } from "@/components/features/dashboard/dashboard-section";
 import { StatCard } from "@/components/features/dashboard/stat-card";
@@ -143,7 +144,7 @@ export default async function DashboardPage() {
                     <div className="min-w-0">
                       <Link
                         href={`/requests/${delivery.id}`}
-                        className="font-mono text-sm text-link hover:underline"
+                        className={`font-mono text-sm ${TEXT_LINK}`}
                       >
                         {delivery.prNumber}
                       </Link>
@@ -215,7 +216,7 @@ export default async function DashboardPage() {
                     <div className="min-w-0">
                       <Link
                         href={`/requests/${pr.id}`}
-                        className="font-mono text-sm text-link hover:underline"
+                        className={`font-mono text-sm ${TEXT_LINK}`}
                       >
                         {pr.prNumber}
                       </Link>
@@ -269,7 +270,7 @@ export default async function DashboardPage() {
                         {" "}
                         <Link
                           href={`/requests/${entry.entityId}`}
-                          className="font-mono text-link hover:underline"
+                          className={`font-mono ${TEXT_LINK}`}
                         >
                           {entry.subjectPrNumber ?? entry.entityId}
                         </Link>
