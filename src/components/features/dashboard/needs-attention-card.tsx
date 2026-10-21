@@ -16,11 +16,11 @@ function AttentionStat({
       href={href}
       className="-m-3 block rounded-2xl p-3 transition-colors hover:bg-on-ink/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-on-ink"
     >
-      <span className="flex items-center gap-2 text-sm text-on-ink-muted">
+      <span className="mt-2 flex items-center gap-1.5 text-sm text-on-ink-muted">
         {icon}
         {label}
       </span>
-      <span className="mt-2 block font-heading text-5xl font-semibold tracking-tight tabular-nums">
+      <span className="block font-heading text-5xl font-semibold tracking-tight tabular-nums">
         {value}
       </span>
     </a>
@@ -55,13 +55,13 @@ export function NeedsAttentionCard({
         <div className="mt-5 grid grid-cols-2 gap-6">
           <AttentionStat
             href="#section-deliveries"
-            icon={<TriangleAlert aria-hidden className="size-4" />}
+            icon={<TriangleAlert aria-hidden className="size-4 shrink-0" />}
             value={overdue}
             label="Overdue deliveries"
           />
           <AttentionStat
             href="#section-waiting-too-long"
-            icon={<Clock aria-hidden className="size-4" />}
+            icon={<Clock aria-hidden className="size-4 shrink-0" />}
             value={waiting}
             label={`Over ${staleDays} days in a stage`}
           />

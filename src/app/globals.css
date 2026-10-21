@@ -101,10 +101,10 @@
   --glass-rim: rgb(255 255 255 / 0.12);
   --glass-highlight: rgb(255 255 255 / 0.08);
   --glass-muted: #a7b0bd;
-  --ink: #f4f4f5;
-  --ink-2: #e4e4e7;
+  --ink: #c4c9d1;
+  --ink-2: #e7e9ec;
   --on-ink: #0f1114;
-  --on-ink-muted: rgb(15 17 20 / 0.6);
+  --on-ink-muted: rgb(15 17 20 / 0.7);
   --shadow-float:
     0 1px 2px rgb(0 0 0 / 0.3), 0 16px 48px -16px rgb(0 0 0 / 0.6);
 
