@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 export function PrintButton() {
   return (
     <Button
-      variant="secondary"
+      variant="glass"
       onClick={() => window.print()}
       className="print:hidden"
     >

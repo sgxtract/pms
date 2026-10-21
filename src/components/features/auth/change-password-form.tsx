@@ -32,6 +32,7 @@ export function ChangePasswordForm() {
           name="currentPassword"
           type="password"
           autoComplete="current-password"
+          className="h-11 px-4"
           required
         />
       </div>
@@ -45,6 +46,7 @@ export function ChangePasswordForm() {
           autoComplete="new-password"
           aria-describedby="password-requirements"
           onChange={(event) => setNewPassword(event.target.value)}
+          className="h-11 px-4"
           required
         />
         <ul id="password-requirements" className="space-y-1 pt-1 text-sm">
@@ -80,6 +82,7 @@ export function ChangePasswordForm() {
           name="confirmPassword"
           type="password"
           autoComplete="new-password"
+          className="h-11 px-4"
           required
         />
       </div>
@@ -87,13 +90,19 @@ export function ChangePasswordForm() {
       {state?.error && (
         <p
           role="alert"
-          className="rounded-md bg-danger-soft px-3 py-2 text-sm text-danger-soft-foreground"
+          className="rounded-xl bg-danger-soft px-4 py-3 text-sm text-danger-soft-foreground"
         >
           {state.error}
         </p>
       )}
 
-      <Button type="submit" className="w-full" disabled={isPending}>
+      <Button
+        type="submit"
+        variant="ink"
+        size="lg"
+        className="w-full"
+        disabled={isPending}
+      >
         {isPending ? "Saving…" : "Save new password"}
       </Button>
     </form>

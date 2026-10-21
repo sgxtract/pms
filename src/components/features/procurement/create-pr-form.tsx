@@ -1,8 +1,12 @@
 "use client";
 
 import { startTransition, useActionState, useEffect } from "react";
-import { PrDetailsFields } from "@/components/features/procurement/pr-details-fields";
-import { Button } from "@/components/ui/button";
+import {
+  FieldPanel,
+  PrDetailsFields,
+} from "@/components/features/procurement/pr-details-fields";
+import Link from "next/link";
+import { Button, buttonClasses } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { FormMessage } from "@/components/ui/form-message";
 import { Input } from "@/components/ui/input";
@@ -48,7 +52,7 @@ export function CreatePrForm({
         const formData = new FormData(event.currentTarget);
         startTransition(() => formAction(formData));
       }}
-      className="max-w-3xl space-y-10"
+      className="max-w-3xl space-y-6"
     >
       <PrDetailsFields
         options={options}
@@ -57,9 +61,7 @@ export function CreatePrForm({
         today={today}
       />
 
-      <fieldset className="grid gap-5 sm:grid-cols-2">
-        <legend className="mb-4 text-lg font-semibold">Receipt</legend>
-
+      <FieldPanel legend="Receipt" className="sm:grid-cols-2">
         <Field
           id="receivedAt"
           label="Received by the PBAC"
@@ -82,13 +84,21 @@ export function CreatePrForm({
         >
           <Textarea {...fieldAria(errors, "remarks")} rows={2} />
         </Field>
-      </fieldset>
+      </FieldPanel>
 
-      <div className="space-y-4 border-t pt-6">
+      <div className="space-y-4">
         {state?.error && <FormMessage>{state.error}</FormMessage>}
-        <Button type="submit" disabled={isPending}>
-          {isPending ? "Saving…" : "Create PR"}
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button type="submit" variant="ink" disabled={isPending}>
+            {isPending ? "Saving…" : "Create PR"}
+          </Button>
+          <Link
+            href="/requests"
+            className={buttonClasses({ variant: "glass" })}
+          >
+            Cancel
+          </Link>
+        </div>
       </div>
     </form>
   );

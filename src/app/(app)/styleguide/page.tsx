@@ -26,7 +26,7 @@ export default function StyleguidePage() {
 
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">Typography</h2>
-        <div className="space-y-4 rounded-lg border bg-surface p-6">
+        <div className="glass space-y-4 p-6">
           <p className="font-heading text-3xl font-semibold tracking-tight">
             Procurement Monitoring System
           </p>
@@ -47,28 +47,38 @@ export default function StyleguidePage() {
 
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">Buttons</h2>
-        <div className="flex flex-wrap items-center gap-3 rounded-lg border bg-surface p-6">
-          <Button>
-            <Plus /> Create PR
+        <div className="glass flex flex-wrap items-center gap-3 p-6">
+          <Button variant="ink">
+            <Plus /> New PR
           </Button>
-          <Button variant="secondary">
+          <Button variant="glass">
             <Printer /> Print report
           </Button>
           <Button variant="ghost">View history</Button>
           <Button variant="danger">Cancel PR</Button>
-          <Button size="sm" variant="secondary">
+          <Button size="sm" variant="glass">
             Small
           </Button>
-          <Button disabled>Disabled</Button>
+          <Button variant="glass" disabled>
+            Disabled
+          </Button>
         </div>
       </section>
 
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">Badges</h2>
-        <div className="flex flex-wrap items-center gap-3 rounded-lg border bg-surface p-6">
-          <Badge tone="info">Active</Badge>
+        <div className="glass flex flex-wrap items-center gap-3 p-6">
+          <Badge tone="info">In progress</Badge>
           <Badge tone="success">Completed</Badge>
-          <Badge tone="warning">Delivery overdue</Badge>
+          <Badge tone="warning">Overdue</Badge>
+          <Badge tone="danger">Cancelled</Badge>
+          <Badge>Pre-Procurement</Badge>
+        </div>
+        <div className="flex flex-wrap items-center gap-3 ink p-6">
+          <span className="text-sm text-on-ink-muted">On ink:</span>
+          <Badge tone="info">In progress</Badge>
+          <Badge tone="success">Completed</Badge>
+          <Badge tone="warning">Overdue</Badge>
           <Badge tone="danger">Cancelled</Badge>
           <Badge>Pre-Procurement</Badge>
         </div>

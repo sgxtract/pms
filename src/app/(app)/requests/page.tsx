@@ -5,6 +5,7 @@ import { PrFilterBar } from "@/components/features/procurement/pr-filter-bar";
 import { PrStatusBadge } from "@/components/features/procurement/pr-status-badge";
 import { Badge } from "@/components/ui/badge";
 import { buttonClasses } from "@/components/ui/button";
+import { TEXT_LINK } from "@/components/ui/link-styles";
 import { Pagination } from "@/components/ui/pagination";
 import {
   Table,
@@ -26,9 +27,6 @@ import { requirePermission } from "@/server/auth/authorize";
 import { getPrFilterOptions, listPrs } from "@/server/queries/procurement";
 
 export const metadata: Metadata = { title: "Requests" };
-
-const TEXT_LINK =
-  "rounded-sm font-medium underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 
 function StageBadge({ code, name }: { code: string; name: string }) {
   return (

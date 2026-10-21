@@ -49,6 +49,16 @@
   --shadow-float:
     0 1px 2px rgb(15 17 20 / 0.04), 0 16px 48px -16px rgb(15 17 20 / 0.18);
 
+  /* Badge dots. The -inverse set is for dots sitting on ink. */
+  --tone-info: #2563eb;
+  --tone-success: #16a34a;
+  --tone-warning: #d97706;
+  --tone-danger: #dc2626;
+  --tone-info-inverse: #60a5fa;
+  --tone-success-inverse: #4ade80;
+  --tone-warning-inverse: #fbbf24;
+  --tone-danger-inverse: #f87171;
+
   color-scheme: light;
 }
 
@@ -98,6 +108,15 @@
   --shadow-float:
     0 1px 2px rgb(0 0 0 / 0.3), 0 16px 48px -16px rgb(0 0 0 / 0.6);
 
+  --tone-info: #60a5fa;
+  --tone-success: #4ade80;
+  --tone-warning: #fbbf24;
+  --tone-danger: #f87171;
+  --tone-info-inverse: #1d4ed8;
+  --tone-success-inverse: #15803d;
+  --tone-warning-inverse: #b45309;
+  --tone-danger-inverse: #b91c1c;
+
   color-scheme: dark;
 }
 
@@ -138,6 +157,12 @@
   --color-on-ink: var(--on-ink);
   --color-on-ink-muted: var(--on-ink-muted);
   --color-glass-edge: var(--glass-edge);
+  --color-glass-solid: var(--glass-solid);
+
+  --color-tone-info: var(--tone-info);
+  --color-tone-success: var(--tone-success);
+  --color-tone-warning: var(--tone-warning);
+  --color-tone-danger: var(--tone-danger);
 
   --ease-glass: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -236,6 +261,11 @@
 
 /* Ink: the solid accent card. One or two per view, no more. */
 @utility ink {
+  /* Ink flips lightness, so badge dots on it use the opposite theme's set. */
+  --tone-info: var(--tone-info-inverse);
+  --tone-success: var(--tone-success-inverse);
+  --tone-warning: var(--tone-warning-inverse);
+  --tone-danger: var(--tone-danger-inverse);
   border-radius: 1.5rem;
   background: radial-gradient(120% 80% at 20% 0%, var(--ink-2), var(--ink));
   color: var(--on-ink);

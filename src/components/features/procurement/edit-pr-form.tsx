@@ -54,7 +54,7 @@ export function EditPrForm({
         const formData = new FormData(event.currentTarget);
         startTransition(() => formAction(formData));
       }}
-      className="max-w-3xl space-y-10"
+      className="max-w-3xl space-y-6"
     >
       <input type="hidden" name="prId" value={prId} />
       <input type="hidden" name="version" value={version} />
@@ -67,13 +67,13 @@ export function EditPrForm({
         defaults={defaults}
       />
 
-      <div className="space-y-4 border-t pt-6">
+      <div className="space-y-4">
         {state?.status === "error" && (
           <FormMessage tone={state.conflict ? "warning" : "error"}>
             <p>{state.message}</p>
             {state.conflict && (
               <Button
-                variant="secondary"
+                variant="glass"
                 size="sm"
                 className="mt-2"
                 onClick={() => router.refresh()}
@@ -84,12 +84,12 @@ export function EditPrForm({
           </FormMessage>
         )}
         <div className="flex flex-wrap gap-2">
-          <Button type="submit" disabled={isPending}>
+          <Button type="submit" variant="ink" disabled={isPending}>
             {isPending ? "Saving…" : "Save changes"}
           </Button>
           <Link
             href={`/requests/${prId}`}
-            className={buttonClasses({ variant: "secondary" })}
+            className={buttonClasses({ variant: "glass" })}
           >
             Cancel
           </Link>

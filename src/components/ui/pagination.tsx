@@ -10,7 +10,7 @@ function PageLink({
   disabled: boolean;
   children: React.ReactNode;
 }) {
-  const classes = buttonClasses({ variant: "secondary", size: "sm" });
+  const classes = buttonClasses({ variant: "glass", size: "sm" });
   if (disabled) {
     return (
       <span

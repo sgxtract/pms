@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BackLink } from "@/components/ui/back-link";
 import { EditPrForm } from "@/components/features/procurement/edit-pr-form";
 import { todayInManila } from "@/lib/dates";
 import { requirePermission } from "@/server/auth/authorize";
@@ -23,24 +23,25 @@ export default async function EditPrPage({
   if (!pr) notFound();
 
   const header = (
-    <div>
-      <Link
-        href={`/requests/${pr.id}`}
-        className="text-sm text-link hover:underline"
-      >
-        Back to PR {pr.prNumber}
-      </Link>
-      <h1 className="mt-1 text-2xl font-semibold">Edit PR details</h1>
-    </div>
+    <>
+      <BackLink href={`/requests/${pr.id}`}>Back to PR {pr.prNumber}</BackLink>
+      <div>
+        <p className="font-mono text-sm text-foreground/75">PR {pr.prNumber}</p>
+        <h1 className="mt-1 text-2xl font-semibold">Edit PR details</h1>
+      </div>
+    </>
   );
 
   if (pr.status === "cancelled") {
     return (
-      <div className="space-y-4">
+      <div className="space-y-6">
         {header}
-        <p className="text-muted-foreground">
-          This PR is cancelled. Restore it before editing its details.
-        </p>
+        <div className="glass max-w-3xl px-6 py-10 text-center">
+          <p className="font-medium">This PR is cancelled.</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Restore it before editing its details.
+          </p>
+        </div>
       </div>
     );
   }
@@ -55,7 +56,7 @@ export default async function EditPrPage({
   ]);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {header}
       <EditPrForm
         key={pr.version}

@@ -1,8 +1,9 @@
 import Form from "next/form";
 import Link from "next/link";
-import { Button, buttonClasses } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { TEXT_LINK } from "@/components/ui/link-styles";
 import { Select } from "@/components/ui/select";
 import { hasActiveAuditFilters, type AuditFilters } from "@/lib/audit-filters";
 import { AUDIT_AREAS, type AuditArea } from "@/lib/audit-labels";
@@ -22,7 +23,7 @@ export function AuditFilterBar({
       action="/audit-log"
       role="search"
       aria-label="Filter audit log"
-      className="grid gap-3 rounded-lg border bg-surface p-4 sm:grid-cols-2 lg:grid-cols-[1fr_1.5fr_1fr_1fr_auto] lg:items-end"
+      className="glass grid gap-3 glass-strong p-4 sm:grid-cols-2 lg:grid-cols-[1fr_1.5fr_1fr_1fr_auto] lg:items-end"
     >
       <div className="space-y-1">
         <Label htmlFor="area" className="text-xs text-muted-foreground">
@@ -70,13 +71,12 @@ export function AuditFilterBar({
         <Input id="to" name="to" type="date" defaultValue={filters.to} />
       </div>
 
-      <div className="flex gap-2">
-        <Button type="submit">Apply</Button>
+      <div className="flex items-center gap-3">
+        <Button type="submit" variant="glass">
+          Apply
+        </Button>
         {hasActiveAuditFilters(filters) && (
-          <Link
-            href="/audit-log"
-            className={buttonClasses({ variant: "secondary" })}
-          >
+          <Link href="/audit-log" className={`text-sm ${TEXT_LINK}`}>
             Clear
           </Link>
         )}

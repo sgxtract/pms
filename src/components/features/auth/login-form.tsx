@@ -5,10 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { login, type LoginState } from "@/server/actions/auth";
-import { GLASS_FIELD } from "@/components/ui/glass-field";
-import { cn } from "@/lib/utils";
 
-const GLASS_INPUT = cn(GLASS_FIELD, "h-11 px-4");
+const LARGE_INPUT = "h-11 px-4";
 
 export function LoginForm() {
   const [state, formAction, isPending] = useActionState<LoginState, FormData>(
@@ -27,7 +25,7 @@ export function LoginForm() {
           autoCapitalize="characters"
           spellCheck={false}
           defaultValue={state?.employeeId}
-          className={GLASS_INPUT}
+          className={LARGE_INPUT}
           required
         />
       </div>
@@ -39,7 +37,7 @@ export function LoginForm() {
           name="password"
           type="password"
           autoComplete="current-password"
-          className={GLASS_INPUT}
+          className={LARGE_INPUT}
           required
         />
       </div>

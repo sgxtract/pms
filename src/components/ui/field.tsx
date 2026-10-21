@@ -20,7 +20,7 @@ export function Field({
 }) {
   return (
     <div className={cn("space-y-1.5", className)}>
-      <Label htmlFor={id}>
+      <Label htmlFor={id} className="block w-fit">
         {label}
         {optional && (
           <span className="ml-1 font-normal text-muted-foreground">
