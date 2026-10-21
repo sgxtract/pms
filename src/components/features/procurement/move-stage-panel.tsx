@@ -11,6 +11,7 @@ import { nowForDateTimeInput } from "@/lib/dates";
 import type { MoveStageField } from "@/lib/validation/stage-move";
 import { movePrStage, type MoveStageState } from "@/server/actions/procurement";
 import type { StageOption } from "@/server/queries/procurement";
+import { GLASS_FIELD } from "@/components/ui/glass-field";
 
 export function MoveStagePanel({
   prId,
@@ -68,7 +69,9 @@ export function MoveStagePanel({
         {justMoved && state?.status === "moved" && (
           <FormMessage tone="success">Moved to {state.toStage}.</FormMessage>
         )}
-        <Button onClick={open}>Move to another stage</Button>
+        <Button variant="ink" onClick={open}>
+          Move to another stage
+        </Button>
       </div>
     );
   }
@@ -85,7 +88,7 @@ export function MoveStagePanel({
         const formData = new FormData(event.currentTarget);
         startTransition(() => formAction(formData));
       }}
-      className="max-w-xl space-y-5 rounded-lg border bg-surface p-5"
+      className="max-w-xl space-y-5 rounded-xl border border-foreground/10 bg-foreground/3 p-5"
     >
       <input type="hidden" name="prId" value={prId} />
       <p className="text-sm">
@@ -100,6 +103,7 @@ export function MoveStagePanel({
             setToStageId(event.target.value);
             setConfirmingComplete(false);
           }}
+          className={GLASS_FIELD}
         >
           <option value="" disabled>
             Choose a stage
@@ -127,6 +131,7 @@ export function MoveStagePanel({
           {...describe("effectiveAt", true)}
           type="datetime-local"
           defaultValue={defaultEffectiveAt}
+          className={GLASS_FIELD}
         />
       </Field>
 
@@ -143,7 +148,11 @@ export function MoveStagePanel({
         }
         error={errors.remarks}
       >
-        <Textarea {...describe("remarks", movingBack)} rows={3} />
+        <Textarea
+          {...describe("remarks", movingBack)}
+          rows={3}
+          className={GLASS_FIELD}
+        />
       </Field>
 
       {state?.status === "error" && isNew && (
@@ -161,7 +170,7 @@ export function MoveStagePanel({
               </p>
             </FormMessage>
             <div className="flex flex-wrap gap-2">
-              <Button type="submit" disabled={isPending} autoFocus>
+              <Button type="submit" variant="ink" disabled={isPending} autoFocus>
                 {isPending ? "Saving…" : "Yes, mark as completed"}
               </Button>
               <Button
@@ -175,7 +184,7 @@ export function MoveStagePanel({
           </div>
         ) : (
           <div className="flex flex-wrap gap-2">
-            <Button type="submit" disabled={isPending}>
+            <Button type="submit" variant="ink" disabled={isPending}>
               {isPending
                 ? "Saving…"
                 : isReopening
