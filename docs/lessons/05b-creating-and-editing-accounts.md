@@ -6,7 +6,7 @@
 
 - The server **must check** every value again, as if the form didn't exist.
 
-- `Tamper Experiment` successfully refused the user trying to bypass the admin role using *dev tools*.
+- `Tamper Experiment` successfully refused the user trying to bypass the admin role using _dev tools_.
 
 2. **What a race condition is, and how FOR UPDATE prevents the "no Admins left" case?**
 

@@ -4,7 +4,7 @@ import { BarList } from "@/components/features/dashboard/bar-list";
 import { DashboardSection } from "@/components/features/dashboard/dashboard-section";
 import { StatCard } from "@/components/features/dashboard/stat-card";
 import { Badge } from "@/components/ui/badge";
-import { buttonClasses } from "@/components/ui/button";
+
 import { AUDIT_ACTION_LABELS } from "@/lib/audit-labels";
 import {
   DELIVERY_DUE_SOON_DAYS,
@@ -22,6 +22,9 @@ import {
   getUpcomingDeliveries,
   getWaitingPrs,
 } from "@/server/queries/dashboard";
+import { GlassScene } from "@/components/features/dashboard/glass-scene";
+import { NeedsAttentionCard } from "@/components/features/dashboard/needs-attention-card";
+import { Plus } from "lucide-react";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
@@ -47,9 +50,11 @@ export default async function DashboardPage() {
     ]);
 
   const totalWaiting = waiting[0]?.totalWaiting ?? 0;
+  const totalOverdue = deliveries[0]?.totalOverdue ?? 0;
 
   return (
     <div className="space-y-8">
+      <GlassScene />
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold">Dashboard</h1>
@@ -58,158 +63,186 @@ export default async function DashboardPage() {
           </p>
         </div>
         {can(user, "pr.create") && (
-          <Link href="/requests/new" className={buttonClasses()}>
+          <Link
+            href="/requests/new"
+            className="inline-flex items-center gap-2 ink px-5 py-2.5 text-sm font-medium transition-transform duration-200 ease-glass focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink motion-safe:hover:-translate-y-0.5 motion-safe:active:scale-98"
+          >
+            <Plus aria-hidden className="size-4" />
             New PR
           </Link>
         )}
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard
-          label="Total PRs"
-          value={String(summary.total)}
-          href="/requests"
-        />
-        <StatCard
-          label="In progress"
-          value={String(summary.inProgress)}
-          description={`${formatPeso(summary.inProgressAbc)} total ABC`}
-          href="/requests?status=in_progress"
-        />
-        <StatCard
-          label="Completed"
-          value={String(summary.completed)}
-          href="/requests?status=completed"
-        />
-        <StatCard
-          label="Cancelled"
-          value={String(summary.cancelled)}
-          href="/requests?status=cancelled"
-        />
+      {/* Row 1: ink card + stat strip (unchanged from step 3) */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+        {/* Row 1: needs attention + totals */}
+        <div className="lg:col-span-4">
+          <NeedsAttentionCard
+            overdue={totalOverdue}
+            waiting={totalWaiting}
+            staleDays={STALE_STAGE_DAYS}
+          />
+        </div>
+
+        <div className="glass grid grid-cols-2 p-2 sm:grid-cols-4 sm:divide-x sm:divide-foreground/10 lg:col-span-8">
+          <StatCard
+            label="Total PRs"
+            value={String(summary.total)}
+            href="/requests"
+          />
+          <StatCard
+            label="In progress"
+            value={String(summary.inProgress)}
+            description={`${formatPeso(summary.inProgressAbc)} ABC`}
+            href="/requests?status=in_progress"
+          />
+          <StatCard
+            label="Completed"
+            value={String(summary.completed)}
+            href="/requests?status=completed"
+          />
+          <StatCard
+            label="Cancelled"
+            value={String(summary.cancelled)}
+            href="/requests?status=cancelled"
+          />
+        </div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[3fr_2fr]">
-        <DashboardSection
-          title="In progress by stage"
-          description="Where active PRs are now."
-        >
-          <BarList
-            items={stages.map((stage) => ({
-              key: stage.code,
-              label: stage.name,
-              value: stage.count,
-              href: `/requests?status=in_progress&stage=${stage.code}`,
-            }))}
-          />
-        </DashboardSection>
-
-        <DashboardSection title="In progress by procurement mode">
-          {modes.length === 0 ? (
-            <EmptyNote>No PRs in progress.</EmptyNote>
-          ) : (
+      {/* Two column stacks; items-start keeps each column at its own height */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12 lg:items-start">
+        {/* Left: stage + deliveries */}
+        <div className="space-y-4 lg:col-span-7">
+          {/* Section unchanged, only moved */}
+          <DashboardSection
+            title="In progress by stage"
+            description="Where active PRs are now."
+          >
             <BarList
-              items={modes.map((mode) => ({
-                key: mode.id ?? "none",
-                label: mode.name,
-                value: mode.count,
-                detail: formatPeso(mode.totalAbc),
-                href: mode.id
-                  ? `/requests?status=in_progress&mode=${mode.id}`
-                  : undefined,
+              items={stages.map((stage) => ({
+                key: stage.code,
+                label: stage.name,
+                value: stage.count,
+                href: `/requests?status=in_progress&stage=${stage.code}`,
               }))}
             />
-          )}
-        </DashboardSection>
+          </DashboardSection>
+
+          {/* Section unchanged, only moved (was in the old second row) */}
+          <DashboardSection
+            title="Deliveries"
+            description={`Overdue, or due within ${DELIVERY_DUE_SOON_DAYS} days.`}
+          >
+            {deliveries.length === 0 ? (
+              <EmptyNote>No deliveries are overdue or due soon.</EmptyNote>
+            ) : (
+              <ul className="divide-y divide-foreground/10">
+                {deliveries.map((delivery) => (
+                  <li
+                    key={delivery.id}
+                    className="flex items-start justify-between gap-3 py-2.5 first:pt-0 last:pb-0"
+                  >
+                    <div className="min-w-0">
+                      <Link
+                        href={`/requests/${delivery.id}`}
+                        className="font-mono text-sm text-link hover:underline"
+                      >
+                        {delivery.prNumber}
+                      </Link>
+                      <p className="truncate text-sm text-muted-foreground">
+                        {delivery.particulars}
+                      </p>
+                    </div>
+                    <div className="shrink-0 text-right text-sm">
+                      {delivery.isOverdue ? (
+                        <Badge tone="warning">Overdue</Badge>
+                      ) : (
+                        <span className="tabular-nums">
+                          Due in {plural(Math.max(delivery.daysLeft, 1), "day")}
+                        </span>
+                      )}
+                      <p className="text-xs text-muted-foreground tabular-nums">
+                        {formatDate(delivery.dueAt)}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </DashboardSection>
+        </div>
+        {/* ── END left column ── */}
+
+        {/* ── CHANGED: RIGHT column (5 of 12) = Mode + Waiting ── */}
+        <div className="space-y-4 lg:col-span-5">
+          {/* Right: mode + waiting */}
+          <DashboardSection title="In progress by procurement mode">
+            {modes.length === 0 ? (
+              <EmptyNote>No PRs in progress.</EmptyNote>
+            ) : (
+              <BarList
+                items={modes.map((mode) => ({
+                  key: mode.id ?? "none",
+                  label: mode.name,
+                  value: mode.count,
+                  detail: formatPeso(mode.totalAbc),
+                  href: mode.id
+                    ? `/requests?status=in_progress&mode=${mode.id}`
+                    : undefined,
+                }))}
+              />
+            )}
+          </DashboardSection>
+
+          {/* Section unchanged, only moved (was in the old second row) */}
+          <DashboardSection
+            title="Waiting too long"
+            description={
+              totalWaiting > waiting.length
+                ? `In the same stage for over ${STALE_STAGE_DAYS} days. Showing the ${waiting.length} longest of ${totalWaiting}.`
+                : `In the same stage for over ${STALE_STAGE_DAYS} days.`
+            }
+          >
+            {waiting.length === 0 ? (
+              <EmptyNote>
+                No PR has been in its stage for over {STALE_STAGE_DAYS} days.
+              </EmptyNote>
+            ) : (
+              <ul className="divide-y divide-foreground/10">
+                {waiting.map((pr) => (
+                  <li
+                    key={pr.id}
+                    className="flex items-start justify-between gap-3 py-2.5 first:pt-0 last:pb-0"
+                  >
+                    <div className="min-w-0">
+                      <Link
+                        href={`/requests/${pr.id}`}
+                        className="font-mono text-sm text-link hover:underline"
+                      >
+                        {pr.prNumber}
+                      </Link>
+                      <p className="truncate text-sm text-muted-foreground">
+                        {pr.particulars}
+                      </p>
+                    </div>
+                    <div className="shrink-0 text-right text-sm">
+                      <p className="tabular-nums">
+                        {plural(pr.daysInStage, "day")}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {pr.stageName}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </DashboardSection>
+        </div>
+        {/* ── END right column ── */}
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <DashboardSection
-          title="Deliveries"
-          description={`Overdue, or due within ${DELIVERY_DUE_SOON_DAYS} days.`}
-        >
-          {deliveries.length === 0 ? (
-            <EmptyNote>No deliveries are overdue or due soon.</EmptyNote>
-          ) : (
-            <ul className="divide-y">
-              {deliveries.map((delivery) => (
-                <li
-                  key={delivery.id}
-                  className="flex items-start justify-between gap-3 py-2.5 first:pt-0 last:pb-0"
-                >
-                  <div className="min-w-0">
-                    <Link
-                      href={`/requests/${delivery.id}`}
-                      className="font-mono text-sm text-link hover:underline"
-                    >
-                      {delivery.prNumber}
-                    </Link>
-                    <p className="truncate text-sm text-muted-foreground">
-                      {delivery.particulars}
-                    </p>
-                  </div>
-                  <div className="shrink-0 text-right text-sm">
-                    {delivery.isOverdue ? (
-                      <Badge tone="warning">Overdue</Badge>
-                    ) : (
-                      <span className="tabular-nums">
-                        Due in {plural(Math.max(delivery.daysLeft, 1), "day")}
-                      </span>
-                    )}
-                    <p className="text-xs text-muted-foreground tabular-nums">
-                      {formatDate(delivery.dueAt)}
-                    </p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </DashboardSection>
-
-        <DashboardSection
-          title="Waiting too long"
-          description={
-            totalWaiting > waiting.length
-              ? `In the same stage for over ${STALE_STAGE_DAYS} days. Showing the ${waiting.length} longest of ${totalWaiting}.`
-              : `In the same stage for over ${STALE_STAGE_DAYS} days.`
-          }
-        >
-          {waiting.length === 0 ? (
-            <EmptyNote>
-              No PR has been in its stage for over {STALE_STAGE_DAYS} days.
-            </EmptyNote>
-          ) : (
-            <ul className="divide-y">
-              {waiting.map((pr) => (
-                <li
-                  key={pr.id}
-                  className="flex items-start justify-between gap-3 py-2.5 first:pt-0 last:pb-0"
-                >
-                  <div className="min-w-0">
-                    <Link
-                      href={`/requests/${pr.id}`}
-                      className="font-mono text-sm text-link hover:underline"
-                    >
-                      {pr.prNumber}
-                    </Link>
-                    <p className="truncate text-sm text-muted-foreground">
-                      {pr.particulars}
-                    </p>
-                  </div>
-                  <div className="shrink-0 text-right text-sm">
-                    <p className="tabular-nums">
-                      {plural(pr.daysInStage, "day")}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {pr.stageName}
-                    </p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </DashboardSection>
-      </div>
-
+      {/* Recent activity: unchanged, still full width below the columns */}
       <DashboardSection
         title="Recent activity"
         action={{ href: "/audit-log", label: "View audit log" }}
@@ -217,7 +250,7 @@ export default async function DashboardPage() {
         {activity.length === 0 ? (
           <EmptyNote>No activity recorded yet.</EmptyNote>
         ) : (
-          <ul className="divide-y">
+          <ul className="divide-y divide-foreground/10">
             {activity.map((entry) => (
               <li
                 key={entry.id}

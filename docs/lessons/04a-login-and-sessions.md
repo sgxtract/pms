@@ -1,7 +1,8 @@
 ## Sessions
 
 ### Questions
-1. How the session works, from login to expiry, including  why the database stores a hash of the token?
+
+1. How the session works, from login to expiry, including why the database stores a hash of the token?
 2. Why the cookie survives closing the browser, and what still logs the user out?
 3. The two layers of protection (proxy and server checks), and why the proxy doesn't redirect away from /login?
 4. How the lockout works, and its trade-off?
@@ -9,7 +10,7 @@
 
 ### Answers
 
-1. The session works when the user login, the server will generate a `long random token` that will be insert in a `cookie browser`. The `SHA-256` hash is the one being used in the database, if ever someone stole a copy of the database they still couldn't use those sessions because they need the `original token` that *lives* in the user's browser and **NOT** in the database.
+1. The session works when the user login, the server will generate a `long random token` that will be insert in a `cookie browser`. The `SHA-256` hash is the one being used in the database, if ever someone stole a copy of the database they still couldn't use those sessions because they need the `original token` that _lives_ in the user's browser and **NOT** in the database.
 
 2. The cookie is `persistent`. After closing the browser it survives for up to 15 minutes, more than it will run out the idle clock in the database, so the next request will log you out.
 
