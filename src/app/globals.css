@@ -37,6 +37,22 @@
   --neu-muted: #475569;
   --neu-edge: #7b879b;
 
+  /* Liquid glass */
+  --scene: #e9eaec;
+  --scene-form-1: #d4d6da;
+  --scene-form-2: #f7f7f8;
+  --glass: rgb(255 255 255 / 0.55);
+  --glass-strong: rgb(255 255 255 / 0.78);
+  --glass-solid: #f6f6f7;
+  --glass-rim: rgb(255 255 255 / 0.75);
+  --glass-highlight: rgb(255 255 255 / 0.85);
+  --ink: #0f1114;
+  --ink-2: #1b1e23;
+  --on-ink: #f4f4f5;
+  --on-ink-muted: rgb(244 244 245 / 0.6);
+  --shadow-float:
+    0 1px 2px rgb(15 17 20 / 0.04), 0 16px 48px -16px rgb(15 17 20 / 0.18);
+
   color-scheme: light;
 }
 
@@ -73,6 +89,22 @@
   --neu-dark: #111723;
   --neu-muted: #94a3b8;
   --neu-edge: #66738a;
+
+  /* Liquid glass */
+  --scene: #0d0e10;
+  --scene-form-1: #1c1f24;
+  --scene-form-2: #2a2e35;
+  --glass: rgb(28 30 34 / 0.55);
+  --glass-strong: rgb(36 38 43 / 0.75);
+  --glass-solid: #1a1c20;
+  --glass-rim: rgb(255 255 255 / 0.12);
+  --glass-highlight: rgb(255 255 255 / 0.08);
+  --ink: #f4f4f5;
+  --ink-2: #e4e4e7;
+  --on-ink: #0f1114;
+  --on-ink-muted: rgb(15 17 20 / 0.6);
+  --shadow-float:
+    0 1px 2px rgb(0 0 0 / 0.3), 0 16px 48px -16px rgb(0 0 0 / 0.6);
 
   color-scheme: dark;
 }
@@ -113,6 +145,10 @@
   --color-neu: var(--neu);
   --color-neu-muted: var(--neu-muted);
   --color-neu-edge: var(--neu-edge);
+
+  --color-ink: var(--ink);
+  --color-on-ink: var(--on-ink);
+  --color-on-ink-muted: var(--on-ink-muted);
 }
 
 @layer base {
@@ -160,6 +196,78 @@
   box-shadow:
     inset 3px 3px 6px var(--neu-dark),
     inset -3px -3px 6px var(--neu-light);
+}
+
+/* Liquid glass: frosted panel with a light-catching rim and grain. */
+@utility glass {
+  position: relative;
+  isolation: isolate;
+  border-radius: 1.5rem;
+  background-color: var(--glass);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  backdrop-filter: blur(24px) saturate(160%);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    var(--shadow-float);
+
+  /* Rim: a 1px gradient border, brighter top-left. */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      135deg,
+      var(--glass-rim),
+      transparent 40%,
+      transparent 60%,
+      var(--glass-rim)
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* Grain: stops gradient banding, makes it feel physical. */
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+  }
+
+  /* Fallbacks: solid surface when blur isn't available or wanted. */
+  @supports not (backdrop-filter: blur(1px)) {
+    background-color: var(--glass-solid);
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    background-color: var(--glass-solid);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+@utility glass-strong {
+  background-color: var(--glass-strong);
+}
+
+/* Ink: the solid accent card. One or two per view, no more. */
+@utility ink {
+  border-radius: 1.5rem;
+  background: radial-gradient(120% 80% at 20% 0%, var(--ink-2), var(--ink));
+  color: var(--on-ink);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.08),
+    var(--shadow-float);
 }
 
 @page {
