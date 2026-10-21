@@ -7,7 +7,7 @@ const variants = {
     "border border-border bg-surface text-foreground hover:bg-surface-muted",
   ghost: "text-foreground hover:bg-surface-muted",
   danger: "bg-danger text-white hover:bg-danger-hover",
-  neu: "rounded-xl bg-neu font-semibold text-link neu-raised-sm transition-[color,box-shadow] hover:text-foreground active:neu-pressed",
+  ink: "rounded-full bg-ink font-semibold text-on-ink shadow-[var(--shadow-float)] transition-transform hover:-translate-y-0.5 active:scale-98 focus-visible:outline-ink",
 } as const;
 
 const sizes = {

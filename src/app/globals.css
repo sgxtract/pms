@@ -47,6 +47,7 @@
   --glass-rim: rgb(255 255 255 / 0.75);
   --glass-highlight: rgb(255 255 255 / 0.85);
   --glass-muted: #555e6b;
+  --glass-edge: #7d8590;
   --ink: #0f1114;
   --ink-2: #1b1e23;
   --on-ink: #f4f4f5;
@@ -101,6 +102,7 @@
   --glass-rim: rgb(255 255 255 / 0.12);
   --glass-highlight: rgb(255 255 255 / 0.08);
   --glass-muted: #a7b0bd;
+  --glass-edge: #6b7280;
   --ink: #c4c9d1;
   --ink-2: #e7e9ec;
   --on-ink: #0f1114;
@@ -151,6 +153,7 @@
   --color-ink: var(--ink);
   --color-on-ink: var(--on-ink);
   --color-on-ink-muted: var(--on-ink-muted);
+  --color-glass-edge: var(--glass-edge);
 
   --ease-glass: cubic-bezier(0.2, 0.8, 0.2, 1);
 }

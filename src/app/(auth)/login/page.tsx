@@ -8,6 +8,7 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { IDLE_TIMEOUT_SECONDS } from "@/lib/auth-config";
 import { SITE } from "@/lib/site-config";
 import { getCurrentSession } from "@/server/auth/session";
+import { GlassScene } from "@/components/features/app-shell/glass-scene";
 
 export const metadata: Metadata = { title: "Sign in" };
 
@@ -40,23 +41,25 @@ export default async function LoginPage({
   const { reason } = await searchParams;
 
   return (
-    <main className="relative grid min-h-svh place-items-center bg-neu px-4 py-12 sm:px-8">
+    <main className="relative grid min-h-svh place-items-center px-4 py-12 sm:px-8">
+      <GlassScene />
+
       <div className="absolute top-4 right-4">
-        <ThemeToggle />
+        <div className="glass p-1">
+          <ThemeToggle />
+        </div>
       </div>
 
-      <div className="grid w-full max-w-4xl gap-2 rounded-4xl bg-neu p-3 neu-raised md:grid-cols-[1.1fr_1fr] md:p-4">
+      <div className="glass grid w-full max-w-4xl gap-3 glass-strong p-3 md:grid-cols-[1.1fr_1fr]">
         {/* The form comes first in the page, so it's first on mobile and for keyboards. */}
         <section
           aria-labelledby="sign-in-heading"
           className="flex flex-col justify-center p-5 sm:p-8 md:p-10"
         >
           <div className="mb-8 flex items-center gap-3 md:hidden">
-            <span className="inline-grid rounded-full bg-neu p-1.5 neu-raised-sm">
-              <Seal size={44} eager />
-            </span>
+            <Seal size={44} eager />
             <div className="leading-tight">
-              <p className="text-xs text-neu-muted">{SITE.lguName}</p>
+              <p className="text-xs text-muted-foreground">{SITE.lguName}</p>
               <p className="font-heading font-semibold">{SITE.systemName}</p>
             </div>
           </div>
@@ -64,14 +67,14 @@ export default async function LoginPage({
           <h1 id="sign-in-heading" className="text-2xl font-semibold">
             Sign in
           </h1>
-          <p className="mt-1 text-sm text-neu-muted">
+          <p className="mt-1 text-sm text-muted-foreground">
             Use your Employee ID and password.
           </p>
 
           {reason === "timeout" && (
             <p
               role="status"
-              className="mt-6 rounded-xl bg-neu px-4 py-3 text-sm text-info-soft-foreground neu-inset"
+              className="mt-6 rounded-xl bg-info-soft px-4 py-3 text-sm text-info-soft-foreground"
             >
               You were signed out after {IDLE_TIMEOUT_SECONDS / 60} minutes of
               inactivity. Sign in again to continue.
@@ -80,13 +83,13 @@ export default async function LoginPage({
 
           <LoginForm />
 
-          <p className="mt-8 text-sm text-neu-muted">
+          <p className="mt-8 text-sm text-muted-foreground">
             Accounts are created by the system administrator. Contact them if
             you need access or have forgotten your password.
           </p>
           <Link
             href="/"
-            className="mt-4 inline-flex w-fit items-center gap-1.5 text-sm text-link hover:underline"
+            className="mt-4 inline-flex w-fit items-center gap-1.5 rounded-md text-sm underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
             <ArrowLeft className="size-4" aria-hidden />
             Back to home
@@ -96,16 +99,14 @@ export default async function LoginPage({
         {/* Shown on the left on wider screens. */}
         <section
           aria-labelledby="about-heading"
-          className="rounded-3xl bg-neu p-6 neu-inset sm:p-8 md:order-first md:p-10"
+          className="rounded-xl bg-ink bg-[radial-gradient(120%_80%_at_0%_0%,var(--ink-2),var(--ink))] p-6 text-on-ink sm:p-8 md:order-first md:p-10"
         >
           <div className="hidden md:block">
-            <span className="inline-grid rounded-full bg-neu p-2 neu-raised-sm">
-              <Seal size={72} eager />
-            </span>
-            <p className="mt-6 text-sm font-medium text-neu-muted">
+            <Seal size={72} eager />
+            <p className="mt-6 text-sm font-medium text-on-ink-muted">
               {SITE.lguName}
             </p>
-            <p className="text-sm text-neu-muted">{SITE.officeName}</p>
+            <p className="text-sm text-on-ink-muted">{SITE.officeName}</p>
           </div>
 
           <h2
@@ -115,7 +116,7 @@ export default async function LoginPage({
             <span className="md:hidden">About the system</span>
             <span className="hidden md:inline">{SITE.systemName}</span>
           </h2>
-          <p className="mt-3 max-w-prose text-sm text-neu-muted md:text-base">
+          <p className="mt-3 max-w-prose text-sm text-on-ink-muted md:text-base">
             Procurement requests of the {SITE.officeShortName}, tracked from the
             moment they&apos;re received until they&apos;re completed.
           </p>
@@ -123,12 +124,12 @@ export default async function LoginPage({
           <ul className="mt-8 space-y-5">
             {HIGHLIGHTS.map((item) => (
               <li key={item.title} className="flex gap-4">
-                <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-neu text-link neu-raised-sm [&_svg]:size-5">
+                <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-on-ink/10 [&_svg]:size-5">
                   {item.icon}
                 </span>
                 <div>
                   <p className="font-medium">{item.title}</p>
-                  <p className="text-sm text-neu-muted">{item.text}</p>
+                  <p className="text-sm text-on-ink-muted">{item.text}</p>
                 </div>
               </li>
             ))}
@@ -136,7 +137,7 @@ export default async function LoginPage({
 
           <Link
             href="/procurements"
-            className="mt-8 inline-flex rounded-xl bg-neu px-4 py-2.5 text-sm font-medium text-link neu-raised-sm transition-shadow focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring active:neu-pressed"
+            className="mt-8 inline-flex rounded-full border border-on-ink/25 px-4 py-2.5 text-sm font-medium transition-colors hover:bg-on-ink/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-on-ink"
           >
             View public procurement
           </Link>
