@@ -11,7 +11,6 @@ import { nowForDateTimeInput } from "@/lib/dates";
 import type { MoveStageField } from "@/lib/validation/stage-move";
 import { movePrStage, type MoveStageState } from "@/server/actions/procurement";
 import type { StageOption } from "@/server/queries/procurement";
-import { GLASS_FIELD } from "@/components/ui/glass-field";
 
 export function MoveStagePanel({
   prId,
@@ -103,7 +102,6 @@ export function MoveStagePanel({
             setToStageId(event.target.value);
             setConfirmingComplete(false);
           }}
-          className={GLASS_FIELD}
         >
           <option value="" disabled>
             Choose a stage
@@ -131,7 +129,6 @@ export function MoveStagePanel({
           {...describe("effectiveAt", true)}
           type="datetime-local"
           defaultValue={defaultEffectiveAt}
-          className={GLASS_FIELD}
         />
       </Field>
 
@@ -148,11 +145,7 @@ export function MoveStagePanel({
         }
         error={errors.remarks}
       >
-        <Textarea
-          {...describe("remarks", movingBack)}
-          rows={3}
-          className={GLASS_FIELD}
-        />
+        <Textarea {...describe("remarks", movingBack)} rows={3} />
       </Field>
 
       {state?.status === "error" && isNew && (
@@ -170,11 +163,16 @@ export function MoveStagePanel({
               </p>
             </FormMessage>
             <div className="flex flex-wrap gap-2">
-              <Button type="submit" variant="ink" disabled={isPending} autoFocus>
+              <Button
+                type="submit"
+                variant="ink"
+                disabled={isPending}
+                autoFocus
+              >
                 {isPending ? "Saving…" : "Yes, mark as completed"}
               </Button>
               <Button
-                variant="secondary"
+                variant="glass"
                 onClick={() => setConfirmingComplete(false)}
                 disabled={isPending}
               >
@@ -196,7 +194,7 @@ export function MoveStagePanel({
                       : "Move PR"}
             </Button>
             <Button
-              variant="secondary"
+              variant="glass"
               onClick={() => setIsOpen(false)}
               disabled={isPending}
             >

@@ -1,13 +1,11 @@
 import Form from "next/form";
 import Link from "next/link";
-import { Button, buttonClasses } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { hasActiveFilters, type PrFilters } from "@/lib/pr-filters";
 import type { Option } from "@/server/queries/procurement";
-import { GLASS_FIELD } from "@/components/ui/glass-field";
-import { cn } from "@/lib/utils";
 
 type FilterOptions = {
   stages: { code: string; name: string }[];
@@ -74,17 +72,11 @@ export function PrFilterBar({
             type="search"
             defaultValue={filters.q}
             placeholder="PR Number, Reference ID, Particulars, or End-User"
-            className="{GLASS_FIELD}"
           />
         </FilterField>
 
         <FilterField id="status" label="Status">
-          <Select
-            id="status"
-            className="{GLASS_FIELD}"
-            name="status"
-            defaultValue={filters.status ?? ""}
-          >
+          <Select id="status" name="status" defaultValue={filters.status ?? ""}>
             <option value="">All</option>
             <option value="in_progress">In progress</option>
             <option value="completed">Completed</option>
@@ -93,12 +85,7 @@ export function PrFilterBar({
         </FilterField>
 
         <FilterField id="stage" label="Stage">
-          <Select
-            id="stage"
-            className="{GLASS_FIELD}"
-            name="stage"
-            defaultValue={filters.stage ?? ""}
-          >
+          <Select id="stage" name="stage" defaultValue={filters.stage ?? ""}>
             <option value="">All stages</option>
             {options.stages.map((stage) => (
               <option key={stage.code} value={stage.code}>
@@ -109,12 +96,7 @@ export function PrFilterBar({
         </FilterField>
 
         <FilterField id="mode" label="Procurement Mode">
-          <Select
-            id="mode"
-            className="{GLASS_FIELD}"
-            name="mode"
-            defaultValue={filters.mode ?? ""}
-          >
+          <Select id="mode" name="mode" defaultValue={filters.mode ?? ""}>
             <option value="">All modes</option>
             <OptionList options={options.modes} />
           </Select>
@@ -144,7 +126,6 @@ export function PrFilterBar({
             <Select
               id="category"
               name="category"
-              className="{GLASS_FIELD}"
               defaultValue={filters.category ?? ""}
             >
               <option value="">All categories</option>
@@ -153,12 +134,7 @@ export function PrFilterBar({
           </FilterField>
 
           <FilterField id="type" label="Type of PR">
-            <Select
-              id="type"
-              name="type"
-              className="{GLASS_FIELD}"
-              defaultValue={filters.type ?? ""}
-            >
+            <Select id="type" name="type" defaultValue={filters.type ?? ""}>
               <option value="">All types</option>
               <OptionList options={options.types} />
             </Select>
@@ -169,7 +145,6 @@ export function PrFilterBar({
               <Input
                 id="from"
                 name="from"
-                className="{GLASS_FIELD}"
                 type="date"
                 defaultValue={filters.from}
               />
@@ -186,7 +161,7 @@ export function PrFilterBar({
                 name="abcMin"
                 inputMode="decimal"
                 defaultValue={filters.abcMin}
-                className={cn(GLASS_FIELD, "tabular-nums")}
+                className="tabular-nums"
               />
             </FilterField>
             <FilterField id="abcMax" label="ABC to">
@@ -195,7 +170,7 @@ export function PrFilterBar({
                 name="abcMax"
                 inputMode="decimal"
                 defaultValue={filters.abcMax}
-                className={cn(GLASS_FIELD, "tabular-nums")}
+                className="tabular-nums"
               />
             </FilterField>
           </div>

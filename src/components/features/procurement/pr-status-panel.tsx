@@ -9,7 +9,6 @@ import {
   changePrStatus,
   type StatusChangeState,
 } from "@/server/actions/procurement";
-import { GLASS_FIELD } from "@/components/ui/glass-field";
 
 export function PrStatusPanel({
   prId,
@@ -90,7 +89,6 @@ export function PrStatusPanel({
           id="statusRemarks"
           name="remarks"
           rows={3}
-          className={GLASS_FIELD}
           aria-invalid={remarksError ? true : undefined}
           aria-describedby={remarksError ? "statusRemarks-error" : undefined}
           autoFocus

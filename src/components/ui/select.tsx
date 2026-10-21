@@ -1,13 +1,15 @@
 import type { ComponentProps } from "react";
+import { GLASS_FIELD } from "@/components/ui/glass-field";
 import { cn } from "@/lib/utils";
 
 export function Select({ className, ...props }: ComponentProps<"select">) {
   return (
     <select
       className={cn(
-        "h-9 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground",
-        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
-        "disabled:cursor-not-allowed disabled:opacity-50",
+        GLASS_FIELD,
+        // Some browsers paint the open list with the select's background;
+        // a translucent one would be hard to read, so options get a solid one.
+        "h-9 px-3 [&_option]:bg-glass-solid",
         className,
       )}
       {...props}

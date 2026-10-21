@@ -1,12 +1,17 @@
 import type { ComponentProps } from "react";
 import { cn } from "@/lib/utils";
 
+/**
+ * Monochrome pill with a coloured dot. The pill takes its colours from the
+ * surrounding text (currentColor), so the same badge reads on glass, on ink
+ * and on a plain page. The word carries the meaning; the dot helps scanning.
+ */
 const tones = {
-  neutral: "bg-neutral-soft text-neutral-soft-foreground",
-  info: "bg-info-soft text-info-soft-foreground",
-  success: "bg-success-soft text-success-soft-foreground",
-  warning: "bg-warning-soft text-warning-soft-foreground",
-  danger: "bg-danger-soft text-danger-soft-foreground",
+  neutral: "before:bg-current/40",
+  info: "before:bg-tone-info",
+  success: "before:bg-tone-success",
+  warning: "before:bg-tone-warning",
+  danger: "before:bg-tone-danger",
 } as const;
 
 type BadgeProps = ComponentProps<"span"> & {
@@ -17,7 +22,8 @@ export function Badge({ tone = "neutral", className, ...props }: BadgeProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap ring-1 ring-foreground/10 ring-inset",
+        "inline-flex items-center gap-1.5 rounded-full bg-current/8 px-2 py-0.5 text-xs font-medium whitespace-nowrap ring-1 ring-current/15 ring-inset",
+        "before:size-1.5 before:shrink-0 before:rounded-full before:content-['']",
         tones[tone],
         className,
       )}
