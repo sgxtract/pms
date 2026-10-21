@@ -1,10 +1,12 @@
 import type { ComponentProps } from "react";
 import { cn } from "@/lib/utils";
 
+/**
+ * Monochrome Frost buttons. Ink is the page's main action (at most two ink
+ * elements per page); glass is everything else; ghost is for quiet actions
+ * in lists and bars; danger only for destructive actions.
+ */
 const variants = {
-  primary: "bg-primary text-primary-foreground hover:bg-primary-hover",
-  secondary:
-    "rounded-full border border-border bg-surface text-foreground hover:bg-surface-muted",
   ghost: "rounded-full text-foreground hover:bg-foreground/5",
   danger: "rounded-full bg-danger text-white hover:bg-danger-hover",
   ink: "rounded-full bg-ink font-semibold text-on-ink shadow-[var(--shadow-float)] transition-transform hover:-translate-y-0.5 active:scale-98 focus-visible:outline-ink",
@@ -29,7 +31,7 @@ type ButtonStyle = {
 };
 
 export function buttonClasses({
-  variant = "primary",
+  variant = "glass",
   size = "md",
   className,
 }: ButtonStyle = {}): string {
