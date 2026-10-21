@@ -5,9 +5,9 @@
 1. **Why the filters live in the URL, and what that gives users?**
 
 - Filters live in the url for a several benefits.
-    + Staff can `bookmark or share` filtered views. Just by sending the URL with filter will already redirect to the filtered views.
-    + The browser's `Back button` will work properly, because if it does not live in the URL, when you press back, you are not sure where it will redirect.
-    + `Reloading` the page will keep the filters, unlike when the filter does not live in the URL.
+  - Staff can `bookmark or share` filtered views. Just by sending the URL with filter will already redirect to the filtered views.
+  - The browser's `Back button` will work properly, because if it does not live in the URL, when you press back, you are not sure where it will redirect.
+  - `Reloading` the page will keep the filters, unlike when the filter does not live in the URL.
 
 2. **What happens with an invalid URL value, and why that's better than an error?**
 
@@ -23,7 +23,7 @@
 
 5. **Why % and _ are escaped in searches?**
 
-- These two symbols are called wildcards, they are literal. If a user searches for `20%`, the `%` they typed must be treated as a literal percent sign, not as *"anything"*.
+- These two symbols are called wildcards, they are literal. If a user searches for `20%`, the `%` they typed must be treated as a literal percent sign, not as _"anything"_.
 
 6. **What the key on the filter bar fixes?**
 

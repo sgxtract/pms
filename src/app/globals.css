@@ -151,6 +151,8 @@
   --color-ink: var(--ink);
   --color-on-ink: var(--on-ink);
   --color-on-ink-muted: var(--on-ink-muted);
+
+  --ease-glass: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 @layer base {
@@ -248,7 +250,14 @@
     pointer-events: none;
   }
 
-  /* Fallbacks: solid surface when blur isn't available or wanted. */
+  /* Cheaper blur on small screens (must come before the fallbacks). */
+  @media (width < 40rem) {
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    backdrop-filter: blur(12px) saturate(140%);
+  }
+
+  /* Fallbacks: solid surface when blur isn't available or wanted.
+     Keep these last so they override everything above. */
   @supports not (backdrop-filter: blur(1px)) {
     background-color: var(--glass-solid);
   }
@@ -311,9 +320,25 @@
     --foreground: #000000;
     --muted-foreground: #334155;
     --link: #000000;
+
+    --glass: #ffffff;
+    --glass-solid: #ffffff;
+    --glass-muted: #334155;
+    --ink: #ffffff;
+    --ink-2: #ffffff;
+    --on-ink: #000000;
+    --on-ink-muted: #334155;
+    --shadow-float: none;
   }
 
   body {
     font-size: 10.5pt;
+  }
+
+  .glass,
+  .ink {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border: 1px solid var(--border);
   }
 }

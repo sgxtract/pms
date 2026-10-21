@@ -4,9 +4,7 @@ import { BarList } from "@/components/features/dashboard/bar-list";
 import { DashboardSection } from "@/components/features/dashboard/dashboard-section";
 import { StatCard } from "@/components/features/dashboard/stat-card";
 import { Badge } from "@/components/ui/badge";
-// CHANGED: removed `import { buttonClasses } from "@/components/ui/button";`
-// The New PR link now uses the `ink` utility, so buttonClasses is unused
-// (ESLint would flag it).
+
 import { AUDIT_ACTION_LABELS } from "@/lib/audit-labels";
 import {
   DELIVERY_DUE_SOON_DAYS,
@@ -67,7 +65,7 @@ export default async function DashboardPage() {
         {can(user, "pr.create") && (
           <Link
             href="/requests/new"
-            className="inline-flex items-center gap-2 ink px-5 py-2.5 text-sm font-medium transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink active:scale-98"
+            className="inline-flex items-center gap-2 ink px-5 py-2.5 text-sm font-medium transition-transform duration-200 ease-glass focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink motion-safe:hover:-translate-y-0.5 motion-safe:active:scale-98"
           >
             <Plus aria-hidden className="size-4" />
             New PR
@@ -77,6 +75,7 @@ export default async function DashboardPage() {
 
       {/* Row 1: ink card + stat strip (unchanged from step 3) */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+        {/* Row 1: needs attention + totals */}
         <div className="lg:col-span-4">
           <NeedsAttentionCard
             overdue={totalOverdue}
@@ -110,11 +109,9 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* ── CHANGED: one grid with TWO column stacks replaces the old
-          `lg:grid-cols-[3fr_2fr]` and `lg:grid-cols-2` rows.
-          `lg:items-start` stops the columns stretching to equal height. ── */}
+      {/* Two column stacks; items-start keeps each column at its own height */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12 lg:items-start">
-        {/* ── CHANGED: LEFT column (7 of 12) = Stage + Deliveries ── */}
+        {/* Left: stage + deliveries */}
         <div className="space-y-4 lg:col-span-7">
           {/* Section unchanged, only moved */}
           <DashboardSection
@@ -139,7 +136,7 @@ export default async function DashboardPage() {
             {deliveries.length === 0 ? (
               <EmptyNote>No deliveries are overdue or due soon.</EmptyNote>
             ) : (
-              <ul className="divide-y">
+              <ul className="divide-y divide-foreground/10">
                 {deliveries.map((delivery) => (
                   <li
                     key={delivery.id}
@@ -178,7 +175,7 @@ export default async function DashboardPage() {
 
         {/* ── CHANGED: RIGHT column (5 of 12) = Mode + Waiting ── */}
         <div className="space-y-4 lg:col-span-5">
-          {/* Section unchanged, only moved */}
+          {/* Right: mode + waiting */}
           <DashboardSection title="In progress by procurement mode">
             {modes.length === 0 ? (
               <EmptyNote>No PRs in progress.</EmptyNote>
@@ -211,7 +208,7 @@ export default async function DashboardPage() {
                 No PR has been in its stage for over {STALE_STAGE_DAYS} days.
               </EmptyNote>
             ) : (
-              <ul className="divide-y">
+              <ul className="divide-y divide-foreground/10">
                 {waiting.map((pr) => (
                   <li
                     key={pr.id}
@@ -253,7 +250,7 @@ export default async function DashboardPage() {
         {activity.length === 0 ? (
           <EmptyNote>No activity recorded yet.</EmptyNote>
         ) : (
-          <ul className="divide-y">
+          <ul className="divide-y divide-foreground/10">
             {activity.map((entry) => (
               <li
                 key={entry.id}

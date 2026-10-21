@@ -34,7 +34,7 @@ function BarRow({ item, max }: { item: BarItem; max: number }) {
   return (
     <Link
       href={item.href}
-      className="-mx-3 block rounded-xl px-3 py-2 transition-colors hover:bg-foreground/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      className="-mx-3 block rounded-xl px-3 py-2 transition-colors duration-200 ease-glass hover:bg-foreground/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
       {content}
     </Link>

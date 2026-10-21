@@ -14,7 +14,7 @@ function AttentionStat({
   return (
     <a
       href={href}
-      className="-m-3 block rounded-2xl p-3 transition-colors hover:bg-on-ink/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-on-ink"
+      className="-m-3 block rounded-2xl p-3 transition-colors duration-200 ease-glass hover:bg-on-ink/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-on-ink"
     >
       <span className="block font-heading text-5xl font-semibold tracking-tight tabular-nums">
         {value}

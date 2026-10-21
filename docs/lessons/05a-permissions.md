@@ -20,7 +20,7 @@
 
 4. **Why dates are formatted with a fixed time zone?**
 
-- Fixed `timeZone` is essential. Without it, a date would be formatted in the server's time zone on the server, then in the browser's time zone in the browser. If they differ, then it will *report a mismatch*, and a time near midnight could even show a different day. But, with fixed `timeZone`, both will always agree.
+- Fixed `timeZone` is essential. Without it, a date would be formatted in the server's time zone on the server, then in the browser's time zone in the browser. If they differ, then it will _report a mismatch_, and a time near midnight could even show a different day. But, with fixed `timeZone`, both will always agree.
 
 5. **Why query functions never decide permissions?**
 
