@@ -41,10 +41,10 @@ export default async function LoginPage({
   const { reason } = await searchParams;
 
   return (
-    <main className="relative grid min-h-svh place-items-center px-4 py-12 sm:px-8">
+    <main className="relative grid min-h-svh place-items-center px-4 pt-20 pb-12 sm:px-8 md:py-12">
       <GlassScene />
 
-      <div className="absolute top-4 right-4">
+      <div className="absolute top-4 right-4 z-10">
         <div className="glass p-1">
           <ThemeToggle />
         </div>
