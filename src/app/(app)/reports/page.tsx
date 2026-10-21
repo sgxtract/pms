@@ -13,12 +13,21 @@ import {
 } from "@/lib/report-period";
 import type { SearchParams } from "@/lib/search-params";
 import { requirePermission } from "@/server/auth/authorize";
-import { getAbcBreakdown, getReportOverview } from "@/server/queries/reports";
+import {
+  getAbcBreakdown,
+  getReportOverview,
+  EMPTY_TOTALS,
+  getMonthlyTotals,
+  getProcessingTimes,
+} from "@/server/queries/reports";
 import { PrintButton } from "@/components/features/reports/print-button";
 import { ReportLetterhead } from "@/components/features/reports/report-letterhead";
 import { SignatureBlock } from "@/components/features/reports/signature-block";
 import { getReportSignatories } from "@/server/queries/settings";
 import { SITE } from "@/lib/site-config";
+import { MonthlyTrendTable } from "@/components/features/reports/monthly-trend-table";
+import { ProcessingTimeTable } from "@/components/features/reports/processing-time-table";
+import { fillMonths } from "@/lib/report-months";
 
 export const metadata: Metadata = { title: "Reports" };
 
@@ -60,14 +69,23 @@ export default async function ReportsPage({
 }) {
   const user = await requirePermission("report.view");
   const params = parseReportParams(await searchParams);
-  const period = resolvePeriod(params, todayInManila());
+  const today = todayInManila();
+  const period = resolvePeriod(params, today);
 
-  const [overview, byMode, byCategory, signatories] = await Promise.all([
-    getReportOverview(period),
-    getAbcBreakdown("mode", period),
-    getAbcBreakdown("category", period),
-    getReportSignatories(),
-  ]);
+  const [overview, byMode, byCategory, signatories, monthlyRows, processing] =
+    await Promise.all([
+      getReportOverview(period),
+      getAbcBreakdown("mode", period),
+      getAbcBreakdown("category", period),
+      getReportSignatories(),
+      getMonthlyTotals(period),
+      getProcessingTimes(period),
+    ]);
+
+  const monthly = fillMonths(monthlyRows, period, today, (month) => ({
+    month,
+    ...EMPTY_TOTALS,
+  }));
 
   return (
     <div className="space-y-8">
@@ -135,6 +153,16 @@ export default async function ReportsPage({
                 />
               </div>
             </section>
+
+            {/* after the Financial overview <section> */}
+            {monthly.length > 1 && (
+              <MonthlyTrendTable rows={monthly} totals={overview} />
+            )}
+
+            {/* the two existing AbcBreakdownTable lines stay here */}
+
+            {/* after the Category table, before the SignatureBlock */}
+            <ProcessingTimeTable rows={processing} />
 
             <AbcBreakdownTable
               title="Total ABC by Procurement Mode"

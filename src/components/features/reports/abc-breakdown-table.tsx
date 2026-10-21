@@ -7,7 +7,7 @@ import {
   TableHeaderCell,
   TableRow,
 } from "@/components/ui/table";
-import { formatPeso } from "@/lib/format";
+import { formatPeso, formatShare } from "@/lib/format";
 import type { BreakdownRow, ReportTotals } from "@/server/queries/reports";
 
 function AmountCells({ totals }: { totals: ReportTotals }) {
@@ -62,6 +62,7 @@ export function AbcBreakdownTable({
             <TableHeaderCell className="text-right">Completed</TableHeaderCell>
             <TableHeaderCell className="text-right">Total ABC</TableHeaderCell>
             <TableHeaderCell className="text-right">Cancelled</TableHeaderCell>
+            <TableHeaderCell className="text-right">Share</TableHeaderCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -69,6 +70,9 @@ export function AbcBreakdownTable({
             <TableRow key={row.key}>
               <TableCell>{row.name}</TableCell>
               <AmountCells totals={row} />
+              <TableCell className="text-right tabular-nums">
+                {formatShare(row.activeAbc, totals.activeAbc)}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -76,6 +80,7 @@ export function AbcBreakdownTable({
           <TableRow>
             <TableCell>Total</TableCell>
             <AmountCells totals={totals} />
+            <TableCell className="text-right tabular-nums">100%</TableCell>
           </TableRow>
         </TableFoot>
       </Table>

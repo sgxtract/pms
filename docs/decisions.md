@@ -231,6 +231,9 @@ All fields remain editable while the PR is active. Every edit is audited with be
 - Breakdown tables list only modes or categories with PRs in the period; every table's totals row equals the overview.
 - Reports print on A4 with the letterhead, the figures and tables, and "Prepared by" and "Noted by" signatures. Printed copies show when the figures were generated and who printed them, and always use light colours.
 - Signatory names and positions are stored in `system_settings` and edited by Administrators on the Settings page; changes are audited. A blank name prints an empty line for signing by hand.
+- Reports show a month-by-month table (by PR date) whose totals equal the overview; months without PRs show as zero, up to the current month.
+- Processing time = days from PR date to reaching Completed, for completed PRs only. The median is shown first, because one long-running PR distorts the average.
+- The dashboard's "this month" completion figure counts by completion date, not PR date, and is labelled separately from the all-time Completed count.
 
 ## 11. Hosting and deployment
 

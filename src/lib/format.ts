@@ -28,3 +28,13 @@ export function formatDateTime(value: Date | string): string {
 export function formatPeso(value: number | string): string {
   return pesoFormatter.format(Number(value));
 }
+
+const PERCENT = new Intl.NumberFormat("en-PH", {
+  style: "percent",
+  maximumFractionDigits: 1,
+});
+
+export function formatShare(part: string, whole: string) {
+  const total = Number(whole);
+  return total > 0 ? PERCENT.format(Number(part) / total) : "—";
+}

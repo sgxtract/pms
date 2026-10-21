@@ -22,6 +22,7 @@ import {
   getStageCounts,
   getUpcomingDeliveries,
   getWaitingPrs,
+  getCompletionStats,
 } from "@/server/queries/dashboard";
 import { NeedsAttentionCard } from "@/components/features/dashboard/needs-attention-card";
 import { Plus } from "lucide-react";
@@ -39,7 +40,7 @@ function EmptyNote({ children }: { children: React.ReactNode }) {
 export default async function DashboardPage() {
   const user = await requireUser();
 
-  const [summary, stages, modes, deliveries, waiting, activity] =
+  const [summary, stages, modes, deliveries, waiting, activity, completion] =
     await Promise.all([
       getDashboardSummary(),
       getStageCounts(),
@@ -47,10 +48,16 @@ export default async function DashboardPage() {
       getUpcomingDeliveries(),
       getWaitingPrs(),
       listRecentAuditLogs(auditScope(user), user.id, RECENT_ACTIVITY_LIMIT),
+      getCompletionStats(),
     ]);
 
   const totalWaiting = waiting[0]?.totalWaiting ?? 0;
   const totalOverdue = deliveries[0]?.totalOverdue ?? 0;
+
+  const completedNote =
+    completion.medianDaysThisYear === null
+      ? `${completion.completedThisMonth} this month`
+      : `${completion.completedThisMonth} this month · median ${completion.medianDaysThisYear} days`;
 
   return (
     <div className="space-y-8">
@@ -98,6 +105,7 @@ export default async function DashboardPage() {
           <StatCard
             label="Completed"
             value={String(summary.completed)}
+            description={completedNote}
             href="/requests?status=completed"
           />
           <StatCard
