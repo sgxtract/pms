@@ -22,6 +22,7 @@ import {
   getUpcomingDeliveries,
   getWaitingPrs,
 } from "@/server/queries/dashboard";
+import { GlassScene } from "@/components/features/dashboard/glass-scene";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
@@ -50,6 +51,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8">
+      <GlassScene />
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold">Dashboard</h1>

@@ -14,7 +14,7 @@ export function DashboardSection({
   const id = `section-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
 
   return (
-    <section aria-labelledby={id} className="rounded-lg border bg-surface p-5">
+    <section aria-labelledby={id} className="glass p-6">
       <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
         <div>
           <h2 id={id} className="font-semibold">

@@ -270,6 +270,23 @@
     var(--shadow-float);
 }
 
+/* The backdrop glass blurs over: soft, low-contrast forms on a matte base. */
+@utility glass-scene {
+  background:
+    radial-gradient(40rem 32rem at 8% 0%, var(--scene-form-2), transparent 70%),
+    radial-gradient(
+      48rem 36rem at 96% 40%,
+      var(--scene-form-1),
+      transparent 70%
+    ),
+    radial-gradient(
+      36rem 28rem at 30% 105%,
+      var(--scene-form-1),
+      transparent 70%
+    ),
+    var(--scene);
+}
+
 @page {
   size: A4;
   margin: 15mm;
