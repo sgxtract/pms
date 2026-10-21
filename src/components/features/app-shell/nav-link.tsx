@@ -21,12 +21,12 @@ export function NavLink({
       href={href}
       aria-current={isActive ? "page" : undefined}
       className={cn(
-        "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+        "flex items-center gap-3 rounded-full px-3 py-2 text-sm font-medium",
+        "transition-colors duration-200 ease-glass",
+        "text-foreground/80 hover:bg-foreground/5 hover:text-foreground",
+        "aria-[current=page]:bg-ink aria-[current=page]:text-on-ink",
         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
         "[&_svg]:size-4 [&_svg]:shrink-0",
-        isActive
-          ? "bg-primary/10 text-foreground"
-          : "text-muted-foreground hover:bg-surface-muted hover:text-foreground",
       )}
     >
       {icon}

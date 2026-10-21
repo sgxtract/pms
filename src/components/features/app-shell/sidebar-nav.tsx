@@ -11,7 +11,7 @@ export function SidebarNav({ groups }: { groups: NavGroup[] }) {
           <p className="px-3 pb-2 text-xs font-medium text-muted-foreground">
             {group.label}
           </p>
-          <ul className="space-y-0.5">
+          <ul className="space-y-1">
             {group.items.map((item) => (
               <li key={item.href}>
                 <NavLink href={item.href} icon={item.icon}>

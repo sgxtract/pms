@@ -18,8 +18,8 @@ function initials(name: string): string {
 }
 
 const ITEM_CLASSES = cn(
-  "flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm transition-colors",
-  "hover:bg-surface-muted focus-visible:outline-2 focus-visible:outline-ring",
+  "flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm transition-colors",
+  "hover:bg-foreground/5 focus-visible:outline-2 focus-visible:outline-ring",
   "[&_svg]:size-4 [&_svg]:shrink-0",
 );
 
@@ -62,7 +62,7 @@ export function UserMenu({
   const avatar = (
     <span
       aria-hidden
-      className="grid size-8 shrink-0 place-items-center rounded-full bg-primary text-xs font-semibold text-primary-foreground"
+      className="grid size-8 shrink-0 place-items-center rounded-full bg-foreground/10 text-xs font-semibold text-foreground"
     >
       {initials(name)}
     </span>
@@ -116,7 +116,7 @@ export function UserMenu({
         hidden={!isOpen}
         tabIndex={-1}
         className={cn(
-          "absolute z-50 rounded-lg border bg-surface p-1 shadow-lg",
+          "absolute z-50 rounded-2xl border border-foreground/10 bg-surface p-1.5 shadow-[var(--shadow-float)]",
           placement === "up"
             ? "inset-x-0 bottom-full mb-2"
             : "top-full right-0 mt-2 w-64",
@@ -126,7 +126,7 @@ export function UserMenu({
           <p className="truncate text-sm font-medium">{name}</p>
           <p className="truncate text-xs text-muted-foreground">{roleLabel}</p>
         </div>
-        <div className="my-1 border-t" />
+        <div className="my-1 border-t border-foreground/10" />
 
         <Link
           href="/change-password"
@@ -141,7 +141,7 @@ export function UserMenu({
           <p className="mb-1.5 text-xs text-muted-foreground">Theme</p>
           <ThemeChoice />
         </div>
-        <div className="my-1 border-t" />
+        <div className="my-1 border-t border-foreground/10" />
 
         <form action={logout}>
           <button type="submit" className={ITEM_CLASSES}>
