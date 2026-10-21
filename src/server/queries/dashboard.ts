@@ -136,3 +136,29 @@ export async function getWaitingPrs(): Promise<WaitingPr[]> {
     LIMIT ${DASHBOARD_LIST_LIMIT}
   `;
 }
+
+export type CompletionStats = {
+  completedThisMonth: number;
+  completedThisYear: number;
+  medianDaysThisYear: number | null;
+};
+
+// By completion date (what got finished), unlike Reports, which group by PR date.
+export async function getCompletionStats(): Promise<CompletionStats> {
+  const [stats] = await sql<CompletionStats[]>`
+    WITH done AS (
+      SELECT (p.current_stage_at AT TIME ZONE 'Asia/Manila')::date AS done_on, p.pr_date
+      FROM procurement_requests p
+      JOIN procurement_stages s ON s.id = p.current_stage_id
+      WHERE p.status = 'active' AND s.code = 'completed'
+    ),
+    today AS (SELECT (now() AT TIME ZONE 'Asia/Manila')::date AS d)
+    SELECT
+      count(*) FILTER (WHERE done_on >= date_trunc('month', t.d))::int AS completed_this_month,
+      count(*) FILTER (WHERE done_on >= date_trunc('year', t.d))::int AS completed_this_year,
+      (percentile_cont(0.5) WITHIN GROUP (ORDER BY greatest(done_on - pr_date, 0))
+        FILTER (WHERE done_on >= date_trunc('year', t.d)))::int AS median_days_this_year
+    FROM done CROSS JOIN today t
+  `;
+  return stats;
+}
