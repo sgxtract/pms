@@ -38,14 +38,15 @@
   --neu-edge: #7b879b;
 
   /* Liquid glass */
-  --scene: #e9eaec;
-  --scene-form-1: #d4d6da;
-  --scene-form-2: #f7f7f8;
+  --scene: #e6e7ea;
+  --scene-form-1: #c9cdd4;
+  --scene-form-2: #fafafa;
   --glass: rgb(255 255 255 / 0.55);
   --glass-strong: rgb(255 255 255 / 0.78);
   --glass-solid: #f6f6f7;
   --glass-rim: rgb(255 255 255 / 0.75);
   --glass-highlight: rgb(255 255 255 / 0.85);
+  --glass-muted: #555e6b;
   --ink: #0f1114;
   --ink-2: #1b1e23;
   --on-ink: #f4f4f5;
@@ -91,14 +92,15 @@
   --neu-edge: #66738a;
 
   /* Liquid glass */
-  --scene: #0d0e10;
-  --scene-form-1: #1c1f24;
-  --scene-form-2: #2a2e35;
+  --scene: #0b0c0e;
+  --scene-form-1: #262a31;
+  --scene-form-2: #1a1d22;
   --glass: rgb(28 30 34 / 0.55);
   --glass-strong: rgb(36 38 43 / 0.75);
   --glass-solid: #1a1c20;
   --glass-rim: rgb(255 255 255 / 0.12);
   --glass-highlight: rgb(255 255 255 / 0.08);
+  --glass-muted: #a7b0bd;
   --ink: #f4f4f5;
   --ink-2: #e4e4e7;
   --on-ink: #0f1114;
@@ -200,6 +202,7 @@
 
 /* Liquid glass: frosted panel with a light-catching rim and grain. */
 @utility glass {
+  --muted-foreground: var(--glass-muted);
   position: relative;
   isolation: isolate;
   border-radius: 1.5rem;
@@ -273,14 +276,18 @@
 /* The backdrop glass blurs over: soft, low-contrast forms on a matte base. */
 @utility glass-scene {
   background:
-    radial-gradient(40rem 32rem at 8% 0%, var(--scene-form-2), transparent 70%),
     radial-gradient(
-      48rem 36rem at 96% 40%,
+      38rem 30rem at 32% 8%,
+      var(--scene-form-2),
+      transparent 70%
+    ),
+    radial-gradient(
+      44rem 34rem at 88% 38%,
       var(--scene-form-1),
       transparent 70%
     ),
     radial-gradient(
-      36rem 28rem at 30% 105%,
+      34rem 26rem at 48% 92%,
       var(--scene-form-1),
       transparent 70%
     ),
