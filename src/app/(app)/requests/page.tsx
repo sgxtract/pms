@@ -131,7 +131,14 @@ export default async function RequestsPage({
                 </p>
                 <div className="mt-2 flex flex-wrap gap-1.5">
                   <StageBadge code={pr.stageCode} name={pr.stageName} />
-                  <PrStatusBadge status={pr.status} stageCode={pr.stageCode} />
+                  {!(
+                    pr.status === "active" && pr.stageCode === "completed"
+                  ) && (
+                    <PrStatusBadge
+                      status={pr.status}
+                      stageCode={pr.stageCode}
+                    />
+                  )}
                 </div>
               </li>
             ))}
