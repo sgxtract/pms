@@ -196,8 +196,6 @@ function prListWhere(filters: PrFilters) {
   if (filters.type) conditions.push(sql`p.pr_type_id::text = ${filters.type}`);
   if (filters.from) conditions.push(sql`p.pr_date >= ${filters.from}`);
   if (filters.to) conditions.push(sql`p.pr_date <= ${filters.to}`);
-  if (filters.abcMin) conditions.push(sql`p.abc >= ${filters.abcMin}`);
-  if (filters.abcMax) conditions.push(sql`p.abc <= ${filters.abcMax}`);
 
   return conditions.reduce(
     (combined, condition) => sql`${combined} AND ${condition}`,

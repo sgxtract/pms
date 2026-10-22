@@ -53,8 +53,6 @@ export function PrFilterBar({
     filters.type,
     filters.from,
     filters.to,
-    filters.abcMin,
-    filters.abcMax,
   ].filter(Boolean).length;
 
   return (
@@ -121,7 +119,7 @@ export function PrFilterBar({
         <summary className="cursor-pointer text-sm font-medium underline-offset-4 hover:underline">
           More filters{moreCount > 0 && ` (${moreCount} in use)`}
         </summary>
-        <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <FilterField id="category" label="Category">
             <Select
               id="category"
@@ -151,27 +149,6 @@ export function PrFilterBar({
             </FilterField>
             <FilterField id="to" label="PR date to">
               <Input id="to" name="to" type="date" defaultValue={filters.to} />
-            </FilterField>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2">
-            <FilterField id="abcMin" label="ABC from">
-              <Input
-                id="abcMin"
-                name="abcMin"
-                inputMode="decimal"
-                defaultValue={filters.abcMin}
-                className="tabular-nums"
-              />
-            </FilterField>
-            <FilterField id="abcMax" label="ABC to">
-              <Input
-                id="abcMax"
-                name="abcMax"
-                inputMode="decimal"
-                defaultValue={filters.abcMax}
-                className="tabular-nums"
-              />
             </FilterField>
           </div>
         </div>

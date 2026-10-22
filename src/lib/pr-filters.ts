@@ -25,19 +25,6 @@ const optionId = z
   )
   .catch(undefined);
 
-const amount = z
-  .preprocess(
-    (value) => {
-      const raw = firstValue(value);
-      return typeof raw === "string" ? raw.replace(/[\s,₱]/g, "") : raw;
-    },
-    z
-      .string()
-      .regex(/^\d{1,13}(\.\d{1,2})?$/)
-      .optional(),
-  )
-  .catch(undefined);
-
 export const prFiltersSchema = z.object({
   q: text(100),
   status: z
@@ -60,8 +47,6 @@ export const prFiltersSchema = z.object({
   type: optionId,
   from: dateParam,
   to: dateParam,
-  abcMin: amount,
-  abcMax: amount,
   page: pageParam,
 });
 
